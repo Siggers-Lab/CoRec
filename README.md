@@ -33,7 +33,7 @@ Clicking the button opens up a file browser where you can upload your experiment
 ![hTF dialog box](screenshots/2_data_dialog_box.png)
 
 ### Data explorer
-After uploading your data, an interative table is rendered where you can explore which TF sites demonstrated the highest COF recruitment levels in each experiment performed. For example, clicking the `LPS_PMA_P300` column (orange arrow below) will sort the data by which sites recruited the coactivator p300 the best in this experiment from LPS-stimulated, PMA-differentiated THP-1 macrophages. The top results are dominated by IRFs which are known LPS-responsive TFs. Looking at the `UT_PMA_P300` column immediately to the left, we can see that these same TFs do not recruit p300 in the untreated (UT) condition.
+After uploading your data, an interactive table is rendered where you can explore which TF sites demonstrated the highest COF recruitment levels in each experiment performed. For example, clicking the `LPS_PMA_P300` column (orange arrow below) will sort the data by which sites recruited the coactivator p300 the best in this experiment from LPS-stimulated, PMA-differentiated THP-1 macrophages. The top results are dominated by IRFs which are known LPS-responsive TFs. Looking at the `UT_PMA_P300` column immediately to the left, we can see that these same TFs do not recruit p300 in the untreated (UT) condition.
 
 ![hTF data explorer](screenshots/3_data_explorer.png)
 
