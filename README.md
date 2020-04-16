@@ -20,8 +20,6 @@ The following are short descriptions of each of the files included in this repos
 | app.R | shiny app used to explore, analyze, and visualize the results from hTF array experiments |
 | HTF_V01_020520_FULL_ANNOT_v1_a1_run1_ZSCORES.dat | sample dataset of real experimental results obtained using the hTF array (v01) |
 
-## Array design details
-
 ## Analysis overview
 The hTF array design comes bundled with a dedicated analysis applet. The app can be deployed offline directly from RStudio using the `app.R` file included in this repository. The following is an overview for how to explore, analyze, and visualize real hTF array experimental results.
 
@@ -46,7 +44,7 @@ Clicking the `Scatterplots` tab at the top of the page opens a portal that you c
 
 ![hTF scatterplots](screenshots/4_scatterplots.png)
 
-In the above example, I've selected to compare p300 recruitment to a diverse group of TFs in LPS-stimulated macrophages (y-axis) compared to an untreated control (x-axis). The colors show the consensus as well as single nucleotide variant probes associated with a given TF in the hTF array design. You can see that probes associated with the IRFs (highlighted in the "Data explorer" step) are strong LPS-dependent p300 recruiters (depending on the given variant probe being examined) whereas SPI1 and SPIB (constitutively expressed ETS factors) recruit p300 much better in the unstimulated macrophages. NF-kB TFs (REL and RELA) are also strongly LPS-dependent but appear to be weaker p300 recruiters compared to the IRFs. In contrast with SPI1/SPIB, closely related ETS factors ELF1 and ETV2 appear to be decent p300 recruiters in both LPS-stimulated and untreated macrophages.
+In the above example, I've selected to compare p300 recruitment to a diverse group of TFs in LPS-stimulated macrophages (y-axis) compared to an untreated control (x-axis). The colors show the consensus as well as single nucleotide variant probes associated with a given TF in the hTF array design. You can see that probes associated with the IRFs (the TF group highlighted in the previous `Data explorer` step) are strong LPS-dependent p300 recruiters (depending on the given variant probe being examined) whereas SPI1 and SPIB (constitutively expressed ETS factors) recruit p300 much better in the unstimulated macrophages. NF-kB TFs (REL and RELA) are also strongly LPS-dependent but appear to be weaker p300 recruiters compared to the IRFs. In contrast with SPI1/SPIB, closely related ETS factors ELF1 and ETV2 appear to be decent p300 recruiters in both LPS-stimulated and untreated macrophages.
 
 If you are interested in including many more TFs and the automatically generated color palette starts to become less distinguishable, you can click the `Family-level comparison` tab to look at probes grouped by their TF family as opposed to the individual factors as shown below.
 
@@ -62,6 +60,11 @@ As shown above, both the coactivator p300 and the NCOR corepressor complex can b
 
 ### Recruitment heatmap
 
-This module is currently under construction. It will hopefully one day allow users to build summary recruitment "profiles" or "signatures" that summarizes COF recruitment to hundreds of TF sites in a given cell state. Alterations to these signatures in aberrant cell states (such as cancer) could be used to investigate which COF-TF complexes are involved.
+This module is currently under construction. It will hopefully one day allow users to build recruitment "profiles" or "signatures" that summarizes COF recruitment to hundreds of TF sites in a given cell state. Alterations to these signatures in aberrant cell states (such as cancer) could be used to investigate which COF-TF complexes are involved.
 
 ![hTF recruitment heatmap](screenshots/6_recruitment_heatmap_TEMP.png)
+
+## Array design details
+
+TODO
+
