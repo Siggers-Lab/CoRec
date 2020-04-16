@@ -1,5 +1,5 @@
 # hTF_array
-Design and analysis scripts for the human transcription factor (hTF) protein-binding microarray
+Design, analysis, and visualization software for the human transcription factor (hTF) protein-binding microarray
 
 ## Introduction
 The human transcription factor (hTF) array is an experimental protein-binding microarray platform designed to characterize transcriptional cofactor (COF) recruitment to consensus TF binding sites in a cell state-dependent manner.
