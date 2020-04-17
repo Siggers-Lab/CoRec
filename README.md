@@ -66,5 +66,54 @@ This module is currently under construction. It will hopefully one day allow use
 
 ## Array design details
 
-TODO
+The hTF array design was generated using the `hTF_v01_nextPBM_design.R` file included in this repository. The microarray itself is available to purchase from Agilent (Design ID: 086290). In order to reconstitute the files and annotations associated with the design, simply run `hTF_v01_nextPBM_design.R` as an Rscript as follows:
+```shell
+Rscript hTF_v01_nextPBM_design.R hTF_v01
+```
+The only argument is a prefix to use while naming the individual DNA probes and the design as a whole. In the above example, I've used `hTF_v01` as this prefix. The script depends on several R and bioconductor packages, so if you would like to rerun it, please install the following first:
+* `TFBSTools`
+* `JASPAR2018`
+* `plyr`
+
+The following are each of the steps executed in the design Rscript to build the array design starting from the TF binding models included in the open-source JASPAR 2018 database.
+
+### 1. Obtain all core TF motifs in the JASPAR database and their consensus sequences
+* The `JASPAR2018` bioconductor R package was used to fetch the motif matrices from the database
+* The CORE set of motifs consists of a non-redundant, curated 1,564 motif matrices across many model organisms
+* This initial set was filtered for vertebrate CORE motifs with a human source (ie. used human cell lines/tissues for their characterization)
+* This filter resulted in 452 total human TF binding motifs
+
+### 2. Flag "equivalent" motif seed sequences for "filtering" form final design
+* Each of these 452 motifs were collapsed into a single consensus sequence (per motif) using the highest-scoring nucleotide within each position
+* These sequences were collapsed since a physical DNA probe on an array can represent at most 1 sequence. I reasoned that the consensus sequence would be the best to start with as the "seed" sequence for the single nucleotide variant probe generation
+* An equivalence filter was then applied to examine which consensus sequences were identical or close enough to one another. This was accomplished by sorting the consensus sequences by size (largest to smallest), walking through each sequence systematically (starting with the largest), and adding them to a final list of consensus sequences to include in the array design. If a consensus sequence (or its reverse complement was found to be a subsequence (or exact match) of one already included in the list, the relative sizes of the matches were compared. If this relative size was found to be greater than 0.90, then the current sequence was flagged to be "filtered". The match within the final design was then tagged with the info from the current sequence to note that they are "equivalent".
+
+### 3. Pad the consensus sequence to create the final target sequence and generate single nucleotide variant probes
+* 2 flanking bases were added to both ends of the consensus sequence to account for possible additional recruitment preferences not captured in the TF binding model positions.
+* Each 2 base pad was selected randomly from all possible non-repeating combinations of 2 nucleotides
+* This procedure combined with the previous step resulted in 346 distinct consensus sequences to include in the final array design
+* Single nucleotide variant probes for each of these modified consensus sequences were generated at this step. All possible single nucleotide variants of each consensus sequence were included in the final array design to model the difference in recruitment intensity attributable to a given variant at a given position within the consensus sequence.
+
+### 4. Generate a backbone probe sequence
+* To account for size differences between probes, a 34-base backbone was generated algorithmically such that each position was generated randomly but restricted to non-repeating nucleotides
+* The collection of consensus sequences and all their SNVs were tested to make sure none were subsequences of the backbone
+* The final backbone sequence generated for this v01 hTF design is: <br>
+`GACTACTACGTGTCGACGATCGAGCACGCAGATC`
+* Each target sequence generated as the result of step 3 was inserted into the 34-base backbone beginning at the 5' site (as far away from the glass slide as possible).
+
+### 5. Construct final probes
+* The total 34-base target region (the TF target and some portion of the backbone) for each probe was then included as part of a larger 60-base DNA probe as follows: <br>
+`GC cap + 34-base target (TF site or SNV + backbone) + 24 base double-stranding primer`
+* The array design also includes 261 background probes selected using random 34-base regions of the hg38 genome. These background probes are used by the analysis in order to normalize against background fluorescence intensity
+* Each final probe on the array exists with the target in the reference direction and its reverse complement. Both versions of the probe are included 5x for a total of 10 internal replicates per probe.
+
+### Design FAQ
+`Q: Why was a size threshold used? Why not just filter a consensus sequence if it is a subsequence of a larger consensus sequence?` <br>
+A: It may be biophysically important to study a half-site (ie. from a TF complex) or a core element in isolation from other half-sites or flanking bases for example. I wanted to avoid the situation where I would be filtering out half-sites or smaller, more degenerate sites for this reason.
+
+`Q: Why was a relative size filter of 0.90 selected? Why not another number?` <br>
+A: This choice was completely arbitrary. I adjusted it until I obtained a suitable number of final consensus sequences to fit within the limits of the Agilent 4x180K microarray design
+
+`Q: What happened to all of the consensus sequences that were filtered out?` <br>
+A: None of the 452 human JASPAR CORE motifs from the 2018 build were actually "filtered out". The ones that were determined to be duplicates or have close enough sequence identity to a consensus sequence on the design were simply flagged and added as "equivalent". Details can be viewed for individual TFs within the full array annotation or the sample results dataset.
 
