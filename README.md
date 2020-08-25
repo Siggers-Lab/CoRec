@@ -62,7 +62,7 @@ As shown above, both the coactivator p300 and the NCOR corepressor complex can b
 
 This module is currently under construction. It will hopefully one day allow users to build recruitment "profiles" or "signatures" that summarizes COF recruitment to hundreds of TF sites in a given cell state. Alterations to these signatures in aberrant cell states (such as cancer) could be used to investigate which COF-TF complexes are involved.
 
-![hTF recruitment heatmap](screenshots/6_recruitment_heatmap_TEMP.png)
+![hTF recruitment heatmap](screenshots/6_recruitment_heatmap.PNG)
 
 ## Array design details
 
