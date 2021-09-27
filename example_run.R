@@ -1,4 +1,4 @@
-devtools::load_all("/projectnb/siggers/data/rm679/hTFArrayAnalysis")
+devtools::load_all()
 
 corec_motifs <- run_full_analysis(
     output_directory = "./example_output",
