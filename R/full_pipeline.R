@@ -22,7 +22,8 @@ run_full_analysis <-
         run_tag = NA,
         score_method = "seed_zscore",
         score_threshold = 1.5,
-        comparison_method = "EUCL"
+        comparison_method = "EUCL",
+        pvalue_threshold = 0.05
     ) {
         # Give an error if pbm_conditions_file and pbm_conditions are both NA
         if (is.na(pbm_conditions_file) &  all(is.na(pbm_conditions))) {
@@ -207,11 +208,17 @@ run_full_analysis <-
             saveRDS(corec_motif, file_name)
         })
 
-        # Save a MEME format file of the matched corecmotifs
+        # Pull out the corecmotif PPMs that matched a reference motif well
         lapply(matched_corec_motifs, function(corec_motif) {
-            return(corec_motif@ppm)
+            if (corec_motif@motif_match_pvalue < pvalue_threshold) {
+                return(corec_motif@ppm)
+            }
         }) %>%
 
+            # Remove NULL elements (from corecmotifs below the pvalue threshold)
+            plyr::compact() %>%
+
+            # Save a MEME format file of the matched corecmotifs
             universalmotif::write_meme(
                 paste0(output_base_name, "_motifs.meme")
             )
