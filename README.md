@@ -27,7 +27,11 @@ corec_motifs <- run_full_analysis(
     pbm_conditions = NA, # Need only one of pbm_conditions/pbm_conditions_file
     annotation_file = "./example_data/hTF_v01_PBM_ANNOT.txt",
     reference_motifs_file = "./example_data/JASPAR2018_hTF_only.meme",
-    run_tag = "v1_a11_run1"
+    run_tag = "v1_a11_run1",
+    score_method = "seed_zscore",
+    score_threshold = 0.5,
+    comparison_method = "EUCL",
+    pvalue_threshold = 0.01
 )
 ```
 
@@ -41,5 +45,9 @@ corec_motifs <- run_full_analysis(
 |    annotation_file    | A file containing PBM probe annotations. |
 | reference_motifs_file | A MEME format file containing the reference TF motifs to compare the hTF array motifs to. |
 |        run_tag        | An optional (but recommended) tag specifying the particular experiment these fluorescence matrices are from. It will be incorporated into the column names along with the PBM conditions. This option is useful for differentiating replicates when merging two matrices downstream. |
+|      score_method     | The method to use to score the motif. Currently the only option is "seed_zscore". |
+|    score_threshold    | The motif score threshold. CoRec motifs with scores below this value will not be compared to the reference motifs. |
+|   comparison_method   | The method to use to compare CoRec motifs to the library of reference motifs. Current options are "EUCL" (Euclidean distance), "PCC" (Pearson correlation coefficient), and "ALLR" (average log-likelihood ratio). |
+|    pvalue_threshold   | The motif comparison p-value threshold. CoRec motifs that did not match any reference motifs with a p-value less than this threshold will not be included in the output MEME file. |
 
-After running the full analysis pipeline (which should take about 10-15 minutes), the output directory will contain two directories of .rds files of the generated corecmotif objects, a matrix of the raw fluorescence values, a matrix of the fluorescence z-scores, and a MEME format file containing the corecmotifs that passed the score threshold.
+After running the full analysis pipeline (which should take about 30-40 minutes with the default seed z-score threshold of 0.5), the output directory will contain two directories of .rds files of the generated corecmotif objects, a matrix of the raw fluorescence values, a matrix of the fluorescence z-scores, and a MEME format file containing the corecmotifs that passed the score threshold.
