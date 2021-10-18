@@ -16,7 +16,7 @@ NOTE: If you are installing this package somewhere other than the BU SCC, you ma
 
 ## Example
 
-To run the full analysis pipeline on the provided example data, run the following R command (also provided in `run_example.R`). The arguments are explained below.
+To run the full analysis pipeline on the provided example data, run the following R command (also provided in `example_run.R`). The arguments are explained below.
 
 ```
 corec_motifs <- run_full_analysis(
