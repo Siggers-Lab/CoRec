@@ -22,7 +22,7 @@ run_full_analysis <-
         run_tag = NA,
         score_method = "seed_zscore",
         score_threshold = 1.5,
-        comparison_method = "EUCL",
+        comparison_method = "ed",
         pvalue_threshold = 0.05
     ) {
         # Give an error if pbm_conditions_file and pbm_conditions are both NA
@@ -164,6 +164,12 @@ run_full_analysis <-
             saveRDS(corec_motif, file_name)
         })
 
+        # Save the list of all corecmotifs as a single RDS file
+        saveRDS(
+            corec_motifs,
+            paste0(output_base_name, "_all_corecmotifs.rds")
+        )
+
         # Filter out corecmotifs with low scores
         filtered_corec_motifs <-
             lapply(
@@ -179,16 +185,12 @@ run_full_analysis <-
             # Remove NULL elements (from corecmotifs below the score threshold)
             plyr::compact()
 
-        # Load the library of reference motifs
-        reference_motifs <-
-            universalmotif::read_meme(reference_motifs_file)
-
         # Compare the filtered corecmotifs to the library of reference TF motifs
         matched_corec_motifs <-
             purrr::map(
                 filtered_corec_motifs,
                 identify_motif_match,
-                reference_motifs = reference_motifs,
+                reference_motifs_file = reference_motifs_file,
                 method = comparison_method
             )
 
@@ -208,6 +210,12 @@ run_full_analysis <-
             saveRDS(corec_motif, file_name)
         })
 
+        # Save the list of matched corecmotifs as a single RDS file
+        saveRDS(
+            matched_corec_motifs,
+            paste0(output_base_name, "_matched_corecmotifs.rds")
+        )
+
         # Pull out the corecmotif PPMs that matched a reference motif well
         lapply(matched_corec_motifs, function(corec_motif) {
             if (corec_motif@motif_match_pvalue < pvalue_threshold) {
@@ -215,16 +223,13 @@ run_full_analysis <-
             }
         }) %>%
 
-            # Remove NULL elements (from corecmotifs below the pvalue threshold)
+            # Remove NULL elements (from corecmotifs above the pvalue threshold)
             plyr::compact() %>%
 
             # Save a MEME format file of the matched corecmotifs
             universalmotif::write_meme(
                 paste0(output_base_name, "_motifs.meme")
             )
-
-        # Convert the corecmotifs into their negative versions
-        negative_corec_motifs <- NA
 
         # Return
         return(matched_corec_motifs)

@@ -11,6 +11,6 @@ corec_motifs <- run_full_analysis(
     run_tag = "v1_a11_run1",
     score_method = "seed_zscore",
     score_threshold = 0.5,
-    comparison_method = "EUCL",
+    comparison_method = "ed",
     pvalue_threshold = 0.01
 )

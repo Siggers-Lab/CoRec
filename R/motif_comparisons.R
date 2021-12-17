@@ -14,8 +14,20 @@
 identify_motif_match <-
     function(
         corec_motif,
-        reference_motifs,
-        method = c("EUCL", "PCC", "ALLR")
+        reference_motifs_file,
+        method = c(
+            "ed",
+            "allr",
+            "pearson",
+            "sandelin",
+            "kullback",
+            "blic1",
+            "blic5",
+            "llr1",
+            "llr5"
+        ),
+        meme_path = "/share/pkg.7/meme/5.3.3/install/bin/",
+        min_overlap = 6
     ) {
         # Make sure the selected comparison method is a valid option
         method <-
@@ -23,38 +35,33 @@ identify_motif_match <-
 
         # Compare the corecmotif to the full library of reference motifs
         motif_comparison <-
-            universalmotif::compare_motifs(
-                c(reference_motifs, corec_motif@ppm),
-                compare.to = length(reference_motifs) + 1,
-                method = method,
-                max.p = Inf,
-                max.e = Inf
-            ) %>%
+            memes::runTomTom(
+                corec_motif@ppm,
+                database = reference_motifs_file,
+                dist = method,
+                meme_path = meme_path
+            )
 
-            suppressWarnings()
-
-        # Figure out which reference motif has the lowest p-value
-        best_match <-
-            motif_comparison %>%
-
-            # Convert to a data frame first to remove extra information
-            as.data.frame() %>%
-
-            # Take the single row with the smallest p-value
-            dplyr::slice_min(Pval, with_ties = FALSE)
+        # If no matches were found, return the original corecmotif object
+        if (is.na(motif_comparison$best_match_motif)) {
+            return(corec_motif)
+        }
 
         # Update the motif matching slots of the original corecmotif object
         corec_motif@motif_match <-
-            reference_motifs[[best_match$target.i]]
+            motif_comparison$best_match_motif[[1]]
 
         corec_motif@motif_match_score_type <-
             method
 
         corec_motif@motif_match_score <-
-            best_match$score
+            NA_real_
 
         corec_motif@motif_match_pvalue <-
-            best_match$Pval
+            as.numeric(motif_comparison$best_match_pval)
+
+        corec_motif@motif_match_qvalue <-
+            as.numeric(motif_comparison$best_match_qval)
 
         # Return the updated corecmotif
         return(corec_motif)

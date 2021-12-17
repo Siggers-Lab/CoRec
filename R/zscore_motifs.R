@@ -30,7 +30,7 @@ zscore_matrix_to_motifs <-
         seed_names,
         pbm_conditions
     ) {
-        # Make a data frame of the seed names, PBM conditions, motifs, and beta
+        # Make a data frame of the seed names, PBM conditions, and motifs
         zscore_motif_table <-
             # Get all possible combinations of seed names and PBM conditions
             tidyr::crossing(seed_names, pbm_conditions) %>%
@@ -42,23 +42,6 @@ zscore_matrix_to_motifs <-
                     pbm_conditions,
                     make_zscore_motif,
                     zscore_matrix = zscore_matrix
-                )
-            ) %>%
-
-            # Add a column with the beta value for each z-score motif
-            dplyr::mutate(
-                beta = purrr::map(
-                    zscore_motif,
-                    calculate_beta
-                )
-            ) %>%
-
-            # Change any beta values that are negative or above 15 to 15
-            dplyr::mutate(
-                beta = replace(
-                    beta,
-                    beta > 15 | beta < 0,
-                    15
                 )
             )
 
@@ -84,7 +67,6 @@ zscore_matrix_to_motifs <-
                 list(
                     seed_name = zscore_motif_table$seed_names,
                     pbm_condition = zscore_motif_table$pbm_conditions,
-                    beta = zscore_motif_table$beta,
                     zscore_motif = zscore_motif_table$zscore_motif,
                     seed_probe_sequence = zscore_motif_table$probe_seq
                 ),
@@ -174,10 +156,34 @@ make_zscore_motif <- function(zscore_matrix, seed_name, pbm_condition) {
 #   are nucleotides and the columns are positions in the motif.
 #
 # @return The value of beta for the given PBM condition.
-calculate_beta <- function(zscore_motif) {
-    # Beta = 15 / the maximum z-score from any probe in this probe set
+calculate_beta <- function(zscore_motif, method = c("linear", "old")) {
+    # Make sure the selected method for calculating beta is a valid option
+    method <-
+        match.arg(method)
+
+    # Calculate beta using the selected method
     beta <-
-        15 / max(zscore_motif)
+        switch(
+            method,
+
+            # Old: 15 / the maximum z-score from any probe in this probe set
+            "old" = 15 / max(zscore_motif),
+
+            # Linear: between 1 and 4 based on seed probe z-score
+            "linear" = {
+                # Find the seed probe z-score
+                seed_probe <- seed_zscore(zscore_motif)
+
+                # Calculate beta
+                beta <- 4 - (0.5 * seed_probe)
+
+                # Restrict beta to a range of 1 to 4
+                beta <- max(min(4, beta), 1)
+
+                # Return beta
+                return(beta)
+            }
+        )
 
     # Return beta
     return(beta)
