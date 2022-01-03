@@ -244,3 +244,22 @@ zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
     return(ppm)
 }
 
+
+calculate_strength <- function(corec_motif, top_n_percent = 15) {
+    # Get a sorted list of all the probe z-scores
+    z_scores <-
+        sort(unique(unlist(corec_motif@zscore_motif)), decreasing = TRUE)
+
+    # Figure out how many probes to average (rounded up to the nearest integer)
+    num_probes <- ceiling(length(z_scores) * (top_n_percent / 100))
+
+    # Find the average z-score of the highest num_probes probes
+    mean_zscore <- mean(z_scores[1:num_probes])
+
+    # Save the average z-score of the highest probes in the motif_strength slot
+    corec_motif@motif_strength <- mean_zscore
+
+    # Return the updated corecmotif
+    return(corec_motif)
+}
+

@@ -148,6 +148,14 @@ run_full_analysis <-
                 method = score_method
             )
 
+        # Calculate the motif strength for each corecmotif
+        corec_motifs <-
+            purrr::map(
+                corec_motifs,
+                calculate_strength,
+                top_n_percent = 15
+            )
+
         # Create a directory to save the corecmotifs
         dir.create(paste0(output_directory, "/corecmotifs_all"))
 
