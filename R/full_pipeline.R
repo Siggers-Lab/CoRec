@@ -68,8 +68,10 @@ run_full_analysis <-
                 annotation
             )
 
-        # Create the output directory
-        dir.create(output_directory)
+        # Create the output directory if it doesn't already exist
+        if (!dir.exists(output_directory)) {
+            dir.create(output_directory)
+        }
 
         # Create a base file name for output files
         output_base_name <-
@@ -156,8 +158,10 @@ run_full_analysis <-
                 top_n_percent = 15
             )
 
-        # Create a directory to save the corecmotifs
-        dir.create(paste0(output_directory, "/corecmotifs_all"))
+        # Create a directory to save the corecmotifs if it doesn't already exist
+        if (!dir.exists(paste0(output_directory, "/corecmotifs_all"))) {
+            dir.create(paste0(output_directory, "/corecmotifs_all"))
+        }
 
         # Save all the corecmotifs as individual RDS files
         lapply(corec_motifs, function(corec_motif) {
@@ -203,7 +207,9 @@ run_full_analysis <-
             )
 
         # Create a directory to save the corecmotifs with matched TF motifs
-        dir.create(paste0(output_directory, "/corecmotifs_matched"))
+        if (!dir.exists(paste0(output_directory, "/corecmotifs_matched"))) {
+            dir.create(paste0(output_directory, "/corecmotifs_matched"))
+        }
 
         # Save the matched corecmotifs as individual RDS files
         lapply(matched_corec_motifs, function(corec_motif) {
