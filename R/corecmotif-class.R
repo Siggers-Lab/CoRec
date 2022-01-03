@@ -16,9 +16,11 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #' @slot motif_score numeric.
 #' @slot seed_probe_sequence character.
 #' @slot motif_match universalmotif_or_NULL.
-#' @slot motif_match_score_type
-#' @slot motif_match_score
 #' @slot motif_match_pvalue
+#' @slot motif_strength
+#' @slot motif_match_method
+#' @slot motif_match_qvalue
+#' @slot motif_cluster_match
 #'
 #' @return
 #' @export
@@ -41,8 +43,7 @@ setClass(
         motif_strength = "numeric",
         seed_probe_sequence = "character",
         motif_match = "universalmotif_or_NULL",
-        motif_match_score_type = "character",
-        motif_match_score = "numeric",
+        motif_match_method = "character",
         motif_match_pvalue = "numeric",
         motif_match_qvalue = "numeric",
         motif_cluster_match = "character"
@@ -61,8 +62,7 @@ setClass(
         motif_strength = NA_real_,
         seed_probe_sequence = NA_character_,
         motif_match = NULL,
-        motif_match_score_type = NA_character_,
-        motif_match_score = NA_real_,
+        motif_match_method = NA_character_,
         motif_match_pvalue = NA_real_,
         motif_match_qvalue = NA_real_,
         motif_cluster_match = NA_character_

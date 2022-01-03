@@ -51,11 +51,8 @@ identify_motif_match <-
         corec_motif@motif_match <-
             motif_comparison$best_match_motif[[1]]
 
-        corec_motif@motif_match_score_type <-
+        corec_motif@motif_match_method <-
             method
-
-        corec_motif@motif_match_score <-
-            NA_real_
 
         corec_motif@motif_match_pvalue <-
             as.numeric(motif_comparison$best_match_pval)
