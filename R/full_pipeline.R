@@ -21,7 +21,7 @@ run_full_analysis <-
         reference_motifs_file,
         run_tag = NA,
         score_method = "seed_zscore",
-        score_threshold = 1.5,
+        score_threshold = 1,
         comparison_method = "ed",
         pvalue_threshold = 0.05
     ) {
