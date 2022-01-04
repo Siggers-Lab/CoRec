@@ -172,7 +172,7 @@ calculate_beta <- function(zscore_motif, method = c("linear", "old")) {
             # Linear: between 1 and 4 based on seed probe z-score
             "linear" = {
                 # Find the seed probe z-score
-                seed_probe <- seed_zscore(zscore_motif)
+                seed_probe <- find_seed_zscore(zscore_motif)
 
                 # Calculate beta
                 beta <- 4 - (0.5 * seed_probe)
@@ -245,10 +245,10 @@ zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
 }
 
 
-calculate_strength <- function(corec_motif, top_n_percent = 15) {
+calculate_strength <- function(zscore_motif, top_n_percent = 15) {
     # Get a sorted list of all the probe z-scores
     z_scores <-
-        sort(unique(unlist(corec_motif@zscore_motif)), decreasing = TRUE)
+        sort(unique(unlist(zscore_motif)), decreasing = TRUE)
 
     # Figure out how many probes to average (rounded up to the nearest integer)
     num_probes <- ceiling(length(z_scores) * (top_n_percent / 100))
@@ -256,10 +256,9 @@ calculate_strength <- function(corec_motif, top_n_percent = 15) {
     # Find the average z-score of the highest num_probes probes
     mean_zscore <- mean(z_scores[1:num_probes])
 
-    # Save the average z-score of the highest probes in the motif_strength slot
-    corec_motif@motif_strength <- mean_zscore
+    names(mean_zscore) <- top_n_percent
 
-    # Return the updated corecmotif
-    return(corec_motif)
+    # Return the average z-score
+    return(mean_zscore)
 }
 

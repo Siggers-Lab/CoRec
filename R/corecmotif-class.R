@@ -4,6 +4,7 @@
 # Define a class union that can contain either a universalmotif object or NULL
 setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 
+
 #' Title
 #'
 #' @slot seed_name character.
@@ -12,15 +13,15 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #' @slot zscore_motif data.frame.
 #' @slot delta_zscore_motif data.frame.
 #' @slot ppm universalmotif.
-#' @slot motif_score_type character.
-#' @slot motif_score numeric.
+#' @slot seed_zscore numeric.
+#' @slot rolling_ic numeric.
+#' @slot motif_strength numeric.
 #' @slot seed_probe_sequence character.
 #' @slot motif_match universalmotif_or_NULL.
-#' @slot motif_match_pvalue
-#' @slot motif_strength
-#' @slot motif_match_method
-#' @slot motif_match_qvalue
-#' @slot motif_cluster_match
+#' @slot motif_match_method character.
+#' @slot motif_match_pvalue numeric.
+#' @slot motif_match_qvalue numeric.
+#' @slot motif_cluster_match character.
 #'
 #' @return
 #' @export
@@ -38,8 +39,8 @@ setClass(
         zscore_motif = "data.frame",
         delta_zscore_motif = "data.frame",
         ppm = "universalmotif",
-        motif_score_type = "character",
-        motif_score = "numeric",
+        seed_zscore = "numeric",
+        rolling_ic = "numeric",
         motif_strength = "numeric",
         seed_probe_sequence = "character",
         motif_match = "universalmotif_or_NULL",
@@ -57,8 +58,8 @@ setClass(
         zscore_motif = data.frame(),
         delta_zscore_motif = data.frame(),
         ppm = universalmotif::create_motif("ACGT"),
-        motif_score_type = NA_character_,
-        motif_score = NA_real_,
+        seed_zscore = NA_real_,
+        rolling_ic = NA_real_,
         motif_strength = NA_real_,
         seed_probe_sequence = NA_character_,
         motif_match = NULL,
@@ -92,6 +93,8 @@ corecmotif <-
         pbm_condition,
         zscore_motif,
         beta_method = "linear",
+        ic_window_width = 5,
+        top_n_percent = 15,
         ...
     ) {
         delta_zscore_motif <-
@@ -106,6 +109,15 @@ corecmotif <-
         ppm <-
             zscore_to_ppm(zscore_motif, beta, motif_name)
 
+        seed_zscore <-
+            find_seed_zscore(zscore_motif)
+
+        rolling_ic <-
+            calculate_rolling_ic(ppm, ic_window_width)
+
+        motif_strength <-
+            calculate_strength(zscore_motif, top_n_percent)
+
         new(
             "corecmotif",
             seed_name = seed_name,
@@ -114,6 +126,9 @@ corecmotif <-
             zscore_motif = zscore_motif,
             delta_zscore_motif = delta_zscore_motif,
             ppm = ppm,
+            seed_zscore = seed_zscore,
+            rolling_ic = rolling_ic,
+            motif_strength = motif_strength,
             ...
         )
     }

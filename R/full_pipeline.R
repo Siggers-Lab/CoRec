@@ -21,7 +21,8 @@ run_full_analysis <-
         reference_motifs_file,
         run_tag = NA,
         score_method = "seed_zscore",
-        score_threshold = 1,
+        seed_zscore_threshold = 1,
+        rolling_ic_threshold = 1.5,
         comparison_method = "ed",
         pvalue_threshold = 0.05
     ) {
@@ -142,22 +143,6 @@ run_full_analysis <-
                 pbm_conditions_br
             )
 
-        # Calculate a score for each corecmotif
-        corec_motifs <-
-            purrr::map(
-                corec_motifs,
-                score_motif,
-                method = score_method
-            )
-
-        # Calculate the motif strength for each corecmotif
-        corec_motifs <-
-            purrr::map(
-                corec_motifs,
-                calculate_strength,
-                top_n_percent = 15
-            )
-
         # Create a directory to save the corecmotifs if it doesn't already exist
         if (!dir.exists(paste0(output_directory, "/corecmotifs_all"))) {
             dir.create(paste0(output_directory, "/corecmotifs_all"))
@@ -188,7 +173,8 @@ run_full_analysis <-
                 corec_motifs,
                 function(corec_motif) {
                     # If the score is above the threshold, keep this motif
-                    if (corec_motif@motif_score > score_threshold) {
+                    if (corec_motif@seed_zscore > seed_zscore_threshold &
+                        corec_motif@rolling_ic > rolling_ic_threshold) {
                         return(corec_motif)
                     }
                 }
@@ -234,7 +220,7 @@ run_full_analysis <-
         lapply(matched_corec_motifs, function(corec_motif) {
             if (!(is.na(corec_motif@motif_match_pvalue)) &
                 corec_motif@motif_match_pvalue < pvalue_threshold) {
-                    return(corec_motif@ppm)
+                return(corec_motif@ppm)
             }
         }) %>%
 
