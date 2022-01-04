@@ -20,7 +20,6 @@ run_full_analysis <-
         annotation_file,
         reference_motifs_file,
         run_tag = NA,
-        score_method = "seed_zscore",
         seed_zscore_threshold = 1,
         rolling_ic_threshold = 1.5,
         comparison_method = "ed",
