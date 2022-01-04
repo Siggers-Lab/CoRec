@@ -232,8 +232,9 @@ run_full_analysis <-
 
         # Pull out the corecmotif PPMs that matched a reference motif well
         lapply(matched_corec_motifs, function(corec_motif) {
-            if (corec_motif@motif_match_pvalue < pvalue_threshold) {
-                return(corec_motif@ppm)
+            if (!(is.na(corec_motif@motif_match_pvalue)) &
+                corec_motif@motif_match_pvalue < pvalue_threshold) {
+                    return(corec_motif@ppm)
             }
         }) %>%
 
