@@ -4,10 +4,18 @@
 \alias{identify_motif_match}
 \title{Title}
 \usage{
-identify_motif_match(corec_motif, reference_motifs, score_threshold = 1.5, ...)
+identify_motif_match(
+  corec_motif,
+  reference_motifs_file,
+  cluster_assignments = NULL,
+  min_overlap = 5,
+  method = c("ed", "allr", "pearson", "sandelin", "kullback", "blic1", "blic5", "llr1",
+    "llr5"),
+  meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
+)
 }
 \arguments{
-\item{...}{}
+\item{method}{}
 }
 \value{
 

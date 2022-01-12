@@ -5,12 +5,18 @@
 \title{Title}
 \usage{
 run_full_analysis(
+  output_directory,
   matrix_directory,
   matrix_base_name,
-  pbm_conditions_file,
+  pbm_conditions_file = NA,
+  pbm_conditions = NA,
   annotation_file,
   reference_motifs_file,
-  run_tag = NA
+  run_tag = NA,
+  seed_zscore_threshold = 1,
+  rolling_ic_threshold = 1.5,
+  comparison_method = "ed",
+  pvalue_threshold = 0.05
 )
 }
 \arguments{

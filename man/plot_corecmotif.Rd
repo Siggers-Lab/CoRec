@@ -6,8 +6,7 @@
 \usage{
 plot_corecmotif(
   corec_motif,
-  motif_score_type = c("seed_probe_zscore", "mean_highest_zscore",
-    "mean_information_content"),
+  motif_logo_type = c("delta_zscore", "PPM", "PWM", "ICM"),
   motif_score_threshold = NA
 )
 }
