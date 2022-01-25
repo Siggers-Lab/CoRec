@@ -90,12 +90,24 @@ combine_replicates <- function(input_file, output_directory, output_base_name) {
         dplyr::summarise(
             seed_zscore = mean(seed_zscore),
             motif_strength = mean(motif_strength),
+            motif_cluster_match_1 = motif_cluster_match[1],
             motif_match_1 = motif_match[1],
             motif_match_pvalue_1 = motif_match_pvalue[1],
-            motif_cluster_match_1 = motif_cluster_match[1],
+            motif_cluster_match_2 = motif_cluster_match[2],
             motif_match_2 = motif_match[2],
-            motif_match_pvalue_2 = motif_match_pvalue[2],
-            motif_cluster_match_2 = motif_cluster_match[2]
+            motif_match_pvalue_2 = motif_match_pvalue[2]
+        ) %>%
+
+        # Remove rows where the cluster match is not the same across replicates
+        dplyr::filter(
+            (is.na(motif_cluster_match_1) & is.na(motif_cluster_match_2)) |
+                motif_cluster_match_1 == motif_cluster_match_2
+        ) %>%
+
+        # Remove the extra cluster match column and rename the remaining one
+        dplyr::select(
+            -motif_cluster_match_2,
+            motif_cluster_match = motif_cluster_match_1
         )
 
     # Save the combined, averaged dataframe in long format
@@ -145,6 +157,31 @@ combine_replicates <- function(input_file, output_directory, output_base_name) {
         combined_dataframe_strength,
         paste0(
             output_directory, "/", output_base_name, "_wide_motif_strength.tsv"
+        ),
+        quote = FALSE,
+        sep = "\t",
+        row.names = FALSE,
+        col.names = TRUE
+    )
+
+    # Convert the combined dataframe to wide format grouped by cluster match
+    combined_dataframe_cluster <-
+        combined_dataframe %>%
+
+        # Group by COF and motif cluster
+        dplyr::group_by(group, motif_cluster_match) %>%
+
+        # Find the max motif strength for each COF/cluster combination
+        dplyr::summarise(motif_strength = max(motif_strength)) %>%
+
+        # Convert to wide format with the motif strength as the values
+        tidyr::pivot_wider(names_from = group, values_from = motif_strength)
+
+    # Save the wide format motif strength matrix grouped by cluster
+    write.table(
+        combined_dataframe_cluster,
+        paste0(
+            output_directory, "/", output_base_name, "_wide_by_cluster.tsv"
         ),
         quote = FALSE,
         sep = "\t",
