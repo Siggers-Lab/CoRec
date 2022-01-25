@@ -15,5 +15,6 @@ corec_motifs <- run_full_analysis(
     seed_zscore_threshold = 5,
     rolling_ic_threshold = 1.5,
     comparison_method = "ed",
+    cluster_assignments_file = "./example_data/motif_clusters.tsv",
     pvalue_threshold = 0.05
 )

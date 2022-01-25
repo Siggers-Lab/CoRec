@@ -23,6 +23,7 @@ run_full_analysis <-
         seed_zscore_threshold = 1,
         rolling_ic_threshold = 1.5,
         comparison_method = "ed",
+        cluster_assignments_file = NULL,
         pvalue_threshold = 0.05
     ) {
         # Give an error if pbm_conditions_file and pbm_conditions are both NA
@@ -182,12 +183,24 @@ run_full_analysis <-
             # Remove NULL elements (from corecmotifs below the score threshold)
             plyr::compact()
 
+        # Read in the table of cluster assignments (if provided)
+        if (!is.null(cluster_assignments_file)) {
+            cluster_assignments <-
+                read.table(
+                    cluster_assignments_file,
+                    header = TRUE, sep = "\t"
+                )
+        } else {
+            cluster_assignments <- NULL
+        }
+
         # Compare the filtered corecmotifs to the library of reference TF motifs
         matched_corec_motifs <-
             purrr::map(
                 filtered_corec_motifs,
                 identify_motif_match,
                 reference_motifs_file = reference_motifs_file,
+                cluster_assignments = cluster_assignments,
                 method = comparison_method
             )
 
