@@ -81,7 +81,7 @@ plot_corecmotif <-
 plot_reference_motif <-
     function(
         corec_motif,
-        motif_logo_type = c("PPM", "PWM", "ICM"),
+        motif_logo_type = c("ICM", "PPM", "PWM"),
         outline_color = "#added1"
     ) {
         # Make sure the selected motif logo type is a valid option
