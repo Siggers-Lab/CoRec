@@ -232,7 +232,15 @@ run_full_analysis <-
         lapply(matched_corec_motifs, function(corec_motif) {
             if (!(is.na(corec_motif@motif_match_pvalue)) &
                 corec_motif@motif_match_pvalue < pvalue_threshold) {
-                return(corec_motif@ppm)
+                # Pull out the PPM
+                ppm <- corec_motif@ppm
+
+                # Add the name of the matched motif to the PPM name
+                ppm@name <-
+                    paste0(ppm@name, "_", corec_motif@motif_match@altname)
+
+                # Return the updated PPM
+                return(ppm)
             }
         }) %>%
 
