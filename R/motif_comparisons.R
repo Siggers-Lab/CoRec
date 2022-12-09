@@ -69,35 +69,22 @@ identify_motif_match <-
             return(corec_motif)
         }
 
-        # Figure out the cluster with the lowest average p-value-based distance
+        # Figure out the cluster the best match motif is in
         best_cluster <-
-            motif_comparison$tomtom[[1]] %>%
+            cluster_assignments %>%
 
-            # Convert the p-value into a distance metric of sorts
-            dplyr::mutate(pval_distance = pvalue_to_distance(match_pval)) %>%
-
-            # Merge with the dataframe of cluster information
-            dplyr::full_join(
-                cluster_assignments,
-                by = c("match_altname" = "motif")
+            # Keep just the row corresponding to the best match motif
+            dplyr::filter(
+                motif == motif_comparison$best_match_altname
             ) %>%
 
-            # Group by cluster
-            dplyr::group_by(cluster) %>%
-
-            # Find the average p-value-based distance for each cluster
-            dplyr::summarise(mean_distance = mean(pval_distance)) %>%
-
-            # Find the cluster with the smallest average distance
-            dplyr::slice_min(order_by = mean_distance) %>%
-
-            # Pull out just the cluster name
+            # Pull out the cluster name for this motif
             dplyr::pull(cluster)
 
         # Update the cluster match slot of the original corecmotif object
         corec_motif@motif_cluster_match <-
             as.character(best_cluster)
-
+        
         # Return the updated corecmotif
         return(corec_motif)
     }
