@@ -20,7 +20,7 @@ run_full_analysis <-
         annotation_file,
         reference_motifs_file,
         run_tag = NA,
-        seed_zscore_threshold = 1,
+        motif_strength_threshold = 1,
         rolling_ic_threshold = 1.5,
         comparison_method = "ed",
         cluster_assignments_file = NULL,
@@ -173,7 +173,7 @@ run_full_analysis <-
                 corec_motifs,
                 function(corec_motif) {
                     # If the score is above the threshold, keep this motif
-                    if (corec_motif@seed_zscore > seed_zscore_threshold &
+                    if (corec_motif@motif_strength > motif_strength_threshold &
                         corec_motif@rolling_ic > rolling_ic_threshold) {
                         return(corec_motif)
                     }
