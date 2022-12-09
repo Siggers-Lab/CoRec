@@ -253,12 +253,12 @@ calculate_strength <- function(zscore_motif, top_n_percent = 15) {
     # Figure out how many probes to average (rounded up to the nearest integer)
     num_probes <- ceiling(length(z_scores) * (top_n_percent / 100))
 
-    # Find the average z-score of the highest num_probes probes
-    mean_zscore <- mean(z_scores[1:num_probes])
+    # Find the median z-score of the highest num_probes probes
+    median_zscore <- median(z_scores[1:num_probes])
 
-    names(mean_zscore) <- top_n_percent
+    names(median_zscore) <- top_n_percent
 
     # Return the average z-score
-    return(mean_zscore)
+    return(median_zscore)
 }
 
