@@ -1,18 +1,19 @@
 Package: hTFArrayAnalysis
-Title: Analysis of CoRec and hTF Array Data
+Title: Process and Visualize hTF Array Data
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Rebekah",
-           family = "Miller",
-           role = c("aut", "cre"),
-           email = "rm679@bu.edu",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: A package for analyzing CoRec and hTF array data.
+    person("Rebekah", "Miller", , "rm679@bu.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0290-6597"))
+Description: Tools for processing and visualizing hTF array data.
+    Includes a 'shiny' app for interactive analysis.
 License: What license it uses
-Encoding: UTF-8
-LazyData: true
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+URL: https://github.com/Siggers-Lab/hTF_array
+BugReports: https://github.com/Siggers-Lab/hTF_array/issues
 Imports: 
     magrittr,
     universalmotif
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+
