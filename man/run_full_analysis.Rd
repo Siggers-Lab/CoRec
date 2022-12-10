@@ -10,6 +10,7 @@ run_full_analysis(
   pbm_conditions,
   annotation_file,
   reference_motifs_file,
+  output_base_name = "output",
   array_id = NA,
   motif_strength_threshold = 1,
   rolling_ic_threshold = 1.5,

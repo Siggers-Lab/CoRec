@@ -23,6 +23,7 @@ run_full_analysis <-
         pbm_conditions,
         annotation_file,
         reference_motifs_file,
+        output_base_name = "output",
         array_id = NA,
         motif_strength_threshold = 1,
         rolling_ic_threshold = 1.5,
@@ -30,6 +31,21 @@ run_full_analysis <-
         cluster_assignments_file = NULL,
         pvalue_threshold = 0.05
     ) {
+        # Create the output directory if it doesn't already exist
+        if (!dir.exists(output_directory)) {
+            dir.create(output_directory)
+        }
+
+        # Add the output directory path to the base file name for output files
+        output_base_name <-
+            paste(output_directory, output_base_name, sep = "/")
+
+        # Add the array ID to the base file name if it's provided
+        if (!is.na(array_id)) {
+            output_base_name <-
+                paste(output_base_name, array_id, sep = "_")
+        }
+
         # Load and annotate the table of fluorescence values
         fluorescence_table <-
             make_fluorescence_table(
@@ -47,34 +63,12 @@ run_full_analysis <-
             dplyr::select(dplyr::contains(pbm_conditions)) %>%
 
             # Keep just the column names
-            names()
-
-        # Create the output directory if it doesn't already exist
-        if (!dir.exists(output_directory)) {
-            dir.create(output_directory)
-        }
-
-        # Create a base file name for output files
-        output_base_name <-
-            paste0(
-                output_directory,
-                "/output"
-            )
-
-        # Add the array ID to the base file name if it's provided
-        if (!is.na(array_id)) {
-            output_base_name <-
-                paste0(
-                    output_base_name,
-                    "_",
-                    array_id
-                )
-        }
+            colnames()
 
         # Save the annotated fluorescence matrix
         write.table(
             fluorescence_table,
-            paste0(output_base_name, "_fluorescence.dat"),
+            paste0(output_base_name, "_fluorescence.tsv"),
             quote = FALSE,
             sep = "\t",
             row.names = FALSE,
@@ -91,7 +85,7 @@ run_full_analysis <-
         # Save the z-score matrix
         write.table(
             zscore_matrix,
-            paste0(output_base_name, "_zscores.dat"),
+            paste0(output_base_name, "_zscores.tsv"),
             quote = FALSE,
             sep = "\t",
             row.names = FALSE,
@@ -115,24 +109,6 @@ run_full_analysis <-
                 seed_names,
                 pbm_conditions
             )
-
-        # Create a directory to save the corecmotifs if it doesn't already exist
-        if (!dir.exists(paste0(output_directory, "/corecmotifs_all"))) {
-            dir.create(paste0(output_directory, "/corecmotifs_all"))
-        }
-
-        # Save all the corecmotifs as individual RDS files
-        lapply(corec_motifs, function(corec_motif) {
-            file_name <-
-                paste0(
-                    output_directory,
-                    "/corecmotifs_all/",
-                    corec_motif@ppm@name,
-                    ".rds"
-                )
-
-            saveRDS(corec_motif, file_name)
-        })
 
         # Save the list of all corecmotifs as a single RDS file
         saveRDS(
@@ -177,24 +153,6 @@ run_full_analysis <-
                 method = comparison_method
             )
 
-        # Create a directory to save the corecmotifs with matched TF motifs
-        if (!dir.exists(paste0(output_directory, "/corecmotifs_matched"))) {
-            dir.create(paste0(output_directory, "/corecmotifs_matched"))
-        }
-
-        # Save the matched corecmotifs as individual RDS files
-        lapply(matched_corec_motifs, function(corec_motif) {
-            file_name <-
-                paste0(
-                    output_directory,
-                    "/corecmotifs_matched/",
-                    corec_motif@ppm@name,
-                    ".rds"
-                )
-
-            saveRDS(corec_motif, file_name)
-        })
-
         # Save the list of matched corecmotifs as a single RDS file
         saveRDS(
             matched_corec_motifs,
@@ -222,7 +180,8 @@ run_full_analysis <-
 
             # Save a MEME format file of the matched corecmotifs
             universalmotif::write_meme(
-                paste0(output_base_name, "_motifs.meme")
+                paste0(output_base_name, "_motifs.meme"),
+                overwrite = TRUE
             )
 
         # Return
