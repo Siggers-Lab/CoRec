@@ -1,12 +1,18 @@
 devtools::load_all()
 
+# Load the PBM conditions from a file
+pbm_conditions <-
+    scan(
+        "./example_data/v1_a11_run1_exp.txt",
+        what = character(),
+        quiet = TRUE
+    )
+
 corec_motifs <- run_full_analysis(
     output_directory = "./example_output",
     fluorescence_file =
         "./example_data/data_matrices/hTF_v1_SUDHL4_14jan21_br.dat",
-    pbm_conditions_file = "./example_data/v1_a11_run1_exp.txt",
-    # Need only one of pbm_conditions or pbm_conditions_file
-    pbm_conditions = NA,
+    pbm_conditions = pbm_conditions,
     annotation_file = "./example_data/hTF_v01_PBM_ANNOT.txt",
     reference_motifs_file =
         "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme",

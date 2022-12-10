@@ -1,12 +1,11 @@
 #' Title
 #'
-#' @param pbm_conditions_file
-#' @param annotation_file
-#' @param array_id
 #' @param output_directory
 #' @param fluorescence_file
 #' @param pbm_conditions
+#' @param annotation_file
 #' @param reference_motifs_file
+#' @param array_id
 #' @param motif_strength_threshold
 #' @param rolling_ic_threshold
 #' @param comparison_method
@@ -21,8 +20,7 @@ run_full_analysis <-
     function(
         output_directory,
         fluorescence_file,
-        pbm_conditions_file = NA,
-        pbm_conditions = NA,
+        pbm_conditions,
         annotation_file,
         reference_motifs_file,
         array_id = NA,
@@ -32,23 +30,6 @@ run_full_analysis <-
         cluster_assignments_file = NULL,
         pvalue_threshold = 0.05
     ) {
-        # Give an error if pbm_conditions_file and pbm_conditions are both NA
-        if (is.na(pbm_conditions_file) &  all(is.na(pbm_conditions))) {
-            stop(
-                "One of pbm_conditions_file or pbm_conditions must be provided"
-            )
-        }
-
-        # Load a vector of the PBM conditions from a file if provided
-        if (!is.na(pbm_conditions_file)) {
-            pbm_conditions <-
-                scan(
-                    pbm_conditions_file,
-                    what = character(),
-                    quiet = TRUE
-                )
-        }
-
         # Load and annotate the table of fluorescence values
         fluorescence_table <-
             make_fluorescence_table(

@@ -7,8 +7,7 @@
 run_full_analysis(
   output_directory,
   fluorescence_file,
-  pbm_conditions_file = NA,
-  pbm_conditions = NA,
+  pbm_conditions,
   annotation_file,
   reference_motifs_file,
   array_id = NA,
@@ -20,7 +19,7 @@ run_full_analysis(
 )
 }
 \arguments{
-\item{array_id}{}
+\item{pvalue_threshold}{}
 }
 \value{
 
