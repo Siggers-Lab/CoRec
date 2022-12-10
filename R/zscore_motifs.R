@@ -112,6 +112,8 @@ make_zscore_motif <- function(zscore_matrix, seed_name, pbm_condition) {
             pbm_condition
             ]
 
+    seed_zscore <- as.numeric(seed_zscore)
+
     # Fill in a motif data frame with the seed and SV probe z-scores
     zscore_motif <-
         zscore_matrix %>%
