@@ -19,7 +19,8 @@
 #' zscore_matrix <- fluorescence_to_zscore_matrix(annotated_fluorescence_matrix)
 fluorescence_to_zscore_matrix <-
     function(
-        annotated_fluorescence_matrix
+        annotated_fluorescence_matrix,
+        pbm_conditions
     ) {
         # Find the indices of the rows that contain background probes
         background_rows <-
@@ -31,7 +32,7 @@ fluorescence_to_zscore_matrix <-
 
             # Change only the data columns and not the annotation columns
             dplyr::mutate(dplyr::across(
-                dplyr::matches("o1_|o2_|or_|br_"),
+                dplyr::matches(pbm_conditions),
                 fluorescence_to_zscore_helper,
                 background_rows
             ))
