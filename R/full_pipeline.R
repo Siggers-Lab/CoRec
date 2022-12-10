@@ -1,10 +1,17 @@
 #' Title
 #'
-#' @param matrix_directory
-#' @param matrix_base_name
 #' @param pbm_conditions_file
 #' @param annotation_file
-#' @param run_tag
+#' @param array_id
+#' @param output_directory
+#' @param fluorescence_file
+#' @param pbm_conditions
+#' @param reference_motifs_file
+#' @param motif_strength_threshold
+#' @param rolling_ic_threshold
+#' @param comparison_method
+#' @param cluster_assignments_file
+#' @param pvalue_threshold
 #'
 #' @return
 #' @export
@@ -13,13 +20,12 @@
 run_full_analysis <-
     function(
         output_directory,
-        matrix_directory,
-        matrix_base_name,
+        fluorescence_file,
         pbm_conditions_file = NA,
         pbm_conditions = NA,
         annotation_file,
         reference_motifs_file,
-        run_tag = NA,
+        array_id = NA,
         motif_strength_threshold = 1,
         rolling_ic_threshold = 1.5,
         comparison_method = "ed",
@@ -43,31 +49,24 @@ run_full_analysis <-
                 )
         }
 
-        # Load the individual fluorescence matrices and combine them into one
-        fluorescence_matrix <-
-            read_fluorescence_matrices(
-                matrix_directory,
-                matrix_base_name,
+        # Load and annotate the table of fluorescence values
+        fluorescence_table <-
+            make_fluorescence_table(
+                fluorescence_file,
                 pbm_conditions,
-                run_tag
-            )
-
-        # Load the annotation file
-        annotation <-
-            read.table(
                 annotation_file,
-                header = TRUE,
-                sep = "\t",
-                strip.white = TRUE,
-                stringsAsFactors = FALSE
+                array_id
             )
 
-        # Add annotation columns to the fluorescence matrix
-        annotated_fluorescence_matrix <-
-            annotate_fluorescence_matrix(
-                fluorescence_matrix,
-                annotation
-            )
+        # Update pbm_conditions based on the column names of fluorescence_table
+        pbm_conditions <-
+            fluorescence_table %>%
+
+            # Select the columns whose names contain PBM condition names
+            dplyr::select(dplyr::contains(pbm_conditions)) %>%
+
+            # Keep just the column names
+            names()
 
         # Create the output directory if it doesn't already exist
         if (!dir.exists(output_directory)) {
@@ -78,23 +77,22 @@ run_full_analysis <-
         output_base_name <-
             paste0(
                 output_directory,
-                "/",
-                matrix_base_name
+                "/output"
             )
 
-        # Add the run tag to the base file name if it's provided
-        if (!is.na(run_tag)) {
+        # Add the array ID to the base file name if it's provided
+        if (!is.na(array_id)) {
             output_base_name <-
                 paste0(
                     output_base_name,
                     "_",
-                    run_tag
+                    array_id
                 )
         }
 
         # Save the annotated fluorescence matrix
         write.table(
-            annotated_fluorescence_matrix,
+            fluorescence_table,
             paste0(output_base_name, "_fluorescence.dat"),
             quote = FALSE,
             sep = "\t",
@@ -105,7 +103,8 @@ run_full_analysis <-
         # Convert the fluorescence values into condition-wise z-scores
         zscore_matrix <-
             fluorescence_to_zscore_matrix(
-                annotated_fluorescence_matrix
+                fluorescence_table,
+                pbm_conditions
             )
 
         # Save the z-score matrix
@@ -128,19 +127,12 @@ run_full_analysis <-
             # Get just the column containing the seed names
             dplyr::pull(seed_names)
 
-        # Extract a vector of all the PBM conditions for the br orientation
-        pbm_conditions_br <-
-            colnames(zscore_matrix) %>%
-
-            # Keep only column names that contain the relevant orientation tag
-            stringr::str_subset("br_")
-
         # Get a list of corecmotif objects for all the seed/condition combos
         corec_motifs <-
             zscore_matrix_to_motifs(
                 zscore_matrix,
                 seed_names,
-                pbm_conditions_br
+                pbm_conditions
             )
 
         # Create a directory to save the corecmotifs if it doesn't already exist
