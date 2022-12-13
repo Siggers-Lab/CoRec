@@ -69,7 +69,7 @@
 #'
 #' @return A data frame containing the fluorescence values from the specified
 #'   fluorescence data file and the probe annotations from the specified
-#'   annotation file.
+#'   annotation file. See 'Details' for a description of each column.
 #' @export
 #'
 #' @examples

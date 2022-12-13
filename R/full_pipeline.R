@@ -76,15 +76,15 @@ run_full_analysis <-
         )
 
         # Convert the fluorescence values into condition-wise z-scores
-        zscore_matrix <-
-            fluorescence_to_zscore_matrix(
+        zscore_table <-
+            make_zscore_table(
                 fluorescence_table,
                 pbm_conditions
             )
 
         # Save the z-score matrix
         write.table(
-            zscore_matrix,
+            zscore_table,
             paste0(output_base_name, "_zscores.tsv"),
             quote = FALSE,
             sep = "\t",
@@ -94,7 +94,7 @@ run_full_analysis <-
 
         # Extract a vector of all the non-background probe seed names
         seed_names <-
-            zscore_matrix %>%
+            zscore_table %>%
 
             # Keep only one row (the seed probe row) for each TF probe set
             dplyr::filter(SNV_pos_offset == 0) %>%
@@ -105,7 +105,7 @@ run_full_analysis <-
         # Get a list of corecmotif objects for all the seed/condition combos
         corec_motifs <-
             zscore_matrix_to_motifs(
-                zscore_matrix,
+                zscore_table,
                 seed_names,
                 pbm_conditions
             )

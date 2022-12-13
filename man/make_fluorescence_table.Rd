@@ -28,7 +28,7 @@ array/experiment the fluorescence data is from.}
 \value{
 A data frame containing the fluorescence values from the specified
 fluorescence data file and the probe annotations from the specified
-annotation file.
+annotation file. See 'Details' for a description of each column.
 }
 \description{
 Reads a file containing fluorescence data (in which rows correspond to probes
@@ -72,8 +72,7 @@ has been removed). IDs that are not present in both will be dropped.}
 \item{\code{probe_type}}{The probe type. This column should contain the
 values "MOTIF" and "BACKGROUND".}
 
-\item{\code{probe_seq}}{The probe sequence. The sequences in this column must
-match the sequences in the second column of the fluorescence data file.}
+\item{\code{probe_seq}}{The probe sequence.}
 
 \item{\code{seed_names}}{The name of the probe set this probe is part of.}
 
