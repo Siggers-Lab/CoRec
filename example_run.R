@@ -3,41 +3,37 @@ devtools::load_all()
 # Load the PBM conditions from a file
 pbm_conditions <-
     scan(
-        "./example_data/v1_a11_run1_exp.txt",
+        "./example_data/hTF_v1_example_pbm_conditions.txt",
         what = character(),
         quiet = TRUE
     )
 
-# # For testing
-# output_directory <- "./example_output"
-# fluorescence_file <-
-#     "./example_data/data_matrices/hTF_v1_SUDHL4_14jan21_br.dat"
-# annotation_file <- "./example_data/hTF_v01_PBM_ANNOT.txt"
-# reference_motifs_file <-
-#     "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
-# output_base_name <- "output"
-# array_id <- "v1_a11_run1"
-# motif_strength_threshold <- 5
-# rolling_ic_threshold <- 1.5
-# comparison_method <- "ed"
-# cluster_assignments_file <- "./example_data/motif_clusters.tsv"
-# pvalue_threshold <- 0.05
+# Set all the arguments
+output_directory <- "./example_data/example_output"
+fluorescence_file <- "./example_data/hTF_v1_example_fluorescence.dat"
+annotation_file <- "./example_data/hTF_v1_example_annotation.tsv"
+reference_motifs_file <-
+    "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
+output_base_name <- "example"
+array_id <- "v1_a11_run1"
+motif_strength_threshold <- 1
+rolling_ic_threshold <- 1.5
+comparison_method <- "ed"
+cluster_assignments_file <- "./example_data/motif_clusters.tsv"
+pvalue_threshold <- 0.05
 
+# Run the analysis
 corec_motifs <- run_full_analysis(
-    output_directory = "./example_output",
-    fluorescence_file =
-        "./example_data/data_matrices/hTF_v1_SUDHL4_14jan21_br.dat",
+    output_directory = output_directory,
+    fluorescence_file = fluorescence_file,
     pbm_conditions = pbm_conditions,
-    annotation_file = "./example_data/hTF_v01_PBM_ANNOT.txt",
-    reference_motifs_file =
-        "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme",
-    output_base_name = "output",
-    array_id = "v1_a11_run1",
-    # I used a motif_strength_threshold of 5 here so the example would run
-    # faster, but by default it uses 1, which is probably better
-    motif_strength_threshold = 5,
-    rolling_ic_threshold = 1.5,
-    comparison_method = "ed",
-    cluster_assignments_file = "./example_data/motif_clusters.tsv",
-    pvalue_threshold = 0.05
+    annotation_file = annotation_file,
+    reference_motifs_file = reference_motifs_file,
+    output_base_name = output_base_name,
+    array_id = array_id,
+    motif_strength_threshold = motif_strength_threshold,
+    rolling_ic_threshold = rolling_ic_threshold,
+    comparison_method = comparison_method,
+    cluster_assignments_file = cluster_assignments_file,
+    pvalue_threshold = pvalue_threshold
 )
