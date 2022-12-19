@@ -92,7 +92,6 @@ corecmotif <-
         seed_name,
         pbm_condition,
         zscore_motif,
-        beta_method = "linear",
         ic_window_width = 5,
         top_n_percent = 15,
         ...
@@ -104,7 +103,7 @@ corecmotif <-
             paste(seed_name, pbm_condition, sep = "_")
 
         beta <-
-            calculate_beta(zscore_motif, method = beta_method)
+            calculate_beta(zscore_motif)
 
         ppm <-
             zscore_to_ppm(zscore_motif, beta, motif_name)
@@ -132,4 +131,104 @@ corecmotif <-
             ...
         )
     }
+
+
+# Calculate beta
+#
+# Calculates the beta parameter to use when converting z-score motifs to PPMs.
+#
+# @param zscore_motif A data frame representing a z-score motif, where the rows
+#   are nucleotides and the columns are positions in the motif.
+#
+# @return The value of beta for the given PBM condition.
+calculate_beta <- function(zscore_motif) {
+    # Find the seed probe z-score
+    seed_probe <- find_seed_zscore(zscore_motif)
+
+    # Calculate beta
+    beta <- 4 - (0.5 * seed_probe)
+
+    # Restrict beta to a range of 1 to 4
+    beta <- max(min(4, beta), 1)
+
+    # Return beta
+    return(beta)
+
+    # Return beta
+    return(beta)
+}
+
+
+# Convert a z-score motif to a delta z-score motif
+#
+# Transforms the given z-score motif by subtracting the median z-score at each
+# position from the z-score for each probe at that position.
+#
+# @param zscore_motif A data frame representing a z-score motif, where the rows
+#   are nucleotides and the columns are positions in the motif.
+#
+# @return A data frame representing the delta z-score motif corresponding to the
+#   provided z-score motif, where the rows are nucleotides and the columns are
+#   positions in the motif.
+zscore_to_delta_zscore <- function(zscore_motif) {
+    # Transform the z-scores to reflect their deviation from column-wise median
+    delta_zscore_motif <-
+        zscore_motif %>%
+
+        # Subtract the column-wise median from each value in each column
+        dplyr::mutate_all(list(~ . - median(.)))
+
+    # Return the delta z-score motif
+    return(delta_zscore_motif)
+}
+
+
+# Convert a z-score motif to a PPM
+#
+# Transforms the given z-score motif into a Position Probability Matrix (PPM).
+#
+# @param zscore_motif A data frame representing a z-score motif, where the rows
+#   are nucleotides and the columns are positions in the motif.
+# @param beta A normalization factor that scales with the maximum z-score
+#   observed for a given PBM condition.
+#
+# @return A universalmotif object representing the PPM corresponding to the
+#   given z-score motif.
+zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
+    # Transform the z-scores using the beta parameter
+    ppm <-
+        # Multiply each z-score by beta and then take the exponential
+        exp(beta * zscore_motif) %>%
+
+        # Normalize by dividing each value in each column by the column-wise sum
+        dplyr::mutate_all(list(~ . / sum(.))) %>%
+
+        # Convert to a numeric matrix
+        as.matrix() %>%
+
+        # Convert to a universalmotif object
+        universalmotif::create_motif(name = name)
+
+    # Return the PPM
+    return(ppm)
+}
+
+
+calculate_strength <- function(zscore_motif, top_n_percent = 15) {
+    # Get a sorted list of all the probe z-scores
+    z_scores <-
+        sort(unique(unlist(zscore_motif)), decreasing = TRUE)
+
+    # Figure out how many probes to average (rounded up to the nearest integer)
+    num_probes <- ceiling(length(z_scores) * (top_n_percent / 100))
+
+    # Find the median z-score of the highest num_probes probes
+    median_zscore <- median(z_scores[1:num_probes])
+
+    names(median_zscore) <- top_n_percent
+
+    # Return the average z-score
+    return(median_zscore)
+}
+
 

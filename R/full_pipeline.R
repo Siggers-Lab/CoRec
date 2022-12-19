@@ -5,6 +5,7 @@
 #' @param pbm_conditions
 #' @param annotation_file
 #' @param reference_motifs_file
+#' @param output_base_name
 #' @param array_id
 #' @param motif_strength_threshold
 #' @param rolling_ic_threshold
@@ -92,25 +93,14 @@ run_full_analysis <-
             col.names = TRUE
         )
 
-        # Extract a vector of all the non-background probe seed names
-        seed_names <-
-            zscore_table %>%
-
-            # Keep only one row (the seed probe row) for each TF probe set
-            dplyr::filter(SNV_pos_offset == 0) %>%
-
-            # Get just the column containing the seed names
-            dplyr::pull(seed_names)
-
-        # Get a list of corecmotif objects for all the seed/condition combos
+        # Make corecmotif objects for all the seed/condition combos
         corec_motifs <-
-            zscore_matrix_to_motifs(
+            make_corec_motifs(
                 zscore_table,
-                seed_names,
                 pbm_conditions
             )
 
-        # Save the list of all corecmotifs as a single RDS file
+        # Save the list of all corecmotifs as an RDS file
         saveRDS(
             corec_motifs,
             paste0(output_base_name, "_all_corecmotifs.rds")
