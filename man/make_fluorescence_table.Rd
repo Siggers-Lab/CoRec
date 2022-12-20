@@ -36,6 +36,8 @@ and columns correspond to fluorescence values) and adds probe metadata from
 an annotation file.
 }
 \details{
+\subsection{Fluorescence File}{
+
 The fluorescence data file supplied to the \code{fluorescence_file} parameter
 must contain \eqn{3 + n} tab-delimited columns, where n is the number of PBM
 conditions supplied to the \code{pbm_conditions} parameter. This file must
@@ -55,6 +57,9 @@ PBM conditions in the order they appear in the \code{pbm_conditions}
 parameter.}
 
 }
+}
+
+\subsection{Annotation File}{
 
 The probe annotation file supplied to the \code{annotation_file} parameter
 must have a header and must contain tab-delimited columns named
@@ -65,9 +70,7 @@ additional columns are present, they will be removed.
 
 \describe{
 
-\item{\code{probeID}}{The probe ID. The IDs in this column must match the IDs
-in the first column of the fluorescence data file (after the orientation tag
-has been removed). IDs that are not present in both will be dropped.}
+\item{\code{probeID}}{The probe ID.}
 
 \item{\code{probe_type}}{The probe type. This column should contain the
 values "MOTIF" and "BACKGROUND".}
@@ -82,28 +85,29 @@ values "MOTIF" and "BACKGROUND".}
 
 }
 
-The output data frame contains \eqn{6 + n} columns, where n is again the
-number of PBM conditions supplied to the \code{pbm_conditions} parameter. The
-first six columns will be the columns from the annotation file (described
-above). The remaining columns will contain the fluorescence values for each
-condition and will be named based on the vector of PBM conditions supplied to
-\code{pbm_conditions} and the tag supplied to \code{array_id} (if any).
+The IDs in the \code{probeID} column must match the IDs in the first column
+of the fluorescence data file (after the orientation tag has been removed).
+IDs that are not present in both will be dropped.The output data frame
+contains \eqn{6 + n} columns, where n is again the number of PBM conditions
+supplied to the \code{pbm_conditions} parameter. The first six columns will
+be the columns from the annotation file (described above). The remaining
+columns will contain the fluorescence values for each condition and will be
+named based on the vector of PBM conditions supplied to \code{pbm_conditions}
+and the tag supplied to \code{array_id} (if any).
+}
 }
 \examples{
-fluorescence_table <- make_fluorescence_table(
-    fluorescence_file =
-        "example_data/data_matrices/hTF_v1_SUDHL4_14jan21_br.dat",
-    pbm_conditions = c(
-        "UT_SUDHL4_SMARCA4MIX",
-        "UT_SUDHL4_HDAC1MIX",
-        "UT_SUDHL4_SUZ12",
-        "UT_SUDHL4_PRMT5",
-        "UT_SUDHL4_JMJD2A",
-        "UT_SUDHL4_BMI1",
-        "UT_SUDHL4_DNMT3A",
-        "UT_SUDHL4_ASH2L"
-    ),
-    annotation_file = "example_data/hTF_v01_PBM_ANNOT.txt",
-    array_id = "v1_a6_run1"
-)
+# Load and annotate the example fluorescence table
+fluorescence_table <-
+    make_fluorescence_table(
+        fluorescence_file = "example_data/hTF_v1_example_fluorescence.dat",
+        pbm_conditions = c(
+            "UT_SUDHL4_SMARCA4MIX",
+            "UT_SUDHL4_HDAC1MIX",
+            "UT_SUDHL4_SUZ12",
+            "UT_SUDHL4_PRMT5"
+        ),
+        annotation_file = "example_data/hTF_v1_annotation.tsv",
+        array_id = "v1_a6_run1"
+    )
 }

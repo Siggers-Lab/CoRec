@@ -8,9 +8,8 @@ make_zscore_table(fluorescence_table, fluorescence_columns)
 }
 \arguments{
 \item{fluorescence_table}{a data frame of fluorescence values and annotations
-for each probe. See the return value of
-\code{\link{make_fluorescence_table}} for a description of the expected
-columns.}
+for each probe. See 'Details' of \code{\link{make_fluorescence_table}} for
+a description of the expected annotation columns.}
 
 \item{fluorescence_columns}{a character vector specifying the names of the
 columns of \code{fluorescence_table} that contain fluorescence data.}
@@ -30,34 +29,24 @@ using the mean and standard deviation of the fluorescence values of the
 background probes in that condition.
 }
 \examples{
-fluorescence_table <- make_fluorescence_table(
-    fluorescence_file =
-        "example_data/data_matrices/hTF_v1_SUDHL4_14jan21_br.dat",
-    pbm_conditions = c(
-        "UT_SUDHL4_SMARCA4MIX",
-        "UT_SUDHL4_HDAC1MIX",
-        "UT_SUDHL4_SUZ12",
-        "UT_SUDHL4_PRMT5",
-        "UT_SUDHL4_JMJD2A",
-        "UT_SUDHL4_BMI1",
-        "UT_SUDHL4_DNMT3A",
-        "UT_SUDHL4_ASH2L"
-    ),
-    annotation_file = "example_data/hTF_v01_PBM_ANNOT.txt",
-    array_id = "v1_a6_run1"
-)
-
-zscore_table <- make_zscore_table(
-    fluorescence_table = fluorescence_table,
-    fluorescence_columns = c(
-        "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
-        "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
-        "v1_a11_run1_UT_SUDHL4_SUZ12",
-        "v1_a11_run1_UT_SUDHL4_PRMT5",
-        "v1_a11_run1_UT_SUDHL4_JMJD2A",
-        "v1_a11_run1_UT_SUDHL4_BMI1",
-        "v1_a11_run1_UT_SUDHL4_DNMT3A",
-        "v1_a11_run1_UT_SUDHL4_ASH2L"
+# Load the example fluorescence data
+fluorescence_table <-
+    read.table(
+        "example_data/example_output/example_v1_a11_run1_fluorescence.tsv",
+        header = TRUE,
+        sep = "\t",
+        stringsAsFactors = FALSE
     )
-)
+
+# Convert the fluorescence data into z-scores
+zscore_table <-
+    make_zscore_table(
+        fluorescence_table,
+        fluorescence_columns = c(
+            "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
+            "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
+            "v1_a11_run1_UT_SUDHL4_SUZ12",
+            "v1_a11_run1_UT_SUDHL4_PRMT5"
+        )
+    )
 }

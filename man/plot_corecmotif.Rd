@@ -7,7 +7,9 @@
 plot_corecmotif(
   corec_motif,
   motif_logo_type = c("delta_zscore", "PPM", "PWM", "ICM"),
-  motif_score_threshold = NA
+  seed_zscore_threshold = 1,
+  rolling_ic_threshold = 1.5,
+  outline_color = "#abbed1"
 )
 }
 \arguments{

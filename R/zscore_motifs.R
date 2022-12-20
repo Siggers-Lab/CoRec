@@ -1,102 +1,130 @@
-#' Extract corecmotif objects from z-score matrix
+#' Create \linkS4class{corecmotif} objects from a table of z-score data
 #'
-#' Extracts a corecmotif object from the input z-score matrix for every possible
-#' combination of the given seed names and PBM conditions.
+#' Creates a list of \linkS4class{corecmotif} objects for all possible
+#' combinations of the probe sets present in \code{zscore_table} and the PBM
+#' conditions given in \code{zscore_columns}.
 #'
-#' @rdname extract_corecmotifs
+#' @param zscore_table a data frame of z-scores and annotations for each probe.
+#'   See 'Details' of \code{\link{make_fluorescence_table}} for a description of
+#'   the expected annotation columns.
+#' @param zscore_columns a character vector specifying the names of the columns
+#'   of \code{zscore_table} that contain z-score data.
 #'
-#' @param zscore_table A data frame of PBM condition-wise fluorescence value
-#'   z-scores, such as output by make_zscore_table().
-#' @param pbm_condition,pbm_conditions A character vector of the column names of
-#'   the PBM conditions for which to extract corecmotif objects.
+#' @return A list of \linkS4class{corecmotif} objects, one for each possible
+#'   combination of the probe sets in \code{zscore_table} and the PBM conditions
+#'   listed in \code{zscore_columns}.
 #'
-#' @return A list of corecmotif objects, one for each possible combination of
-#'   the seed names present in \code{zscore_table} and the PBM conditions in
-#'   \code{pbm_conditions}.
 #' @export
 #'
 #' @examples
+#' # Load the example z-score table
+#' zscore_table <-
+#'     read.table(
+#'         "example_data/example_output/example_v1_a11_run1_zscores.tsv",
+#'         header = TRUE,
+#'         sep = "\t",
+#'         stringsAsFactors = FALSE
+#'     )
+#'
+#' # Make a list of corecmotif objects
 #' corec_motifs <-
 #'     make_corec_motifs(
 #'         zscore_table,
-#'         pbm_conditions
+#'         zscore_columns = c(
+#'             "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
+#'             "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
+#'             "v1_a11_run1_UT_SUDHL4_SUZ12",
+#'             "v1_a11_run1_UT_SUDHL4_PRMT5"
+#'         )
 #'     )
 make_corec_motifs <-
     function(
         zscore_table,
-        pbm_conditions
+        zscore_columns
     ) {
-        # Make a table of motif data
-        motif_table <-
-            zscore_table %>%
+    # Make a table of motif data
+    motif_table <-
+        zscore_table %>%
 
-            # Keep only the seed probe row for each non-background probe set
-            dplyr::filter(SNV_pos_offset == 0) %>%
+        # Keep only the seed probe row for each non-background probe set
+        dplyr::filter(SNV_pos_offset == 0) %>%
 
-            # Keep only the seed name and probe sequence columns
-            dplyr::select(seed_names, probe_seq) %>%
+        # Keep only the probe set name and probe sequence columns
+        dplyr::select(seed_names, probe_seq) %>%
 
-            # Get all possible combinations of seed names and PBM conditions
-            tidyr::expand_grid(pbm_conditions = pbm_conditions) %>%
+        # Get all possible combinations of probe set names and PBM conditions
+        tidyr::expand_grid(pbm_conditions = zscore_columns) %>%
 
-            # Make the z-score motif for each seed/condition combination
-            dplyr::mutate(
-                zscore_motif = purrr::map2(
-                    seed_names,
-                    pbm_conditions,
-                    make_zscore_motif,
-                    zscore_table = zscore_table
-                )
+        # Make the z-score motif for each probe set/condition combination
+        dplyr::mutate(
+            zscore_motif = purrr::map2(
+                seed_names,
+                pbm_conditions,
+                make_zscore_motif,
+                zscore_table = zscore_table
             )
+        )
 
-        # Convert the data frame into a list of corecmotif objects
-        corec_motifs <-
-            purrr::pmap(
-                list(
-                    seed_name = motif_table$seed_names,
-                    pbm_condition = motif_table$pbm_conditions,
-                    zscore_motif = motif_table$zscore_motif,
-                    seed_probe_sequence = motif_table$probe_seq
-                ),
-                corecmotif
-            )
+    # Convert the data frame into a list of corecmotif objects
+    corec_motifs <-
+        purrr::pmap(
+            list(
+                seed_name = motif_table$seed_names,
+                pbm_condition = motif_table$pbm_conditions,
+                zscore_motif = motif_table$zscore_motif,
+                seed_probe_sequence = motif_table$probe_seq
+            ),
+            corecmotif
+        )
 
-        # Return the list of corecmotif objects
-        return(corec_motifs)
+    # Return the list of corecmotif objects
+    return(corec_motifs)
 }
 
-
-#' Extract corecmotif objects from z-score matrix
+#' Create a z-score motif for a given probe set and PBM condition
 #'
-#' @rdname extract_corecmotifs
+#' Creates a z-score motif for a given probe set and PBM condition. The rows
+#' correspond to nucleotides and the columns correspond to positions in the
+#' motif.
 #'
-#' @param zscore_table A data frame of PBM condition-wise fluorescence value
-#'   z-scores, such as output by fluorescence_to_zscore_table().
-#' @param seed_name The name of the seed for which to extract a corecmotif
-#'   object.
-#' @param pbm_condition The column name of the PBM condition for which to
-#'   extract a corecmotif object.
+#' @param zscore_table a data frame of z-scores and annotations for each probe.
+#'   See 'Details' of \code{\link{make_fluorescence_table}} for a description of
+#'   the expected annotation columns.
+#' @param probe_set a character string containing the name of the probe set
+#'   for which to create the z-score motif.
+#' @param pbm_condition a character string containing the name of the PBM
+#'   condition for which to create the z-score motif.
 #'
-#' @return A data frame representing the z-score motif for the seed name and PBM
-#'   condition provided to \code{seed_name} and \code{pbm_condition}
-#'   respectively, where the rows are nucleotides and the columns are positions
-#'   in the motif.
+#' @return A data frame with rows corresponding to nucleotides and columns
+#'   corresponding to positions in the motif. Each cell is filled with the
+#'   z-score of the relevant probe in the given PBM condition.
+#'
 #' @export
 #'
 #' @examples
+#' # Load the example z-score table
+#' zscore_table <-
+#'     read.table(
+#'         "example_data/example_output/example_v1_a11_run1_zscores.tsv",
+#'         header = TRUE,
+#'         sep = "\t",
+#'         stringsAsFactors = FALSE
+#'     )
+#'
+#' # Create a z-score motif
 #' zscore_motif <-
 #'     make_zscore_motif(
 #'         zscore_table,
-#'         "MA0079.3_SP1",
-#'         "v1_a11_run1_UT_SUDHL4_SMARCA4MIX"
+#'         probe_set = "MA0052.3_MEF2A",
+#'         pbm_condition = "v1_a11_run1_UT_SUDHL4_PRMT5"
 #'     )
-make_zscore_motif <- function(zscore_table, seed_name, pbm_condition) {
+make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
     # Get the z-score of the seed probe for this seed_name/pbm_condition combo
     seed_zscore <-
         zscore_table %>%
 
         # Keep only the seed probe row from the relevant probe set
-        dplyr::filter(seed_names == seed_name & SNV_pos_offset == 0) %>%
+        dplyr::filter(seed_names == probe_set & SNV_pos_offset == 0) %>%
 
         # Pull the z-score from the relevant PBM condition column
         dplyr::pull(pbm_condition)
@@ -106,7 +134,7 @@ make_zscore_motif <- function(zscore_table, seed_name, pbm_condition) {
         zscore_table %>%
 
         # Keep only the SV probe rows from the relevant probe set
-        dplyr::filter(seed_names == seed_name & SNV_pos_offset > 0) %>%
+        dplyr::filter(seed_names == probe_set & SNV_pos_offset > 0) %>%
 
         # Keep only the nucleotide, position, and z-score columns
         dplyr::select(
