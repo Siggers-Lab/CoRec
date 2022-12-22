@@ -232,3 +232,55 @@ calculate_strength <- function(zscore_motif, top_n_percent = 15) {
 }
 
 
+#' Update the motif cluster match of a corecmotif
+#'
+#' @param corecmotif
+#' @param cluster_assignments
+#'
+#' @return
+#' @export
+#'
+#' @examples
+update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
+    # Clear the cluster match slot if there are no clusters or no motif match
+    if (is.null(cluster_assignments) | is.null(corecmotif@motif_match)) {
+        corecmotif@motif_cluster_match <- NA_character_
+
+        # Return the updated corecmotif
+        return(corecmotif)
+    }
+
+    # Clear the cluster match slot if the motif match isn't in the clusters
+    if (!(corecmotif@motif_match@altname %in% cluster_assignments$motif)) {
+        corecmotif@motif_cluster_match <- NA_character_
+
+        # Print a warning message
+        warning(
+            "Motif match altname not in cluster assignments table; ",
+            "setting cluster match to NA"
+        )
+
+        # Return the updated corecmotif
+        return(corecmotif)
+    }
+
+    # Figure out the cluster the best match motif is in
+    best_cluster <-
+        cluster_assignments %>%
+
+        # Keep just the row corresponding to the best match motif
+        dplyr::filter(
+            motif == corecmotif@motif_match@altname
+        ) %>%
+
+        # Pull out the cluster name for this motif
+        dplyr::pull(cluster)
+
+    # Update the cluster match slot
+    corecmotif@motif_cluster_match <-
+        as.character(best_cluster)
+
+    # Return the updated corecmotif
+    return(corecmotif)
+}
+
