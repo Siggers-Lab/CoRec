@@ -8,7 +8,8 @@ make_fluorescence_table(
   fluorescence_file,
   pbm_conditions,
   annotation_file,
-  array_id = NA
+  array_id = NULL,
+  output_file = NULL
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ to use. See 'Details' for expected columns.}
 
 \item{array_id}{an optional (but recommended) tag specifying the particular
 array/experiment the fluorescence data is from.}
+
+\item{output_file}{the name of the file where the anootated fluorescence
+table will be written. If NULL (the default), no file is written.}
 }
 \value{
 A data frame containing the fluorescence values from the specified

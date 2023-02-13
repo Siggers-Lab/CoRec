@@ -25,7 +25,7 @@ run_full_analysis <-
         annotation_file,
         reference_motifs_file,
         output_base_name = "output",
-        array_id = NA,
+        array_id = NULL,
         motif_strength_threshold = 1,
         rolling_ic_threshold = 1.5,
         comparison_method = "ed",
@@ -42,7 +42,7 @@ run_full_analysis <-
             paste(output_directory, output_base_name, sep = "/")
 
         # Add the array ID to the base file name if it's provided
-        if (!is.na(array_id)) {
+        if (!is.null(array_id)) {
             output_base_name <-
                 paste(output_base_name, array_id, sep = "_")
         }
@@ -53,7 +53,8 @@ run_full_analysis <-
                 fluorescence_file,
                 pbm_conditions,
                 annotation_file,
-                array_id
+                array_id,
+                paste0(output_base_name, "_fluorescence.tsv")
             )
 
         # Update pbm_conditions based on the column names of fluorescence_table
@@ -66,32 +67,13 @@ run_full_analysis <-
             # Keep just the column names
             colnames()
 
-        # Save the annotated fluorescence matrix
-        write.table(
-            fluorescence_table,
-            paste0(output_base_name, "_fluorescence.tsv"),
-            quote = FALSE,
-            sep = "\t",
-            row.names = FALSE,
-            col.names = TRUE
-        )
-
         # Convert the fluorescence values into condition-wise z-scores
         zscore_table <-
             make_zscore_table(
                 fluorescence_table,
-                pbm_conditions
+                pbm_conditions,
+                paste0(output_base_name, "_zscores.tsv")
             )
-
-        # Save the z-score matrix
-        write.table(
-            zscore_table,
-            paste0(output_base_name, "_zscores.tsv"),
-            quote = FALSE,
-            sep = "\t",
-            row.names = FALSE,
-            col.names = TRUE
-        )
 
         # Make corecmotif objects for all the seed/condition combos
         corec_motifs <-

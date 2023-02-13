@@ -13,6 +13,8 @@
 #'   a description of the expected annotation columns.
 #' @param fluorescence_columns a character vector specifying the names of the
 #'   columns of \code{fluorescence_table} that contain fluorescence data.
+#' @param output_file the name of the file where the anootated z-score table
+#'   will be written. If NULL (the default), no file is written.
 #'
 #' @return A data frame of column-wise fluorescence z-scores and probe
 #'   annotations.
@@ -43,7 +45,8 @@
 make_zscore_table <-
     function(
         fluorescence_table,
-        fluorescence_columns
+        fluorescence_columns,
+        output_file = NULL
     ) {
     # Find the indices of the rows that contain background probes
     background_rows <-
@@ -77,6 +80,18 @@ make_zscore_table <-
                 ~ (.x - mean(.x[background_rows])) / sd(.x[background_rows])
             )
         )
+
+    # Save the z-score table if necessary
+    if (!is.null(output_file)) {
+        write.table(
+            zscore_table,
+            output_file,
+            quote = FALSE,
+            sep = "\t",
+            row.names = FALSE,
+            col.names = TRUE
+        )
+    }
 
     # Return the table of z-scores
     return(zscore_table)

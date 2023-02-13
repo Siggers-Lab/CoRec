@@ -69,6 +69,8 @@
 #'   to use. See 'Details' for expected columns.
 #' @param array_id an optional (but recommended) tag specifying the particular
 #'   array/experiment the fluorescence data is from.
+#' @param output_file the name of the file where the anootated fluorescence
+#'   table will be written. If NULL (the default), no file is written.
 #'
 #' @return A data frame containing the fluorescence values from the specified
 #'   fluorescence data file and the probe annotations from the specified
@@ -95,7 +97,8 @@ make_fluorescence_table <-
         fluorescence_file,
         pbm_conditions,
         annotation_file,
-        array_id = NA
+        array_id = NULL,
+        output_file = NULL
     ) {
     # Load the table of fluorescence values
     fluorescence_table <-
@@ -120,7 +123,7 @@ make_fluorescence_table <-
     }
 
     # Add the run tag (if provided) to the PBM conditions to make column names
-    if (is.na(array_id)) {
+    if (is.null(array_id)) {
         column_names <- pbm_conditions
     } else {
         column_names <- paste(array_id, pbm_conditions, sep = "_")
@@ -187,6 +190,18 @@ make_fluorescence_table <-
             "Annotation file is missing probeIDs present in fluorescence file",
             "\nAre you sure you're using the correct annotation file?",
             call. = FALSE
+        )
+    }
+
+    # Save the annotated fluorescence table if necessary
+    if (!is.null(output_file)) {
+        write.table(
+            fluorescence_table,
+            output_file,
+            quote = FALSE,
+            sep = "\t",
+            row.names = FALSE,
+            col.names = TRUE
         )
     }
 

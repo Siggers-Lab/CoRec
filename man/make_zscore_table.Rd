@@ -4,7 +4,7 @@
 \alias{make_zscore_table}
 \title{Transform fluorescence values into z-scores}
 \usage{
-make_zscore_table(fluorescence_table, fluorescence_columns)
+make_zscore_table(fluorescence_table, fluorescence_columns, output_file = NULL)
 }
 \arguments{
 \item{fluorescence_table}{a data frame of fluorescence values and annotations
@@ -13,6 +13,9 @@ a description of the expected annotation columns.}
 
 \item{fluorescence_columns}{a character vector specifying the names of the
 columns of \code{fluorescence_table} that contain fluorescence data.}
+
+\item{output_file}{the name of the file where the anootated z-score table
+will be written. If NULL (the default), no file is written.}
 }
 \value{
 A data frame of column-wise fluorescence z-scores and probe
