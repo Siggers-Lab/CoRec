@@ -155,6 +155,9 @@ make_fluorescence_table <-
         # Remove the grouping just in case
         dplyr::ungroup()
 
+    # Check how many rows the fluorescence table has
+    n_rows <- nrow(fluorescence_table)
+
     # Reformat the fluorescence table and add the probe annotations
     fluorescence_table <-
         fluorescence_table %>%
@@ -177,6 +180,15 @@ make_fluorescence_table <-
 
         # Merge with the annotation table
         dplyr::inner_join(annotation, ., by = c("probeID"))
+
+    # Give a warning if the fluorescence table lost any rows
+    if (nrow(fluorescence_table) < n_rows) {
+        warning(
+            "Annotation file is missing probeIDs present in fluorescence file",
+            "\nAre you sure you're using the correct annotation file?",
+            call. = FALSE
+        )
+    }
 
     # Return the annotated fluorescence table
     return(fluorescence_table)
