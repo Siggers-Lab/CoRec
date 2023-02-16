@@ -4,7 +4,7 @@
 \alias{make_corec_motifs}
 \title{Create \linkS4class{corecmotif} objects from a table of z-score data}
 \usage{
-make_corec_motifs(zscore_table, zscore_columns)
+make_corec_motifs(zscore_table, zscore_columns, output_file = NULL)
 }
 \arguments{
 \item{zscore_table}{a data frame of z-scores and annotations for each probe.
@@ -13,6 +13,9 @@ the expected annotation columns.}
 
 \item{zscore_columns}{a character vector specifying the names of the columns
 of \code{zscore_table} that contain z-score data.}
+
+\item{output_file}{the name of the RDS file where the list of corecmotif
+objects will be written. If NULL (the default), no file is written.}
 }
 \value{
 A list of \linkS4class{corecmotif} objects, one for each possible

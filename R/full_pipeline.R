@@ -57,8 +57,8 @@ run_full_analysis <-
                 paste0(output_base_name, "_fluorescence.tsv")
             )
 
-        # Update pbm_conditions based on the column names of fluorescence_table
-        pbm_conditions <-
+        # Get the names of the data columns of fluorescence_table
+        fluorescence_columns <-
             fluorescence_table %>%
 
             # Select the columns whose names contain PBM condition names
@@ -71,7 +71,7 @@ run_full_analysis <-
         zscore_table <-
             make_zscore_table(
                 fluorescence_table,
-                pbm_conditions,
+                fluorescence_columns,
                 paste0(output_base_name, "_zscores.tsv")
             )
 
@@ -79,14 +79,9 @@ run_full_analysis <-
         corec_motifs <-
             make_corec_motifs(
                 zscore_table,
-                pbm_conditions
+                fluorescence_columns,
+                paste0(output_base_name, "_all_corecmotifs.rds")
             )
-
-        # Save the list of all corecmotifs as an RDS file
-        saveRDS(
-            corec_motifs,
-            paste0(output_base_name, "_all_corecmotifs.rds")
-        )
 
         # Filter out corecmotifs with low scores
         filtered_corec_motifs <-

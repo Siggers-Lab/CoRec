@@ -69,7 +69,7 @@
 #'   to use. See 'Details' for expected columns.
 #' @param array_id an optional (but recommended) tag specifying the particular
 #'   array/experiment the fluorescence data is from.
-#' @param output_file the name of the file where the anootated fluorescence
+#' @param output_file the name of the TSV file where the anootated fluorescence
 #'   table will be written. If NULL (the default), no file is written.
 #'
 #' @return A data frame containing the fluorescence values from the specified

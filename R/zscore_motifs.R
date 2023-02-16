@@ -9,6 +9,8 @@
 #'   the expected annotation columns.
 #' @param zscore_columns a character vector specifying the names of the columns
 #'   of \code{zscore_table} that contain z-score data.
+#' @param output_file the name of the RDS file where the list of corecmotif
+#'   objects will be written. If NULL (the default), no file is written.
 #'
 #' @return A list of \linkS4class{corecmotif} objects, one for each possible
 #'   combination of the probe sets in \code{zscore_table} and the PBM conditions
@@ -40,7 +42,8 @@
 make_corec_motifs <-
     function(
         zscore_table,
-        zscore_columns
+        zscore_columns,
+        output_file = NULL
     ) {
     # Make a table of motif data
     motif_table <-
@@ -76,6 +79,14 @@ make_corec_motifs <-
             ),
             corecmotif
         )
+
+    # Save the list of all corecmotifs as an RDS file if necessary
+    if (!is.null(output_file)) {
+        saveRDS(
+            corec_motifs,
+            output_file
+        )
+    }
 
     # Return the list of corecmotif objects
     return(corec_motifs)
