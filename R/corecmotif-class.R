@@ -11,17 +11,14 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #' @slot pbm_condition character.
 #' @slot beta numeric.
 #' @slot zscore_motif data.frame.
-#' @slot delta_zscore_motif data.frame.
-#' @slot ppm universalmotif.
-#' @slot seed_zscore numeric.
 #' @slot rolling_ic numeric.
 #' @slot motif_strength numeric.
-#' @slot seed_probe_sequence character.
-#' @slot motif_match universalmotif_or_NULL.
-#' @slot motif_match_method character.
-#' @slot motif_match_pvalue numeric.
-#' @slot motif_match_qvalue numeric.
-#' @slot motif_cluster_match character.
+#' @slot ppm universalmotif.
+#' @slot seed_sequence character.
+#' @slot match universalmotif_or_NULL.
+#' @slot match_method character.
+#' @slot match_pvalue numeric.
+#' @slot match_cluster character.
 #'
 #' @return
 #' @export
@@ -36,18 +33,15 @@ setClass(
         seed_name = "character",
         pbm_condition = "character",
         beta = "numeric",
-        zscore_motif = "data.frame",
-        delta_zscore_motif = "data.frame",
-        ppm = "universalmotif",
-        seed_zscore = "numeric",
+        zscore_motif = "matrix",
         rolling_ic = "numeric",
         motif_strength = "numeric",
-        seed_probe_sequence = "character",
-        motif_match = "universalmotif_or_NULL",
-        motif_match_method = "character",
-        motif_match_pvalue = "numeric",
-        motif_match_qvalue = "numeric",
-        motif_cluster_match = "character"
+        seed_sequence = "character",
+        ppm = "universalmotif",
+        match = "universalmotif_or_NULL",
+        match_method = "character",
+        match_pvalue = "numeric",
+        match_cluster = "character"
     ),
 
     # Provide a default example object
@@ -55,18 +49,15 @@ setClass(
         seed_name = NA_character_,
         pbm_condition = NA_character_,
         beta = NA_real_,
-        zscore_motif = data.frame(),
-        delta_zscore_motif = data.frame(),
-        ppm = universalmotif::create_motif("ACGT"),
-        seed_zscore = NA_real_,
+        zscore_motif = matrix(NA_real_),
         rolling_ic = NA_real_,
         motif_strength = NA_real_,
-        seed_probe_sequence = NA_character_,
-        motif_match = NULL,
-        motif_match_method = NA_character_,
-        motif_match_pvalue = NA_real_,
-        motif_match_qvalue = NA_real_,
-        motif_cluster_match = NA_character_
+        seed_sequence = NA_character_,
+        ppm = universalmotif::create_motif("ACGT"),
+        match = NULL,
+        match_method = NA_character_,
+        match_pvalue = NA_real_,
+        match_cluster = NA_character_
     )
 ) %>%
 
@@ -96,9 +87,6 @@ corecmotif <-
         top_n_percent = 15,
         ...
     ) {
-        delta_zscore_motif <-
-            zscore_to_delta_zscore(zscore_motif)
-
         motif_name <-
             paste(seed_name, pbm_condition, sep = "_")
 
@@ -107,9 +95,6 @@ corecmotif <-
 
         ppm <-
             zscore_to_ppm(zscore_motif, beta, motif_name)
-
-        seed_zscore <-
-            find_seed_zscore(zscore_motif)
 
         rolling_ic <-
             calculate_rolling_ic(ppm, ic_window_width)
@@ -123,11 +108,9 @@ corecmotif <-
             pbm_condition = pbm_condition,
             beta = beta,
             zscore_motif = zscore_motif,
-            delta_zscore_motif = delta_zscore_motif,
-            ppm = ppm,
-            seed_zscore = seed_zscore,
             rolling_ic = rolling_ic,
             motif_strength = motif_strength,
+            ppm = ppm,
             ...
         )
     }
@@ -173,10 +156,8 @@ calculate_beta <- function(zscore_motif) {
 zscore_to_delta_zscore <- function(zscore_motif) {
     # Transform the z-scores to reflect their deviation from column-wise median
     delta_zscore_motif <-
-        zscore_motif %>%
-
         # Subtract the column-wise median from each value in each column
-        dplyr::mutate_all(list(~ . - median(.)))
+        apply(zscore_motif, 2, function(col) {col - median(col)})
 
     # Return the delta z-score motif
     return(delta_zscore_motif)
@@ -201,10 +182,7 @@ zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
         exp(beta * zscore_motif) %>%
 
         # Normalize by dividing each value in each column by the column-wise sum
-        dplyr::mutate_all(list(~ . / sum(.))) %>%
-
-        # Convert to a numeric matrix
-        as.matrix() %>%
+        apply(2, function(col) {col / sum(col)}) %>%
 
         # Convert to a universalmotif object
         universalmotif::create_motif(name = name)
@@ -331,3 +309,4 @@ calculate_rolling_ic <- function(ppm, width = 5) {
 
     return(max_sliding_window_ic)
 }
+

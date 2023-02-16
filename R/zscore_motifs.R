@@ -75,7 +75,7 @@ make_corec_motifs <-
                 seed_name = motif_table$seed_names,
                 pbm_condition = motif_table$pbm_conditions,
                 zscore_motif = motif_table$zscore_motif,
-                seed_probe_sequence = motif_table$probe_seq
+                seed_sequence = motif_table$probe_seq
             ),
             corecmotif
         )
@@ -140,6 +140,17 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
         # Pull the z-score from the relevant PBM condition column
         dplyr::pull(pbm_condition)
 
+    # Make sure there's exactly one seed probe
+    if (length(seed_zscore) != 1) {
+        stop(
+            "Expected 1 seed probe for the probe set ",
+            probe_set,
+            " but found ",
+            length(seed_zscore),
+            call. = FALSE
+        )
+    }
+
     # Fill in a motif data frame with the seed and SV probe z-scores
     zscore_motif <-
         zscore_table %>%
@@ -168,7 +179,10 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
         ) %>%
 
         # Make the nucleotides the row names
-        tibble::column_to_rownames("SNV_nuc")
+        tibble::column_to_rownames("SNV_nuc") %>%
+
+        # Convert to a matrix
+        as.matrix()
 
     # Return the z-score motif
     return(zscore_motif)
