@@ -49,7 +49,7 @@ run_full_analysis <-
 
         # Load and annotate the table of fluorescence values
         fluorescence_table <-
-            make_fluorescence_table(
+            annotate_fluorescence_table(
                 fluorescence_file,
                 pbm_conditions,
                 annotation_file,
@@ -69,7 +69,7 @@ run_full_analysis <-
 
         # Convert the fluorescence values into condition-wise z-scores
         zscore_table <-
-            make_zscore_table(
+            fluorescence_to_zscore_table(
                 fluorescence_table,
                 fluorescence_columns,
                 paste0(output_base_name, "_zscores.tsv")
@@ -77,7 +77,7 @@ run_full_analysis <-
 
         # Make corecmotif objects for all the seed/condition combos
         corec_motifs <-
-            make_corec_motifs(
+            zscore_table_to_corecmotifs(
                 zscore_table,
                 fluorescence_columns,
                 paste0(output_base_name, "_all_corecmotifs.rds")

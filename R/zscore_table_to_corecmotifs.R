@@ -5,8 +5,8 @@
 #' conditions given in \code{zscore_columns}.
 #'
 #' @param zscore_table a data frame of z-scores and annotations for each probe.
-#'   See 'Details' of \code{\link{make_fluorescence_table}} for a description of
-#'   the expected annotation columns.
+#'   See 'Details' of \code{\link{annotate_fluorescence_table}} for a
+#'   description of the expected annotation columns.
 #' @param zscore_columns a character vector specifying the names of the columns
 #'   of \code{zscore_table} that contain z-score data.
 #' @param output_file the name of the RDS file where the list of corecmotif
@@ -30,7 +30,7 @@
 #'
 #' # Make a list of corecmotif objects
 #' corec_motifs <-
-#'     make_corec_motifs(
+#'     zscore_table_to_corecmotifs(
 #'         zscore_table,
 #'         zscore_columns = c(
 #'             "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
@@ -39,7 +39,7 @@
 #'             "v1_a11_run1_UT_SUDHL4_PRMT5"
 #'         )
 #'     )
-make_corec_motifs <-
+zscore_table_to_corecmotifs <-
     function(
         zscore_table,
         zscore_columns,
@@ -63,7 +63,7 @@ make_corec_motifs <-
             zscore_motif = purrr::map2(
                 seed_names,
                 pbm_conditions,
-                make_zscore_motif,
+                extract_zscore_motif,
                 zscore_table = zscore_table
             )
         )
@@ -99,8 +99,8 @@ make_corec_motifs <-
 #' motif.
 #'
 #' @param zscore_table a data frame of z-scores and annotations for each probe.
-#'   See 'Details' of \code{\link{make_fluorescence_table}} for a description of
-#'   the expected annotation columns.
+#'   See 'Details' of \code{\link{annotate_fluorescence_table}} for a
+#'   description of the expected annotation columns.
 #' @param probe_set a character string containing the name of the probe set
 #'   for which to create the z-score motif.
 #' @param pbm_condition a character string containing the name of the PBM
@@ -124,12 +124,12 @@ make_corec_motifs <-
 #'
 #' # Create a z-score motif
 #' zscore_motif <-
-#'     make_zscore_motif(
+#'     extract_zscore_motif(
 #'         zscore_table,
 #'         probe_set = "MA0052.3_MEF2A",
 #'         pbm_condition = "v1_a11_run1_UT_SUDHL4_PRMT5"
 #'     )
-make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
+extract_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
     # Get the z-score of the seed probe for this seed_name/pbm_condition combo
     seed_zscore <-
         zscore_table %>%

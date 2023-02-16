@@ -81,7 +81,7 @@
 #' @examples
 #' # Load and annotate the example fluorescence table
 #' fluorescence_table <-
-#'     make_fluorescence_table(
+#'     annotate_fluorescence_table(
 #'         fluorescence_file = "example_data/hTF_v1_example_fluorescence.dat",
 #'         pbm_conditions = c(
 #'             "UT_SUDHL4_SMARCA4MIX",
@@ -92,7 +92,7 @@
 #'         annotation_file = "example_data/hTF_v1_annotation.tsv",
 #'         array_id = "v1_a6_run1"
 #'     )
-make_fluorescence_table <-
+annotate_fluorescence_table <-
     function(
         fluorescence_file,
         pbm_conditions,
