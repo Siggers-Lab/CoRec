@@ -9,7 +9,7 @@
 #'   description of the expected annotation columns.
 #' @param zscore_columns a character vector specifying the names of the columns
 #'   of \code{zscore_table} that contain z-score data.
-#' @param output_file the name of the RDS file where the list of corecmotif
+#' @param output_file the path to the RDS file where the list of corecmotif
 #'   objects will be written. If NULL (the default), no file is written.
 #'
 #' @return A list of \linkS4class{corecmotif} objects, one for each possible

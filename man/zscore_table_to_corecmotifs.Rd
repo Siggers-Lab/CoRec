@@ -14,7 +14,7 @@ description of the expected annotation columns.}
 \item{zscore_columns}{a character vector specifying the names of the columns
 of \code{zscore_table} that contain z-score data.}
 
-\item{output_file}{the name of the RDS file where the list of corecmotif
+\item{output_file}{the path to the RDS file where the list of corecmotif
 objects will be written. If NULL (the default), no file is written.}
 }
 \value{

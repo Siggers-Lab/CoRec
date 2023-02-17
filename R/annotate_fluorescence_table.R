@@ -60,17 +60,17 @@
 #' named based on the vector of PBM conditions supplied to \code{pbm_conditions}
 #' and the tag supplied to \code{array_id} (if any).
 #'
-#' @param fluorescence_file the name of the file containing the fluorescence
+#' @param fluorescence_file the path to the file containing the fluorescence
 #'   data to load. See 'Details' for expected columns.
 #' @param pbm_conditions a character vector specifying the PBM conditions (e.g.,
 #'   cell type, treatment, and factor profiled) in the order they appear in
 #'   \code{fluorescence_file}.
-#' @param annotation_file the name of the file containing the probe annotations
+#' @param annotation_file the path to the file containing the probe annotations
 #'   to use. See 'Details' for expected columns.
 #' @param array_id an optional (but recommended) tag specifying the particular
 #'   array/experiment the fluorescence data is from.
-#' @param output_file the name of the TSV file where the anootated fluorescence
-#'   table will be written. If NULL (the default), no file is written.
+#' @param output_file the path to the TSV file where the annotated fluorescence
+#'   table will be written. If NULL (the default), no file is created.
 #'
 #' @return A data frame containing the fluorescence values from the specified
 #'   fluorescence data file and the probe annotations from the specified

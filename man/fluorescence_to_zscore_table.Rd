@@ -18,7 +18,7 @@ for a description of the expected annotation columns.}
 \item{fluorescence_columns}{a character vector specifying the names of the
 columns of \code{fluorescence_table} that contain fluorescence data.}
 
-\item{output_file}{the name of the TSV file where the anootated z-score table
+\item{output_file}{the path to the TSV file where the annotated z-score table
 will be written. If NULL (the default), no file is written.}
 }
 \value{

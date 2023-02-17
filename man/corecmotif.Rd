@@ -4,14 +4,7 @@
 \alias{corecmotif}
 \title{Title}
 \usage{
-corecmotif(
-  seed_name,
-  pbm_condition,
-  zscore_motif,
-  ic_window_width = 5,
-  top_n_percent = 15,
-  ...
-)
+corecmotif(seed_name, pbm_condition, zscore_motif, ...)
 }
 \arguments{
 \item{...}{}

@@ -23,17 +23,11 @@ cluster_assignments_file <- "./example_data/motif_clusters.tsv"
 pvalue_threshold <- 0.05
 
 # Run the analysis
-corec_motifs <- run_full_analysis(
-    output_directory = output_directory,
+corec_motifs <- make_corecmotifs(
     fluorescence_file = fluorescence_file,
     pbm_conditions = pbm_conditions,
     annotation_file = annotation_file,
-    reference_motifs_file = reference_motifs_file,
+    output_directory = output_directory,
     output_base_name = output_base_name,
-    array_id = array_id,
-    motif_strength_threshold = motif_strength_threshold,
-    rolling_ic_threshold = rolling_ic_threshold,
-    comparison_method = comparison_method,
-    cluster_assignments_file = cluster_assignments_file,
-    pvalue_threshold = pvalue_threshold
+    array_id = array_id
 )

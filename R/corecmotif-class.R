@@ -83,8 +83,6 @@ corecmotif <-
         seed_name,
         pbm_condition,
         zscore_motif,
-        ic_window_width = 5,
-        top_n_percent = 15,
         ...
     ) {
         motif_name <-
@@ -97,10 +95,10 @@ corecmotif <-
             zscore_to_ppm(zscore_motif, beta, motif_name)
 
         rolling_ic <-
-            calculate_rolling_ic(ppm, ic_window_width)
+            calculate_rolling_ic(ppm)
 
         motif_strength <-
-            calculate_strength(zscore_motif, top_n_percent)
+            calculate_strength(zscore_motif)
 
         new(
             "corecmotif",
@@ -133,9 +131,6 @@ calculate_beta <- function(zscore_motif) {
 
     # Restrict beta to a range of 1 to 4
     beta <- max(min(4, beta), 1)
-
-    # Return beta
-    return(beta)
 
     # Return beta
     return(beta)
@@ -202,8 +197,6 @@ calculate_strength <- function(zscore_motif, top_n_percent = 15) {
 
     # Find the median z-score of the highest num_probes probes
     median_zscore <- median(z_scores[1:num_probes])
-
-    names(median_zscore) <- top_n_percent
 
     # Return the average z-score
     return(median_zscore)
@@ -304,8 +297,6 @@ calculate_rolling_ic <- function(ppm, width = 5) {
         colSums() %>%
         zoo::rollmean(width) %>%
         max()
-
-    names(max_sliding_window_ic) <- width
 
     return(max_sliding_window_ic)
 }

@@ -13,21 +13,21 @@ annotate_fluorescence_table(
 )
 }
 \arguments{
-\item{fluorescence_file}{the name of the file containing the fluorescence
+\item{fluorescence_file}{the path to the file containing the fluorescence
 data to load. See 'Details' for expected columns.}
 
 \item{pbm_conditions}{a character vector specifying the PBM conditions (e.g.,
 cell type, treatment, and factor profiled) in the order they appear in
 \code{fluorescence_file}.}
 
-\item{annotation_file}{the name of the file containing the probe annotations
+\item{annotation_file}{the path to the file containing the probe annotations
 to use. See 'Details' for expected columns.}
 
 \item{array_id}{an optional (but recommended) tag specifying the particular
 array/experiment the fluorescence data is from.}
 
-\item{output_file}{the name of the TSV file where the anootated fluorescence
-table will be written. If NULL (the default), no file is written.}
+\item{output_file}{the path to the TSV file where the annotated fluorescence
+table will be written. If NULL (the default), no file is created.}
 }
 \value{
 A data frame containing the fluorescence values from the specified
