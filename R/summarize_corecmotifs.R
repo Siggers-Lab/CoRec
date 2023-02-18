@@ -1,38 +1,13 @@
-extract_dataframe <- function(corec_motifs) {
-    # Extract the relevant information from each corecmotif object
-    corecmotif_list <- lapply(corec_motifs, function(corec_motif) {
-        return(
-            list(
-                seed_name = corec_motif@seed_name,
-                pbm_condition = corec_motif@pbm_condition,
-                seed_zscore = corec_motif@seed_zscore,
-                motif_strength = corec_motif@motif_strength,
-                motif_match = ifelse(
-                    is.null(corec_motif@motif_match),
-                    NA,
-                    corec_motif@motif_match@altname
-                ),
-                motif_match_pvalue = corec_motif@motif_match_pvalue,
-                motif_cluster_match = corec_motif@motif_cluster_match
-            )
-        )
-    })
+summarize_corecmotifs <- function(corecmotifs) {
+    # Convert each corecmotif object into a data frame
+    corecmotif_df <-
+        lapply(corecmotifs, as.data.frame) %>%
 
-    # Convert the list of corecmotif information into a dataframe
-    corecmotif_dataframe <- dplyr::bind_rows(corecmotif_list)
-
-    # Add a column with the seed TF name without the MA* identifier
-    corecmotif_dataframe <-
-        corecmotif_dataframe %>%
-
-        # Remove everything up to and including the first underscore
-        dplyr::mutate(seed_TF = gsub(".*_", "", seed_name)) %>%
-
-        # Move the new column right after the seed_name column
-        dplyr::relocate(seed_TF, .after = seed_name)
+        # Combine all the data frames
+        dplyr::bind_rows(corecmotif_df_list)
 
     # Return the dataframe of corecmotif information
-    return(corecmotif_dataframe)
+    return(corecmotif_df)
 }
 
 combine_replicates <- function(input_file, output_directory, output_base_name) {
@@ -51,7 +26,7 @@ combine_replicates <- function(input_file, output_directory, output_base_name) {
     # Extract the dataframes of relevant info for each list of corecmotifs
     corec_motifs_dataframes <-
         lapply(corec_motifs, function(corec_motif_list) {
-            extract_dataframe(corec_motif_list)
+            summarize_corecmotifs(corec_motif_list)
         })
 
     # Pull out the relevant rows for each replicate from the relevant dataframe
