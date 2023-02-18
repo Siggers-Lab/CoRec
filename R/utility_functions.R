@@ -34,6 +34,10 @@ get_ppm <- function(corecmotif) {
     return(corecmotif@ppm)
 }
 
+get_motif_name <- function(corecmotif) {
+    return(corecmotif@ppm@name)
+}
+
 get_match_motif <- function(corecmotif) {
     return(corecmotif@match)
 }
@@ -50,5 +54,15 @@ get_match_cluster <- function(corecmotif) {
     return(corecmotif@match_cluster)
 }
 
+summarize_corecmotifs <- function(corecmotifs) {
+    # Convert each corecmotif object into a data frame
+    corecmotif_df <-
+        lapply(corecmotifs, as.data.frame) %>%
 
+        # Combine all the data frames
+        dplyr::bind_rows()
+
+    # Return the dataframe of corecmotif information
+    return(corecmotif_df)
+}
 

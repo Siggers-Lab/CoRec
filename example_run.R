@@ -1,33 +1,56 @@
+# Load the hTFArrayAnalysis package
 devtools::load_all()
 
-# Load the PBM conditions from a file
-pbm_conditions <-
+# Load the PBM conditions for replicate 1
+pbm_conditions_rep1 <-
     scan(
-        "./example_data/hTF_v1_example_pbm_conditions.txt",
+        "./example_data/hTF_v1_example_pbm_conditions_rep1.txt",
         what = character(),
         quiet = TRUE
     )
 
-# Set all the arguments
-output_directory <- "./example_data/example_output"
-fluorescence_file <- "./example_data/hTF_v1_example_fluorescence.dat"
-annotation_file <- "./example_data/hTF_v1_example_annotation.tsv"
-reference_motifs_file <-
-    "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
-output_base_name <- "example"
-array_id <- "v1_a11_run1"
-motif_strength_threshold <- 1
-rolling_ic_threshold <- 1.5
-comparison_method <- "ed"
-cluster_assignments_file <- "./example_data/motif_clusters.tsv"
-pvalue_threshold <- 0.05
+# Load the PBM conditions for replicate 2
+pbm_conditions_rep2 <-
+    scan(
+        "./example_data/hTF_v1_example_pbm_conditions_rep2.txt",
+        what = character(),
+        quiet = TRUE
+    )
 
-# Run the analysis
-corec_motifs <- make_corecmotifs(
-    fluorescence_file = fluorescence_file,
-    pbm_conditions = pbm_conditions,
+# Set the common arguments
+output_directory <- "./example_data/example_output"
+annotation_file <- "./example_data/hTF_v1_example_annotation.tsv"
+
+# Make the corecmotifs for the replicate 1 array
+corecmotifs_rep1 <- make_corecmotifs(
+    fluorescence_file = "./example_data/hTF_v1_example_fluorescence_rep1.dat",
+    pbm_conditions = pbm_conditions_rep1,
     annotation_file = annotation_file,
     output_directory = output_directory,
-    output_base_name = output_base_name,
-    array_id = array_id
+    output_base_name = "example_rep1",
+    array_id = "v1_a11_run1"
 )
+
+# Make the corecmotifs for the replicate 2 array
+corecmotifs_rep2 <- make_corecmotifs(
+    fluorescence_file = "./example_data/hTF_v1_example_fluorescence_rep2.dat",
+    pbm_conditions = pbm_conditions_rep2,
+    annotation_file = annotation_file,
+    output_directory = output_directory,
+    output_base_name = "example_rep2",
+    array_id = "v1_a21_run1"
+)
+
+matched_corecmotifs <-
+    pipeline_part_2(
+        corecmotifs = c(corecmotifs_rep1, corecmotifs_rep2),
+        min_rolling_ic = 1,
+        min_motif_strength = 0.2,
+        min_n_replicates = 2,
+        max_eucl_distance = 0.4
+    )
+
+reference_motifs_file <-
+    "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
+cluster_assignments_file <- "./example_data/motif_clusters.tsv"
+

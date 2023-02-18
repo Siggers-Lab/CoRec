@@ -134,35 +134,36 @@ make_corecmotifs <-
     return(corecmotifs)
 }
 
-# #' @param reference_motifs_file
-# #' @param motif_strength_threshold
-# #' @param rolling_ic_threshold
-# #' @param comparison_method
-# #' @param cluster_assignments_file
-# #' @param pvalue_threshold
-#
-# motif_strength_threshold = 1,
-# rolling_ic_threshold = 1.5,
+pipeline_part_2 <-
+    function(
+        corecmotifs,
+        min_rolling_ic = 1,
+        min_motif_strength = 1,
+        min_n_replicates = 2,
+        max_eucl_distance = 0.4
+    ) {
+    # Filter out corecmotifs with low motif strength and/or rolling IC scores
+    filtered_corecmotifs <-
+        filter_corecmotifs(
+            corecmotifs,
+            rolling_ic = min_rolling_ic,
+            motif_strength = min_motif_strength
+        )
+
+    # Filter out corecmotifs that don't replicate
+    replicated_corecmotifs <-
+        match_replicates(
+            corecmotifs = filtered_corecmotifs,
+            min_n_replicates = min_n_replicates,
+            max_eucl_distance = max_eucl_distance
+        )
+}
+
 # comparison_method = "ed",
 # cluster_assignments_file = NULL,
 # pvalue_threshold = 0.05
 # reference_motifs_file,
 #
-# # Filter out corecmotifs with low scores
-# filtered_corec_motifs <-
-#     lapply(
-#         corec_motifs,
-#         function(corec_motif) {
-#             # If the score is above the threshold, keep this motif
-#             if (corec_motif@motif_strength > motif_strength_threshold &
-#                 corec_motif@rolling_ic > rolling_ic_threshold) {
-#                 return(corec_motif)
-#             }
-#         }
-#     ) %>%
-#
-#     # Remove NULL elements (from corecmotifs below the score threshold)
-#     plyr::compact()
 #
 # # Read in the table of cluster assignments (if provided)
 # if (!is.null(cluster_assignments_file)) {
