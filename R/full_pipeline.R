@@ -107,37 +107,27 @@ make_corecmotifs <-
     # Load and annotate the table of fluorescence values
     fluorescence_table <-
         annotate_fluorescence_table(
-            fluorescence_file,
-            pbm_conditions,
-            annotation_file,
-            array_id,
-            fluorescence_output
+            fluorescence_file = fluorescence_file,
+            pbm_conditions = pbm_conditions,
+            annotation_file = annotation_file,
+            output_file = fluorescence_output
         )
-
-    # Get the names of the data columns of fluorescence_table
-    fluorescence_columns <-
-        fluorescence_table %>%
-
-        # Select the columns whose names contain PBM condition names
-        dplyr::select(dplyr::contains(pbm_conditions)) %>%
-
-        # Keep just the column names
-        colnames()
 
     # Convert the fluorescence values into condition-wise z-scores
     zscore_table <-
         fluorescence_to_zscore_table(
-            fluorescence_table,
-            fluorescence_columns,
-            zscore_output
+            fluorescence_table = fluorescence_table,
+            fluorescence_columns = pbm_conditions,
+            output_file = zscore_output
         )
 
     # Make corecmotif objects for all the seed/condition combos
     corecmotifs <-
         zscore_table_to_corecmotifs(
-            zscore_table,
-            fluorescence_columns,
-            corec_output
+            zscore_table = zscore_table,
+            zscore_columns = pbm_conditions,
+            output_file = corec_output,
+            array_id = array_id
         )
 
     # Return the list of corecmotifs

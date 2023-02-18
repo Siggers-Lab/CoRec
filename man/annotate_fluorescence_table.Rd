@@ -8,7 +8,6 @@ annotate_fluorescence_table(
   fluorescence_file,
   pbm_conditions,
   annotation_file,
-  array_id = NULL,
   output_file = NULL
 )
 }
@@ -22,9 +21,6 @@ cell type, treatment, and factor profiled) in the order they appear in
 
 \item{annotation_file}{the path to the file containing the probe annotations
 to use. See 'Details' for expected columns.}
-
-\item{array_id}{an optional (but recommended) tag specifying the particular
-array/experiment the fluorescence data is from.}
 
 \item{output_file}{the path to the TSV file where the annotated fluorescence
 table will be written. If NULL (the default), no file is created.}
@@ -96,8 +92,8 @@ contains \eqn{6 + n} columns, where n is again the number of PBM conditions
 supplied to the \code{pbm_conditions} parameter. The first six columns will
 be the columns from the annotation file (described above). The remaining
 columns will contain the fluorescence values for each condition and will be
-named based on the vector of PBM conditions supplied to \code{pbm_conditions}
-and the tag supplied to \code{array_id} (if any).
+named based on the vector of PBM conditions supplied to
+\code{pbm_conditions}.
 }
 }
 \examples{
@@ -111,7 +107,6 @@ fluorescence_table <-
             "UT_SUDHL4_SUZ12",
             "UT_SUDHL4_PRMT5"
         ),
-        annotation_file = "example_data/hTF_v1_annotation.tsv",
-        array_id = "v1_a6_run1"
+        annotation_file = "example_data/hTF_v1_annotation.tsv"
     )
 }

@@ -9,13 +9,14 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #'
 #' @slot seed_name character.
 #' @slot pbm_condition character.
+#' @slot array_id character.
 #' @slot beta numeric.
 #' @slot zscore_motif data.frame.
 #' @slot rolling_ic numeric.
 #' @slot motif_strength numeric.
 #' @slot ppm universalmotif.
 #' @slot seed_sequence character.
-#' @slot match universalmotif_or_NULL.
+#' @slot match_motif universalmotif_or_NULL.
 #' @slot match_method character.
 #' @slot match_pvalue numeric.
 #' @slot match_cluster character.
@@ -32,13 +33,14 @@ setClass(
     slots = list(
         seed_name = "character",
         pbm_condition = "character",
+        array_id = "character",
         beta = "numeric",
         zscore_motif = "matrix",
         rolling_ic = "numeric",
         motif_strength = "numeric",
         seed_sequence = "character",
         ppm = "universalmotif",
-        match = "universalmotif_or_NULL",
+        match_motif = "universalmotif_or_NULL",
         match_method = "character",
         match_pvalue = "numeric",
         match_cluster = "character"
@@ -48,13 +50,14 @@ setClass(
     prototype = list(
         seed_name = NA_character_,
         pbm_condition = NA_character_,
+        array_id = NA_character_,
         beta = NA_real_,
         zscore_motif = matrix(NA_real_),
         rolling_ic = NA_real_,
         motif_strength = NA_real_,
         seed_sequence = NA_character_,
         ppm = universalmotif::create_motif("ACGT"),
-        match = NULL,
+        match_motif = NULL,
         match_method = NA_character_,
         match_pvalue = NA_real_,
         match_cluster = NA_character_

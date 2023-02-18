@@ -51,7 +51,7 @@ This is a convenience function that calls
 \code{\link{fluorescence_to_zscore_table}}, and
 \code{\link{zscore_table_to_corecmotifs}} and optionally saves the outputs
 using file names generated from user input. By default no output files are
-created. To save output files, you must supply \code{output_directory},
+created. To save output files, you must provide \code{output_directory},
 \code{output_base_name}, or both. If \code{output_directory} is provided but
 \code{output_base_name} is not, the files will be saved in the provided
 directory using the base name "output". If \code{output_base_name} is

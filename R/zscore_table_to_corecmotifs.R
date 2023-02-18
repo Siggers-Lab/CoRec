@@ -11,6 +11,8 @@
 #'   of \code{zscore_table} that contain z-score data.
 #' @param output_file the path to the RDS file where the list of corecmotif
 #'   objects will be written. If NULL (the default), no file is written.
+#' @param array_id an optional (but recommended) tag specifying the particular
+#'   array/experiment the fluorescence data is from.
 #'
 #' @return A list of \linkS4class{corecmotif} objects, one for each possible
 #'   combination of the probe sets in \code{zscore_table} and the PBM conditions
@@ -37,14 +39,21 @@
 #'             "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
 #'             "v1_a11_run1_UT_SUDHL4_SUZ12",
 #'             "v1_a11_run1_UT_SUDHL4_PRMT5"
-#'         )
+#'         ),
+#'         array_id = "v1_a11_run1"
 #'     )
 zscore_table_to_corecmotifs <-
     function(
         zscore_table,
         zscore_columns,
-        output_file = NULL
+        output_file = NULL,
+        array_id = NULL
     ) {
+    # If array_id is NULL, switch it to NA_character_
+    if (is.null(array_id)) {
+        array_id <- NA_character_
+    }
+
     # Make a table of motif data
     motif_table <-
         zscore_table %>%
@@ -75,7 +84,8 @@ zscore_table_to_corecmotifs <-
                 seed_name = motif_table$seed_names,
                 pbm_condition = motif_table$pbm_conditions,
                 zscore_motif = motif_table$zscore_motif,
-                seed_sequence = motif_table$probe_seq
+                seed_sequence = motif_table$probe_seq,
+                array_id = array_id
             ),
             corecmotif
         )

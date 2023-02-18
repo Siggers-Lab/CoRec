@@ -57,8 +57,8 @@
 #' supplied to the \code{pbm_conditions} parameter. The first six columns will
 #' be the columns from the annotation file (described above). The remaining
 #' columns will contain the fluorescence values for each condition and will be
-#' named based on the vector of PBM conditions supplied to \code{pbm_conditions}
-#' and the tag supplied to \code{array_id} (if any).
+#' named based on the vector of PBM conditions supplied to
+#' \code{pbm_conditions}.
 #'
 #' @param fluorescence_file the path to the file containing the fluorescence
 #'   data to load. See 'Details' for expected columns.
@@ -67,8 +67,6 @@
 #'   \code{fluorescence_file}.
 #' @param annotation_file the path to the file containing the probe annotations
 #'   to use. See 'Details' for expected columns.
-#' @param array_id an optional (but recommended) tag specifying the particular
-#'   array/experiment the fluorescence data is from.
 #' @param output_file the path to the TSV file where the annotated fluorescence
 #'   table will be written. If NULL (the default), no file is created.
 #'
@@ -89,15 +87,13 @@
 #'             "UT_SUDHL4_SUZ12",
 #'             "UT_SUDHL4_PRMT5"
 #'         ),
-#'         annotation_file = "example_data/hTF_v1_annotation.tsv",
-#'         array_id = "v1_a6_run1"
+#'         annotation_file = "example_data/hTF_v1_annotation.tsv"
 #'     )
 annotate_fluorescence_table <-
     function(
         fluorescence_file,
         pbm_conditions,
         annotation_file,
-        array_id = NULL,
         output_file = NULL
     ) {
     # Load the table of fluorescence values
@@ -120,13 +116,6 @@ annotate_fluorescence_table <-
             length(pbm_conditions),
             call. = FALSE
         )
-    }
-
-    # Add the run tag (if provided) to the PBM conditions to make column names
-    if (is.null(array_id)) {
-        column_names <- pbm_conditions
-    } else {
-        column_names <- paste(array_id, pbm_conditions, sep = "_")
     }
 
     # Load the annotation file
@@ -171,7 +160,7 @@ annotate_fluorescence_table <-
                 "probeID",
                 "probe_seq",
                 "num_conditions",
-                column_names
+                pbm_conditions
             )
         ) %>%
 

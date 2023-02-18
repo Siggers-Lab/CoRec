@@ -4,7 +4,12 @@
 \alias{zscore_table_to_corecmotifs}
 \title{Create \linkS4class{corecmotif} objects from a table of z-score data}
 \usage{
-zscore_table_to_corecmotifs(zscore_table, zscore_columns, output_file = NULL)
+zscore_table_to_corecmotifs(
+  zscore_table,
+  zscore_columns,
+  output_file = NULL,
+  array_id = NULL
+)
 }
 \arguments{
 \item{zscore_table}{a data frame of z-scores and annotations for each probe.
@@ -16,6 +21,9 @@ of \code{zscore_table} that contain z-score data.}
 
 \item{output_file}{the path to the RDS file where the list of corecmotif
 objects will be written. If NULL (the default), no file is written.}
+
+\item{array_id}{an optional (but recommended) tag specifying the particular
+array/experiment the fluorescence data is from.}
 }
 \value{
 A list of \linkS4class{corecmotif} objects, one for each possible
@@ -46,6 +54,7 @@ corec_motifs <-
             "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
             "v1_a11_run1_UT_SUDHL4_SUZ12",
             "v1_a11_run1_UT_SUDHL4_PRMT5"
-        )
+        ),
+        array_id = "v1_a11_run1"
     )
 }
