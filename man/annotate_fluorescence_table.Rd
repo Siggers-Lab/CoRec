@@ -100,13 +100,14 @@ named based on the vector of PBM conditions supplied to
 # Load and annotate the example fluorescence table
 fluorescence_table <-
     annotate_fluorescence_table(
-        fluorescence_file = "example_data/hTF_v1_example_fluorescence.dat",
+        fluorescence_file =
+            "example_data/hTF_v1_example_fluorescence_rep1.dat",
         pbm_conditions = c(
-            "UT_SUDHL4_SMARCA4MIX",
-            "UT_SUDHL4_HDAC1MIX",
-            "UT_SUDHL4_SUZ12",
-            "UT_SUDHL4_PRMT5"
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC1_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
         ),
-        annotation_file = "example_data/hTF_v1_annotation.tsv"
+        annotation_file = "example_data/hTF_v1_example_annotation.tsv"
     )
 }

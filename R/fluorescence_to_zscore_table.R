@@ -25,7 +25,7 @@
 #' # Load the example fluorescence data
 #' fluorescence_table <-
 #'     read.table(
-#'         "example_data/example_output/example_v1_a11_run1_fluorescence.tsv",
+#'         "example_data/output/example_rep1_v1_a11_run1_fluorescence.tsv",
 #'         header = TRUE,
 #'         sep = "\t",
 #'         stringsAsFactors = FALSE
@@ -36,10 +36,10 @@
 #'     fluorescence_to_zscore_table(
 #'         fluorescence_table,
 #'         fluorescence_columns = c(
-#'             "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
-#'             "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
-#'             "v1_a11_run1_UT_SUDHL4_SUZ12",
-#'             "v1_a11_run1_UT_SUDHL4_PRMT5"
+#'             "UT_SUDHL4_SWISNF_mix",
+#'             "UT_SUDHL4_HDAC1_mix",
+#'             "UT_SUDHL4_PRMT5",
+#'             "UT_SUDHL4_JMJD2A"
 #'         )
 #'     )
 fluorescence_to_zscore_table <-
@@ -48,6 +48,33 @@ fluorescence_to_zscore_table <-
         fluorescence_columns,
         output_file = NULL
     ) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(is.data.frame(fluorescence_table))
+    assertthat::assert_that(is.character(fluorescence_columns))
+    assertthat::assert_that(
+        assertthat::is.string(output_file) || is.null(output_file),
+        msg = "output_file is not a character vector or NULL"
+    )
+
+    # Make sure the fluorescence table has the expected columns
+    expected_cols <- c(
+        "probeID",
+        "probe_type",
+        "probe_seq",
+        "seed_names",
+        "SNV_pos_offset",
+        "SNV_nuc",
+        fluorescence_columns
+    )
+    if (! all(expected_cols %in% colnames(fluorescence_table))) {
+        stop(
+            "fluorescence_table is missing one or more expected columns\n",
+            "Expected columns: ",
+            paste(expected_cols, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
     # Find the indices of the rows that contain background probes
     background_rows <-
         which(fluorescence_table$probe_type == "BACKGROUND")
@@ -83,13 +110,27 @@ fluorescence_to_zscore_table <-
 
     # Save the z-score table if necessary
     if (!is.null(output_file)) {
-        write.table(
-            zscore_table,
-            output_file,
-            quote = FALSE,
-            sep = "\t",
-            row.names = FALSE,
-            col.names = TRUE
+        tryCatch(
+            # Try to save the z-score table to the output file
+            suppressWarnings(
+                write.table(
+                    zscore_table,
+                    output_file,
+                    quote = FALSE,
+                    sep = "\t",
+                    row.names = FALSE,
+                    col.names = TRUE
+                )
+            ),
+            # If it fails, skip the output saving step with a warning
+            error = function(e) {
+                warning(
+                    "Could not write to output file '",
+                    output_file,
+                    "'\nSkipping output file creation...",
+                    call. = FALSE
+                )
+            }
         )
     }
 

@@ -1,7 +1,7 @@
-#' Make a list of corecmotif objects
+#' Make a list of \linkS4class{CoRecMotif} objects
 #'
-#' Creates a list of corecmotif objects using fluorescence data from a CoRec
-#' experiment.
+#' Creates a list of \linkS4class{CoRecMotif} objects using fluorescence data
+#' from a CoRec experiment.
 #'
 #' This is a convenience function that calls
 #' \code{\link{annotate_fluorescence_table}},
@@ -37,7 +37,7 @@
 #' @param array_id an optional (but recommended) tag specifying the particular
 #'   array/experiment the fluorescence data is from.
 #'
-#' @return A list of \linkS4class{corecmotif} objects, one for each possible
+#' @return A list of \linkS4class{CoRecMotif} objects, one for each possible
 #'   combination of the probe sets annotated in \code{annotation_file} and the
 #'   PBM conditions listed in \code{pbm_conditions}.
 #'
@@ -48,16 +48,15 @@
 #' @examples
 #' corecmotifs <-
 #'     make_corecmotifs(
-#'         fluorescence_file = "./example_data/hTF_v1_example_fluorescence.dat",
+#'         fluorescence_file =
+#'             "example_data/hTF_v1_example_fluorescence_rep1.dat",
 #'         pbm_conditions = c(
-#'             "UT_SUDHL4_SMARCA4MIX",
-#'             "UT_SUDHL4_HDAC1MIX",
-#'              "UT_SUDHL4_SUZ12",
-#'              "UT_SUDHL4_PRMT5"
+#'             "UT_SUDHL4_SWISNF_mix",
+#'             "UT_SUDHL4_HDAC1_mix",
+#'             "UT_SUDHL4_PRMT5",
+#'             "UT_SUDHL4_JMJD2A"
 #'         ),
-#'         annotation_file = "example_data/hTF_v1_annotation.tsv",
-#'         output_directory = "./example_data/example_output",
-#'         output_base_name = "example",
+#'         annotation_file = "example_data/hTF_v1_example_annotation.tsv"
 #'         array_id = "v1_a6_run1"
 #'     )
 make_corecmotifs <-
@@ -69,6 +68,21 @@ make_corecmotifs <-
         output_base_name = NULL,
         array_id = NULL
     ) {
+    # Make sure the output arguments are the right type
+    # Everything else is checked in the other functions this one calls
+    assertthat::assert_that(
+        assertthat::is.string(output_directory) || is.null(output_directory),
+        msg = "output_directory is not a character vector or NULL"
+    )
+    assertthat::assert_that(
+        assertthat::is.string(output_base_name) || is.null(output_base_name),
+        msg = "output_base_name is not a character vector or NULL"
+    )
+    assertthat::assert_that(
+        assertthat::is.string(array_id) || is.null(array_id),
+        msg = "array_id is not a character vector or NULL"
+    )
+
     # Do not save any output files by default
     fluorescence_output <- NULL
     zscore_output <- NULL
@@ -137,10 +151,15 @@ make_corecmotifs <-
 pipeline_part_2 <-
     function(
         corecmotifs,
+        reference_motifs_file,
         min_rolling_ic = 1,
         min_motif_strength = 1,
         min_n_replicates = 2,
-        max_eucl_distance = 0.4
+        max_eucl_distance = 0.4,
+        min_overlap = 5,
+        cluster_assignments = NULL,
+        max_match_pvalue = 0.05,
+        meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
     ) {
     # Filter out corecmotifs with low motif strength and/or rolling IC scores
     filtered_corecmotifs <-
@@ -150,74 +169,35 @@ pipeline_part_2 <-
             motif_strength = min_motif_strength
         )
 
-    # Filter out corecmotifs that don't replicate
+    # Filter out CoRecMotifs that don't replicate
     replicated_corecmotifs <-
         match_replicates(
             corecmotifs = filtered_corecmotifs,
             min_n_replicates = min_n_replicates,
             max_eucl_distance = max_eucl_distance
         )
+
+    # Find the best matching reference motif for each CoRecMotif
+    matched_corecmotifs <-
+        find_match(
+            corecmotifs = replicated_corecmotifs,
+            reference_motifs_file = reference_motifs_file,
+            cluster_assignments = cluster_assignments,
+            min_overlap = min_overlap,
+            meme_path = meme_path
+        )
+
+    # Filter out CoRecMotifs that don't match any reference motifs well
+    filtered_matched_corecmotifs <-
+        filter_corecmotifs(
+            matched_corecmotifs,
+            match_pvalue = max_match_pvalue
+        ) %>%
+
+        # Make sure at least min_n_replicates match a reference motif well
+        match_replicates(
+            min_n_replicates = min_n_replicates,
+            max_eucl_distance = NULL
+        )
 }
-
-# comparison_method = "ed",
-# cluster_assignments_file = NULL,
-# pvalue_threshold = 0.05
-# reference_motifs_file,
-#
-#
-# # Read in the table of cluster assignments (if provided)
-# if (!is.null(cluster_assignments_file)) {
-#     cluster_assignments <-
-#         read.table(
-#             cluster_assignments_file,
-#             header = TRUE, sep = "\t"
-#         )
-# } else {
-#     cluster_assignments <- NULL
-# }
-#
-# # Compare the filtered corecmotifs to the library of reference TF motifs
-# matched_corec_motifs <-
-#     purrr::map(
-#         filtered_corec_motifs,
-#         identify_motif_match,
-#         reference_motifs_file = reference_motifs_file,
-#         cluster_assignments = cluster_assignments,
-#         method = comparison_method
-#     )
-#
-# # Save the list of matched corecmotifs as a single RDS file
-# saveRDS(
-#     matched_corec_motifs,
-#     paste0(output_base_name, "_matched_corecmotifs.rds")
-# )
-#
-# # Pull out the corecmotif PPMs that matched a reference motif well
-# lapply(matched_corec_motifs, function(corec_motif) {
-#     if (!(is.na(corec_motif@motif_match_pvalue)) &
-#         corec_motif@motif_match_pvalue < pvalue_threshold) {
-#         # Pull out the PPM
-#         ppm <- corec_motif@ppm
-#
-#         # Add the name of the matched motif to the PPM name
-#         ppm@name <-
-#             paste0(ppm@name, "_", corec_motif@motif_match@altname)
-#
-#         # Return the updated PPM
-#         return(ppm)
-#     }
-# }) %>%
-#
-#     # Remove NULL elements (from corecmotifs above the pvalue threshold)
-#     plyr::compact() %>%
-#
-#     # Save a MEME format file of the matched corecmotifs
-#     universalmotif::write_meme(
-#         paste0(output_base_name, "_motifs.meme"),
-#         overwrite = TRUE
-#     )
-#
-# # Return
-# return(matched_corec_motifs)
-
 

@@ -39,7 +39,7 @@ background probes in that condition.
 # Load the example fluorescence data
 fluorescence_table <-
     read.table(
-        "example_data/example_output/example_v1_a11_run1_fluorescence.tsv",
+        "example_data/output/example_rep1_v1_a11_run1_fluorescence.tsv",
         header = TRUE,
         sep = "\t",
         stringsAsFactors = FALSE
@@ -50,10 +50,10 @@ zscore_table <-
     fluorescence_to_zscore_table(
         fluorescence_table,
         fluorescence_columns = c(
-            "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
-            "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
-            "v1_a11_run1_UT_SUDHL4_SUZ12",
-            "v1_a11_run1_UT_SUDHL4_PRMT5"
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC1_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
         )
     )
 }

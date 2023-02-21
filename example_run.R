@@ -20,6 +20,13 @@ pbm_conditions_rep2 <-
 # Set the common arguments
 output_directory <- "./example_data/example_output"
 annotation_file <- "./example_data/hTF_v1_example_annotation.tsv"
+reference_motifs_file <-
+    "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
+cluster_assignments <-
+    read.table(
+        "./example_data/motif_clusters.tsv",
+        header = TRUE, sep = "\t"
+    )
 
 # Make the corecmotifs for the replicate 1 array
 corecmotifs_rep1 <- make_corecmotifs(
@@ -44,13 +51,15 @@ corecmotifs_rep2 <- make_corecmotifs(
 matched_corecmotifs <-
     pipeline_part_2(
         corecmotifs = c(corecmotifs_rep1, corecmotifs_rep2),
+        reference_motifs_file = reference_motifs_file,
         min_rolling_ic = 1,
-        min_motif_strength = 0.2,
+        min_motif_strength = 1,
         min_n_replicates = 2,
-        max_eucl_distance = 0.4
+        max_eucl_distance = 0.4,
+        min_overlap = 5,
+        cluster_assignments = cluster_assignments,
+        max_match_pvalue = 0.05,
+        meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
     )
 
-reference_motifs_file <-
-    "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
-cluster_assignments_file <- "./example_data/motif_clusters.tsv"
 

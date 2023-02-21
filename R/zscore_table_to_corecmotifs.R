@@ -1,6 +1,6 @@
-#' Create \linkS4class{corecmotif} objects from a table of z-score data
+#' Create \linkS4class{CoRecMotif} objects from a table of z-score data
 #'
-#' Creates a list of \linkS4class{corecmotif} objects for all possible
+#' Creates a list of \linkS4class{CoRecMotif} objects for all possible
 #' combinations of the probe sets present in \code{zscore_table} and the PBM
 #' conditions given in \code{zscore_columns}.
 #'
@@ -9,12 +9,12 @@
 #'   description of the expected annotation columns.
 #' @param zscore_columns a character vector specifying the names of the columns
 #'   of \code{zscore_table} that contain z-score data.
-#' @param output_file the path to the RDS file where the list of corecmotif
+#' @param output_file the path to the RDS file where the list of CoRecMotif
 #'   objects will be written. If NULL (the default), no file is written.
 #' @param array_id an optional (but recommended) tag specifying the particular
 #'   array/experiment the fluorescence data is from.
 #'
-#' @return A list of \linkS4class{corecmotif} objects, one for each possible
+#' @return A list of \linkS4class{CoRecMotif} objects, one for each possible
 #'   combination of the probe sets in \code{zscore_table} and the PBM conditions
 #'   listed in \code{zscore_columns}.
 #'
@@ -24,21 +24,21 @@
 #' # Load the example z-score table
 #' zscore_table <-
 #'     read.table(
-#'         "example_data/example_output/example_v1_a11_run1_zscores.tsv",
+#'         "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
 #'         header = TRUE,
 #'         sep = "\t",
 #'         stringsAsFactors = FALSE
 #'     )
 #'
-#' # Make a list of corecmotif objects
-#' corec_motifs <-
+#' # Make a list of CoRecMotif objects
+#' corecmotifs <-
 #'     zscore_table_to_corecmotifs(
 #'         zscore_table,
-#'         zscore_columns = c(
-#'             "v1_a11_run1_UT_SUDHL4_SMARCA4MIX",
-#'             "v1_a11_run1_UT_SUDHL4_HDAC1MIX",
-#'             "v1_a11_run1_UT_SUDHL4_SUZ12",
-#'             "v1_a11_run1_UT_SUDHL4_PRMT5"
+#'         zscore_columns = = c(
+#'             "UT_SUDHL4_SWISNF_mix",
+#'             "UT_SUDHL4_HDAC1_mix",
+#'             "UT_SUDHL4_PRMT5",
+#'             "UT_SUDHL4_JMJD2A"
 #'         ),
 #'         array_id = "v1_a11_run1"
 #'     )
@@ -49,6 +49,37 @@ zscore_table_to_corecmotifs <-
         output_file = NULL,
         array_id = NULL
     ) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(is.data.frame(zscore_table))
+    assertthat::assert_that(is.character(zscore_columns))
+    assertthat::assert_that(
+        assertthat::is.string(output_file) || is.null(output_file),
+        msg = "output_file is not a character vector or NULL"
+    )
+    assertthat::assert_that(
+        assertthat::is.string(array_id) || is.null(array_id),
+        msg = "array_id is not a character vector or NULL"
+    )
+
+    # Make sure the z-score table has the expected columns
+    expected_cols <- c(
+        "probeID",
+        "probe_type",
+        "probe_seq",
+        "seed_names",
+        "SNV_pos_offset",
+        "SNV_nuc",
+        zscore_columns
+    )
+    if (! all(expected_cols %in% colnames(zscore_table))) {
+        stop(
+            "zscore_table is missing one or more expected columns\n",
+            "Expected columns: ",
+            paste(expected_cols, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
     # If array_id is NULL, switch it to NA_character_
     if (is.null(array_id)) {
         array_id <- NA_character_
@@ -72,13 +103,13 @@ zscore_table_to_corecmotifs <-
             zscore_motif = purrr::map2(
                 seed_names,
                 pbm_conditions,
-                extract_zscore_motif,
+                make_zscore_motif,
                 zscore_table = zscore_table
             )
         )
 
-    # Convert the data frame into a list of corecmotif objects
-    corec_motifs <-
+    # Convert the data frame into a list of CoRecMotif objects
+    corecmotifs <-
         purrr::pmap(
             list(
                 seed_name = motif_table$seed_names,
@@ -87,19 +118,33 @@ zscore_table_to_corecmotifs <-
                 seed_sequence = motif_table$probe_seq,
                 array_id = array_id
             ),
-            corecmotif
+            CoRecMotif
         )
 
-    # Save the list of all corecmotifs as an RDS file if necessary
+    # Save the list of all CoRecMotifs as an RDS file if necessary
     if (!is.null(output_file)) {
-        saveRDS(
-            corec_motifs,
-            output_file
+        tryCatch(
+            # Try to save the CoRecMotifs to the output file
+            suppressWarnings(
+                saveRDS(
+                    corecmotifs,
+                    output_file
+                )
+            ),
+            # If it fails, skip the output saving step with a warning
+            error = function(e) {
+                warning(
+                    "Could not write to output file '",
+                    output_file,
+                    "'\nSkipping output file creation...",
+                    call. = FALSE
+                )
+            }
         )
     }
 
-    # Return the list of corecmotif objects
-    return(corec_motifs)
+    # Return the list of CoRecMotifs
+    return(corecmotifs)
 }
 
 #' Create a z-score motif for a given probe set and PBM condition
@@ -126,7 +171,7 @@ zscore_table_to_corecmotifs <-
 #' # Load the example z-score table
 #' zscore_table <-
 #'     read.table(
-#'         "example_data/example_output/example_v1_a11_run1_zscores.tsv",
+#'         "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
 #'         header = TRUE,
 #'         sep = "\t",
 #'         stringsAsFactors = FALSE
@@ -134,12 +179,36 @@ zscore_table_to_corecmotifs <-
 #'
 #' # Create a z-score motif
 #' zscore_motif <-
-#'     extract_zscore_motif(
+#'     make_zscore_motif(
 #'         zscore_table,
 #'         probe_set = "MA0052.3_MEF2A",
-#'         pbm_condition = "v1_a11_run1_UT_SUDHL4_PRMT5"
+#'         pbm_condition = "UT_SUDHL4_PRMT5"
 #'     )
-extract_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
+make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(is.data.frame(zscore_table))
+    assertthat::assert_that(assertthat::is.string(probe_set))
+    assertthat::assert_that(assertthat::is.string(pbm_condition))
+
+    # Make sure the z-score table has the expected columns
+    expected_cols <- c(
+        "probeID",
+        "probe_type",
+        "probe_seq",
+        "seed_names",
+        "SNV_pos_offset",
+        "SNV_nuc",
+        pbm_condition
+    )
+    if (! all(expected_cols %in% colnames(zscore_table))) {
+        stop(
+            "zscore_table is missing one or more expected columns\n",
+            "Expected columns: ",
+            paste(expected_cols, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
     # Get the z-score of the seed probe for this seed_name/pbm_condition combo
     seed_zscore <-
         zscore_table %>%

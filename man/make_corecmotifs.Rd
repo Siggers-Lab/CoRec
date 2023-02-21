@@ -2,7 +2,7 @@
 % Please edit documentation in R/full_pipeline.R
 \name{make_corecmotifs}
 \alias{make_corecmotifs}
-\title{Make a list of corecmotif objects}
+\title{Make a list of \linkS4class{CoRecMotif} objects}
 \usage{
 make_corecmotifs(
   fluorescence_file,
@@ -37,13 +37,13 @@ be created unless output_directory or output_base_name is provided.}
 array/experiment the fluorescence data is from.}
 }
 \value{
-A list of \linkS4class{corecmotif} objects, one for each possible
+A list of \linkS4class{CoRecMotif} objects, one for each possible
 combination of the probe sets annotated in \code{annotation_file} and the
 PBM conditions listed in \code{pbm_conditions}.
 }
 \description{
-Creates a list of corecmotif objects using fluorescence data from a CoRec
-experiment.
+Creates a list of \linkS4class{CoRecMotif} objects using fluorescence data
+from a CoRec experiment.
 }
 \details{
 This is a convenience function that calls
@@ -66,16 +66,15 @@ provided, it will be appended to \code{output_base_name}. The outputs of
 \examples{
 corecmotifs <-
     make_corecmotifs(
-        fluorescence_file = "./example_data/hTF_v1_example_fluorescence.dat",
+        fluorescence_file =
+            "example_data/hTF_v1_example_fluorescence_rep1.dat",
         pbm_conditions = c(
-            "UT_SUDHL4_SMARCA4MIX",
-            "UT_SUDHL4_HDAC1MIX",
-             "UT_SUDHL4_SUZ12",
-             "UT_SUDHL4_PRMT5"
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC1_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
         ),
-        annotation_file = "example_data/hTF_v1_annotation.tsv",
-        output_directory = "./example_data/example_output",
-        output_base_name = "example",
+        annotation_file = "example_data/hTF_v1_example_annotation.tsv"
         array_id = "v1_a6_run1"
     )
 }

@@ -1,14 +1,56 @@
+#' Check reproducibility of a list of \linkS4class{CoRecMotif} objects
+#'
+#' Filter a list of \linkS4class{CoRecMotif} objects based on whether they are
+#' reproducible, i.e., found in multiple replicate experiments.
+#'
+#' @param corecmotifs the list of CoRecMotif objects to filter.
+#' @param min_n_replicates a single positive integer specifying the minimum
+#'   number of replicates to require.
+#' @param max_eucl_distance a single number specifying the maximum allowable
+#'   Euclidean distance between replicate motifs or NULL to skip the replicate
+#'   comparison step.
+#'
+#' @return A list of \linkS4class{CoRecMotif} objects that are reproducible.
+#'
+#' @export
+#'
+#' @examples
+#' # Load example CoRecMotifs
+#' corecmotifs_rep1 <-
+#'     readRDS(
+#'         "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
+#'     )
+#' corecmotifs_rep2 <-
+#'     readRDS(
+#'         "example_data/output/example_rep2_v1_a21_run1_all_corecmotifs.rds"
+#'     )
+#'
+#' # Filter out dissimilar "replicate" motifs
+#' replicated_corecmotifs <-
+#'     match_replicates(c(corecmotifs_rep1, corecmotifs_rep2))
 match_replicates <-
     function(
         corecmotifs,
         min_n_replicates = 2,
         max_eucl_distance = 0.4
     ) {
-    # Make a dataframe summarizing the corecmotifs
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(assertthat::is.count(min_n_replicates))
+    assertthat::assert_that(
+        assertthat::is.number(max_eucl_distance) || is.null(max_eucl_distance),
+        msg = "max_eucl_distance is not a single number or NULL"
+    )
+
+    # Make sure corecmotifs is a list
+    if (!is.list(corecmotifs)) {
+        corecmotifs <- list(corecmotifs)
+    }
+
+    # Make a dataframe summarizing the CoRecMotifs
     corecmotif_df <-
         summarize_corecmotifs(corecmotifs) %>%
 
-        # Add a column with the row number to map to the list of corecmotifs
+        # Add a column with the row number to map to the list of CoRecMotifs
         dplyr::mutate(index = dplyr::row_number()) %>%
 
         # Group replicates together
@@ -17,12 +59,21 @@ match_replicates <-
         # Remove any replicate groups that don't have enough motifs
         dplyr::filter(dplyr::n() >= min_n_replicates)
 
-    # Make a list of lists of replicate corecmotifs
+    # Make a list of lists of replicate CoRecMotifs
     grouped_corecmotifs <-
         corecmotif_df %>%
 
         # Each internal list is all the motifs that are replicates of each other
         dplyr::group_map(~ c(corecmotifs[.x$index]), .keep = TRUE)
+
+    # If not filtering by similarity, return the filtered list now
+    if (is.null(max_eucl_distance)) {
+        # Flatten the list before returning
+        grouped_corecmotifs <-
+            purrr::flatten(grouped_corecmotifs)
+
+        return(grouped_corecmotifs)
+    }
 
     # Make sure replicate motifs are actually replicating (i.e., similar)
     replicated_motifs <- lapply(grouped_corecmotifs, function(group) {

@@ -80,14 +80,15 @@
 #' # Load and annotate the example fluorescence table
 #' fluorescence_table <-
 #'     annotate_fluorescence_table(
-#'         fluorescence_file = "example_data/hTF_v1_example_fluorescence.dat",
+#'         fluorescence_file =
+#'             "example_data/hTF_v1_example_fluorescence_rep1.dat",
 #'         pbm_conditions = c(
-#'             "UT_SUDHL4_SMARCA4MIX",
-#'             "UT_SUDHL4_HDAC1MIX",
-#'             "UT_SUDHL4_SUZ12",
-#'             "UT_SUDHL4_PRMT5"
+#'             "UT_SUDHL4_SWISNF_mix",
+#'             "UT_SUDHL4_HDAC1_mix",
+#'             "UT_SUDHL4_PRMT5",
+#'             "UT_SUDHL4_JMJD2A"
 #'         ),
-#'         annotation_file = "example_data/hTF_v1_annotation.tsv"
+#'         annotation_file = "example_data/hTF_v1_example_annotation.tsv"
 #'     )
 annotate_fluorescence_table <-
     function(
@@ -96,6 +97,15 @@ annotate_fluorescence_table <-
         annotation_file,
         output_file = NULL
     ) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(assertthat::is.readable(fluorescence_file))
+    assertthat::assert_that(is.character(pbm_conditions))
+    assertthat::assert_that(assertthat::is.readable(annotation_file))
+    assertthat::assert_that(
+        assertthat::is.string(output_file) || is.null(output_file),
+        msg = "output_file is not a character vector or NULL"
+    )
+
     # Load the table of fluorescence values
     fluorescence_table <-
         read.table(
@@ -126,7 +136,29 @@ annotate_fluorescence_table <-
             sep = "\t",
             strip.white = TRUE,
             stringsAsFactors = FALSE
-        ) %>%
+        )
+
+    # Make sure the annotation table has the expected column names
+    expected_cols <- c(
+        "probeID",
+        "probe_type",
+        "probe_seq",
+        "seed_names",
+        "SNV_pos_offset",
+        "SNV_nuc"
+    )
+    if (! all(expected_cols %in% colnames(annotation))) {
+        stop(
+            "annotation_file is missing one or more expected columns\n",
+            "Expected columns: ",
+            paste(expected_cols, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
+    # Filter the annotation table
+    annotation <-
+        annotation %>%
 
         # Select only the required columns
         dplyr::select(
@@ -156,12 +188,7 @@ annotate_fluorescence_table <-
 
         # Rename the columns
         magrittr::set_colnames(
-            c(
-                "probeID",
-                "probe_seq",
-                "num_conditions",
-                pbm_conditions
-            )
+            c("probeID", "probe_seq", "num_conditions", pbm_conditions)
         ) %>%
 
         # Remove the unnecessary columns
@@ -184,13 +211,27 @@ annotate_fluorescence_table <-
 
     # Save the annotated fluorescence table if necessary
     if (!is.null(output_file)) {
-        write.table(
-            fluorescence_table,
-            output_file,
-            quote = FALSE,
-            sep = "\t",
-            row.names = FALSE,
-            col.names = TRUE
+        tryCatch(
+            # Try to save the fluorescence table to the output file
+            suppressWarnings(
+                write.table(
+                    fluorescence_table,
+                    output_file,
+                    quote = FALSE,
+                    sep = "\t",
+                    row.names = FALSE,
+                    col.names = TRUE
+                )
+            ),
+            # If it fails, skip the output saving step with a warning
+            error = function(e) {
+                warning(
+                    "Could not write to output file '",
+                    output_file,
+                    "'\nSkipping output file creation...",
+                    call. = FALSE
+                )
+            }
         )
     }
 
