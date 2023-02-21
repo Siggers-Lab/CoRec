@@ -120,6 +120,12 @@ filter_corecmotifs <-
         corecmotifs <- corecmotifs[vals %in% pbm_condition]
     }
 
+    # Filter by array_id
+    if (!is.null(array_id)) {
+        vals <- vapply(corecmotifs, get_array_id, character(1))
+        corecmotifs <- corecmotifs[vals %in% array_id]
+    }
+
     # Filter by rolling_ic
     if (!is.null(rolling_ic)) {
         vals <- vapply(corecmotifs, get_rolling_ic, numeric(1))
@@ -138,6 +144,22 @@ filter_corecmotifs <-
         corecmotifs <- corecmotifs[vals %in% seed_sequence]
     }
 
+    # Filter by motif_name
+    if (!is.null(motif_name)) {
+        vals <- vapply(corecmotifs, get_motif_name, character(1))
+        corecmotifs <- corecmotifs[vals %in% motif_name]
+    }
+
+    # Filter by match_name
+    if (!is.null(match_name)) {
+        vals <- vapply(corecmotifs, get_match_name, character(1))
+        corecmotifs <- corecmotifs[vals %in% match_name]
+    }
+
+    # Filter by match_altname
+    if (!is.null(match_altname)) {
+        vals <- vapply(corecmotifs, get_match_altname, character(1))
+        corecmotifs <- corecmotifs[vals %in% match_altname]
     }
 
     # Filter by match_pvalue
