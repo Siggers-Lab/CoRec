@@ -17,7 +17,6 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #' @slot ppm universalmotif.
 #' @slot seed_sequence character.
 #' @slot match_motif universalmotif_or_NULL.
-#' @slot match_method character.
 #' @slot match_pvalue numeric.
 #' @slot match_cluster character.
 #'
@@ -27,7 +26,7 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #' @examples
 setClass(
     # Name the class CoRecMotif
-    "corecmotif",
+    "CoRecMotif",
 
     # Define the names and types of the slots the class should have
     slots = list(
@@ -41,7 +40,6 @@ setClass(
         seed_sequence = "character",
         ppm = "universalmotif",
         match_motif = "universalmotif_or_NULL",
-        match_method = "character",
         match_pvalue = "numeric",
         match_cluster = "character"
     ),
@@ -58,7 +56,6 @@ setClass(
         seed_sequence = NA_character_,
         ppm = universalmotif::create_motif("ACGT"),
         match_motif = NULL,
-        match_method = NA_character_,
         match_pvalue = NA_real_,
         match_cluster = NA_character_
     )
@@ -81,7 +78,7 @@ setClass(
 #' @export
 #'
 #' @examples
-corecmotif <-
+CoRecMotif <-
     function(
         seed_name,
         pbm_condition,
@@ -104,7 +101,7 @@ corecmotif <-
             calculate_strength(zscore_motif)
 
         new(
-            "corecmotif",
+            "CoRecMotif",
             seed_name = seed_name,
             pbm_condition = pbm_condition,
             beta = beta,
@@ -206,7 +203,7 @@ calculate_strength <- function(zscore_motif, top_n_percent = 15) {
 }
 
 
-#' Update the motif cluster match of a corecmotif
+#' Update the motif cluster match of a CoRecMotif
 #'
 #' @param corecmotif
 #' @param cluster_assignments
@@ -217,16 +214,16 @@ calculate_strength <- function(zscore_motif, top_n_percent = 15) {
 #' @examples
 update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
     # Clear the cluster match slot if there are no clusters or no motif match
-    if (is.null(cluster_assignments) | is.null(corecmotif@motif_match)) {
-        corecmotif@motif_cluster_match <- NA_character_
+    if (is.null(cluster_assignments) | is.null(corecmotif@match_motif)) {
+        corecmotif@match_cluster <- NA_character_
 
         # Return the updated corecmotif
         return(corecmotif)
     }
 
     # Clear the cluster match slot if the motif match isn't in the clusters
-    if (!(corecmotif@motif_match@altname %in% cluster_assignments$motif)) {
-        corecmotif@motif_cluster_match <- NA_character_
+    if (!(corecmotif@match_motif@altname %in% cluster_assignments$motif)) {
+        corecmotif@match_cluster <- NA_character_
 
         # Print a warning message
         warning(
@@ -244,14 +241,14 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
 
         # Keep just the row corresponding to the best match motif
         dplyr::filter(
-            motif == corecmotif@motif_match@altname
+            motif == corecmotif@match_motif@altname
         ) %>%
 
         # Pull out the cluster name for this motif
         dplyr::pull(cluster)
 
     # Update the cluster match slot
-    corecmotif@motif_cluster_match <-
+    corecmotif@match_cluster <-
         as.character(best_cluster)
 
     # Return the updated corecmotif

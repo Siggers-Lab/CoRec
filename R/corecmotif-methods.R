@@ -1,6 +1,6 @@
 setMethod(
     "as.data.frame",
-    signature(x = "corecmotif"),
+    signature(x = "CoRecMotif"),
     definition = function(x) {
         data.frame(
             seed_name = get_seed_name(x),

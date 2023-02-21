@@ -2,8 +2,8 @@
 
 export("%>%")
 export()
+export(CoRecMotif)
 export(annotate_fluorescence_table)
-export(corecmotif)
 export(extract_zscore_motif)
 export(fluorescence_to_zscore_table)
 export(identify_motif_match)
