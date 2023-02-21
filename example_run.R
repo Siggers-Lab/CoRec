@@ -18,7 +18,7 @@ pbm_conditions_rep2 <-
     )
 
 # Set the common arguments
-output_directory <- "./example_data/example_output"
+output_directory <- "./example_data/output"
 annotation_file <- "./example_data/hTF_v1_example_annotation.tsv"
 reference_motifs_file <-
     "./example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
