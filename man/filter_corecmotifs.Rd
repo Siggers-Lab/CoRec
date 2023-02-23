@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_corecmotifs.R
 \name{filter_corecmotifs}
 \alias{filter_corecmotifs}
-\title{Filter a list of \linkS4class{CoRecMotif} objects}
+\title{Filter a list of CoRecMotifs}
 \usage{
 filter_corecmotifs(
   corecmotifs,
@@ -16,61 +16,61 @@ filter_corecmotifs(
   match_name = NULL,
   match_altname = NULL,
   match_pvalue = NULL,
-  match_cluster = NULL
+  match_cluster = NULL,
+  output_file = NULL
 )
 }
 \arguments{
-\item{corecmotifs}{the list of CoRecMotif objects to filter.}
+\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
 
 \item{seed_name}{a character vector specifying the seed names (probe sets) to
-keep.}
+keep. (Default: NULL)}
 
 \item{pbm_condition}{a character vector specifying the PBM conditions to
-keep.}
+keep. (Default: NULL)}
 
-\item{array_id}{a character vector specifying the array IDs to keep.}
+\item{array_id}{a character vector specifying the array IDs to keep.
+(Default: NULL)}
 
-\item{rolling_ic}{a single number specifying the minimum rolling IC to keep.}
+\item{rolling_ic}{a single number specifying the minimum rolling IC to keep.
+(Default: NULL)}
 
 \item{motif_strength}{a single number specifying the minimum motif strength
-to keep.}
+to keep. (Default: NULL)}
 
 \item{seed_sequence}{a character vector specifying the seed sequences to
-keep.}
+keep. (Default: NULL)}
 
-\item{motif_name}{a character vector specifying the motif names to keep.}
+\item{motif_name}{a character vector specifying the motif names to keep.
+(Default: NULL)}
 
 \item{match_name}{a character vector specifying the matching motif names to
-keep.}
+keep. (Default: NULL)}
 
 \item{match_altname}{a character vector specifying the matching motif
-altnames to keep.}
+altnames to keep. (Default: NULL)}
 
 \item{match_pvalue}{a single number specifying the maximum match p-value to
-keep.}
+keep. (Default: NULL)}
 
 \item{match_cluster}{a character vector specifying the matching clusters to
-keep.}
+keep. (Default: NULL)}
+
+\item{output_file}{the path to the RDS file where the filtered list of
+\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL, no file is
+written. (Default: NULL)}
 }
 \value{
-A list of \linkS4class{CoRecMotif} objects that pass the filters.
+A list of \link[=CoRecMotif-class]{CoRecMotifs} that pass the filters.
 }
 \description{
-Filter a list of \linkS4class{CoRecMotif} objects based on the contents of
-\linkS4class{CoRecMotif} slots.
+Filter a list of \link[=CoRecMotif-class]{CoRecMotifs} based on the contents of
+CoRecMotif slots.
+}
+\details{
+To skip filtering by a particular slot, set the corresponding argument to
+NULL (the default).
 }
 \examples{
-# Load example CoRecMotifs
-corecmotifs <-
-    readRDS(
-        "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
-    )
-
-# Filter by rolling IC and motif strength
-filtered_corecmotifs <-
-    filter_corecmotifs(
-        corecmotifs,
-        rolling_ic = 1,
-        motif_strength = 1
-    )
+print("FILL THIS IN")
 }

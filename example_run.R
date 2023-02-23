@@ -49,7 +49,7 @@ corecmotifs_rep2 <- make_corecmotifs(
 )
 
 matched_corecmotifs <-
-    pipeline_part_2(
+    process_corecmotifs(
         corecmotifs = c(corecmotifs_rep1, corecmotifs_rep2),
         reference_motifs_file = reference_motifs_file,
         min_rolling_ic = 1,

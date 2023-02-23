@@ -1,47 +1,28 @@
-#' Create \linkS4class{CoRecMotif} objects from a table of z-score data
+#' Create CoRecMotifs from a table of z-score data
 #'
-#' Creates a list of \linkS4class{CoRecMotif} objects for all possible
-#' combinations of the probe sets present in \code{zscore_table} and the PBM
-#' conditions given in \code{zscore_columns}.
+#' Creates a list of [CoRecMotifs][CoRecMotif-class] for all possible
+#' combinations of the probe sets present in `zscore_table` and the PBM
+#' conditions given in `zscore_columns`.
 #'
 #' @param zscore_table a data frame of z-scores and annotations for each probe.
-#'   See 'Details' of \code{\link{annotate_fluorescence_table}} for a
-#'   description of the expected annotation columns.
+#'   See 'Details' of [annotate_fluorescence_table()] for a description of the
+#'   expected annotation columns.
 #' @param zscore_columns a character vector specifying the names of the columns
-#'   of \code{zscore_table} that contain z-score data.
-#' @param output_file the path to the RDS file where the list of CoRecMotif
-#'   objects will be written. If NULL (the default), no file is written.
+#'   of `zscore_table` that contain z-score data.
 #' @param array_id an optional (but recommended) tag specifying the particular
-#'   array/experiment the fluorescence data is from.
+#'   array/experiment the fluorescence data is from. (Default: NULL)
+#' @param output_file the path to the RDS file where the list of
+#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL, no file is
+#'   written. (Default: NULL)
 #'
-#' @return A list of \linkS4class{CoRecMotif} objects, one for each possible
-#'   combination of the probe sets in \code{zscore_table} and the PBM conditions
-#'   listed in \code{zscore_columns}.
+#' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
+#'   combination of the probe sets in `zscore_table` and the PBM conditions
+#'   listed in `zscore_columns`.
 #'
 #' @export
 #'
 #' @examples
-#' # Load the example z-score table
-#' zscore_table <-
-#'     read.table(
-#'         "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
-#'         header = TRUE,
-#'         sep = "\t",
-#'         stringsAsFactors = FALSE
-#'     )
-#'
-#' # Make a list of CoRecMotif objects
-#' corecmotifs <-
-#'     zscore_table_to_corecmotifs(
-#'         zscore_table,
-#'         zscore_columns = = c(
-#'             "UT_SUDHL4_SWISNF_mix",
-#'             "UT_SUDHL4_HDAC1_mix",
-#'             "UT_SUDHL4_PRMT5",
-#'             "UT_SUDHL4_JMJD2A"
-#'         ),
-#'         array_id = "v1_a11_run1"
-#'     )
+#' print("FILL THIS IN")
 zscore_table_to_corecmotifs <-
     function(
         zscore_table,
@@ -130,11 +111,9 @@ zscore_table_to_corecmotifs <-
 #' correspond to nucleotides and the columns correspond to positions in the
 #' motif.
 #'
-#' @param zscore_table a data frame of z-scores and annotations for each probe.
-#'   See 'Details' of \code{\link{annotate_fluorescence_table}} for a
-#'   description of the expected annotation columns.
-#' @param probe_set a character string containing the name of the probe set
-#'   for which to create the z-score motif.
+#' @inheritParams zscore_table_to_corecmotifs
+#' @param probe_set a character string containing the name of the probe set for
+#'   which to create the z-score motif.
 #' @param pbm_condition a character string containing the name of the PBM
 #'   condition for which to create the z-score motif.
 #'
@@ -145,22 +124,7 @@ zscore_table_to_corecmotifs <-
 #' @export
 #'
 #' @examples
-#' # Load the example z-score table
-#' zscore_table <-
-#'     read.table(
-#'         "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
-#'         header = TRUE,
-#'         sep = "\t",
-#'         stringsAsFactors = FALSE
-#'     )
-#'
-#' # Create a z-score motif
-#' zscore_motif <-
-#'     make_zscore_motif(
-#'         zscore_table,
-#'         probe_set = "MA0052.3_MEF2A",
-#'         pbm_condition = "UT_SUDHL4_PRMT5"
-#'     )
+#' print("FILL THIS IN")
 make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(

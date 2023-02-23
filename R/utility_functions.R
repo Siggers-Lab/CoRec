@@ -58,6 +58,19 @@ get_match_cluster <- function(corecmotif) {
     return(corecmotif@match_cluster)
 }
 
+#' Make a data frame summarizing a list of CoRecMotifs
+#'
+#' Creates a data frame representation of a list of
+#' [CoRecMotifs][CoRecMotif-class].
+#'
+#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to summarize.
+#'
+#' @return A data frame with information about a list of
+#'   [CoRecMotifs][CoRecMotif-class].
+#' @export
+#'
+#' @examples
+#' print("FILL THIS IN")
 summarize_corecmotifs <- function(corecmotifs) {
     # Convert each corecmotif object into a data frame
     corecmotif_df <-

@@ -2,59 +2,40 @@
 % Please edit documentation in R/zscore_table_to_corecmotifs.R
 \name{zscore_table_to_corecmotifs}
 \alias{zscore_table_to_corecmotifs}
-\title{Create \linkS4class{CoRecMotif} objects from a table of z-score data}
+\title{Create CoRecMotifs from a table of z-score data}
 \usage{
 zscore_table_to_corecmotifs(
   zscore_table,
   zscore_columns,
-  output_file = NULL,
-  array_id = NULL
+  array_id = NULL,
+  output_file = NULL
 )
 }
 \arguments{
 \item{zscore_table}{a data frame of z-scores and annotations for each probe.
-See 'Details' of \code{\link{annotate_fluorescence_table}} for a
-description of the expected annotation columns.}
+See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a description of the
+expected annotation columns.}
 
 \item{zscore_columns}{a character vector specifying the names of the columns
 of \code{zscore_table} that contain z-score data.}
 
-\item{output_file}{the path to the RDS file where the list of CoRecMotif
-objects will be written. If NULL (the default), no file is written.}
-
 \item{array_id}{an optional (but recommended) tag specifying the particular
-array/experiment the fluorescence data is from.}
+array/experiment the fluorescence data is from. (Default: NULL)}
+
+\item{output_file}{the path to the RDS file where the list of
+\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL, no file is
+written. (Default: NULL)}
 }
 \value{
-A list of \linkS4class{CoRecMotif} objects, one for each possible
+A list of \link[=CoRecMotif-class]{CoRecMotifs}, one for each possible
 combination of the probe sets in \code{zscore_table} and the PBM conditions
 listed in \code{zscore_columns}.
 }
 \description{
-Creates a list of \linkS4class{CoRecMotif} objects for all possible
+Creates a list of \link[=CoRecMotif-class]{CoRecMotifs} for all possible
 combinations of the probe sets present in \code{zscore_table} and the PBM
 conditions given in \code{zscore_columns}.
 }
 \examples{
-# Load the example z-score table
-zscore_table <-
-    read.table(
-        "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
-        header = TRUE,
-        sep = "\t",
-        stringsAsFactors = FALSE
-    )
-
-# Make a list of CoRecMotif objects
-corecmotifs <-
-    zscore_table_to_corecmotifs(
-        zscore_table,
-        zscore_columns = = c(
-            "UT_SUDHL4_SWISNF_mix",
-            "UT_SUDHL4_HDAC1_mix",
-            "UT_SUDHL4_PRMT5",
-            "UT_SUDHL4_JMJD2A"
-        ),
-        array_id = "v1_a11_run1"
-    )
+print("FILL THIS IN")
 }

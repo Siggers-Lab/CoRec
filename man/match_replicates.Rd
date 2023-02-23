@@ -2,39 +2,36 @@
 % Please edit documentation in R/match_replicates.R
 \name{match_replicates}
 \alias{match_replicates}
-\title{Check reproducibility of a list of \linkS4class{CoRecMotif} objects}
+\title{Check reproducibility of a list of CoRecMotifs}
 \usage{
-match_replicates(corecmotifs, min_n_replicates = 2, max_eucl_distance = 0.4)
+match_replicates(
+  corecmotifs,
+  n_replicates = 2,
+  eucl_distance = 0.4,
+  output_file = NULL
+)
 }
 \arguments{
-\item{corecmotifs}{the list of CoRecMotif objects to filter.}
+\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
 
-\item{min_n_replicates}{a single positive integer specifying the minimum
-number of replicates to require.}
+\item{n_replicates}{a single positive integer specifying the minimum number
+of replicates to require.}
 
-\item{max_eucl_distance}{a single number specifying the maximum allowable
+\item{eucl_distance}{a single number specifying the maximum allowable
 Euclidean distance between replicate motifs or NULL to skip the replicate
 comparison step.}
+
+\item{output_file}{the path to the RDS file where the list of reproducible
+\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL (the default), no
+file is written.}
 }
 \value{
-A list of \linkS4class{CoRecMotif} objects that are reproducible.
+A list of \link[=CoRecMotif-class]{CoRecMotifs} that are reproducible.
 }
 \description{
-Filter a list of \linkS4class{CoRecMotif} objects based on whether they are
+Filter a list of \link[=CoRecMotif-class]{CoRecMotifs} based on whether they are
 reproducible, i.e., found in multiple replicate experiments.
 }
 \examples{
-# Load example CoRecMotifs
-corecmotifs_rep1 <-
-    readRDS(
-        "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
-    )
-corecmotifs_rep2 <-
-    readRDS(
-        "example_data/output/example_rep2_v1_a21_run1_all_corecmotifs.rds"
-    )
-
-# Filter out dissimilar "replicate" motifs
-replicated_corecmotifs <-
-    match_replicates(c(corecmotifs_rep1, corecmotifs_rep2))
+print("FILL THIS IN")
 }

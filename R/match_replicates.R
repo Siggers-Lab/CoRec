@@ -1,38 +1,30 @@
-#' Check reproducibility of a list of \linkS4class{CoRecMotif} objects
+#' Check reproducibility of a list of CoRecMotifs
 #'
-#' Filter a list of \linkS4class{CoRecMotif} objects based on whether they are
+#' Filter a list of [CoRecMotifs][CoRecMotif-class] based on whether they are
 #' reproducible, i.e., found in multiple replicate experiments.
 #'
-#' @param corecmotifs the list of CoRecMotif objects to filter.
-#' @param min_n_replicates a single positive integer specifying the minimum
-#'   number of replicates to require.
-#' @param max_eucl_distance a single number specifying the maximum allowable
+#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to filter.
+#' @param n_replicates a single positive integer specifying the minimum number
+#'   of replicates to require.
+#' @param eucl_distance a single number specifying the maximum allowable
 #'   Euclidean distance between replicate motifs or NULL to skip the replicate
 #'   comparison step.
+#' @param output_file the path to the RDS file where the list of reproducible
+#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL (the default), no
+#'   file is written.
 #'
-#' @return A list of \linkS4class{CoRecMotif} objects that are reproducible.
+#' @return A list of [CoRecMotifs][CoRecMotif-class] that are reproducible.
 #'
 #' @export
 #'
 #' @examples
-#' # Load example CoRecMotifs
-#' corecmotifs_rep1 <-
-#'     readRDS(
-#'         "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
-#'     )
-#' corecmotifs_rep2 <-
-#'     readRDS(
-#'         "example_data/output/example_rep2_v1_a21_run1_all_corecmotifs.rds"
-#'     )
-#'
-#' # Filter out dissimilar "replicate" motifs
-#' replicated_corecmotifs <-
-#'     match_replicates(c(corecmotifs_rep1, corecmotifs_rep2))
+#' print("FILL THIS IN")
 match_replicates <-
     function(
         corecmotifs,
-        min_n_replicates = 2,
-        max_eucl_distance = 0.4
+        n_replicates = 2,
+        eucl_distance = 0.4,
+        output_file = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -57,7 +49,7 @@ match_replicates <-
         dplyr::group_by(seed_name, pbm_condition) %>%
 
         # Remove any replicate groups that don't have enough motifs
-        dplyr::filter(dplyr::n() >= min_n_replicates)
+        dplyr::filter(dplyr::n() >= n_replicates)
 
     # Make a list of lists of replicate CoRecMotifs
     grouped_corecmotifs <-
@@ -67,10 +59,13 @@ match_replicates <-
         dplyr::group_map(~ c(corecmotifs[.x$index]), .keep = TRUE)
 
     # If not filtering by similarity, return the filtered list now
-    if (is.null(max_eucl_distance)) {
+    if (is.null(eucl_distance)) {
         # Flatten the list before returning
         grouped_corecmotifs <-
             purrr::flatten(grouped_corecmotifs)
+
+        # Try to save the replicated CoRecMotifs as an RDS file if necessary
+        try_catch_save_output(grouped_corecmotifs, output_file, "rds")
 
         return(grouped_corecmotifs)
     }
@@ -109,28 +104,31 @@ match_replicates <-
             tidyr::pivot_longer(cols = colnames(motif_comparison)) %>%
 
             # Filter out self comparisons and dissimilar motifs
-            dplyr::filter(rowname != name & value <= max_eucl_distance) %>%
+            dplyr::filter(rowname != name & value <= eucl_distance) %>%
 
             # Get the names of all the remaining similar motifs
             dplyr::pull(rowname)
 
-        # Return the replicate corecmotifs that are replicating
+        # Return the replicate CoRecMotifs that are replicating
         return(group[motif_names %in% replicated_motif_names])
     })
 
     # Remove any groups that don't have enough motifs
     replicated_motifs <-
         lapply(replicated_motifs, function(group) {
-            if (length(group) < min_n_replicates) {
+            if (length(group) < n_replicates) {
                 return(NULL)
             }
             return(group)
         }) %>%
 
-        # Remove the grouping so it's a flat list of corecmotifs again
+        # Remove the grouping so it's a flat list of CoRecMotifs again
         purrr::flatten()
 
-    # Return the list of replicated corecmotifs
+    # Try to save the replicated CoRecMotifs as an RDS file if necessary
+    try_catch_save_output(replicated_corecmotifs, output_file, "rds")
+
+    # Return the list of replicated CoRecMotifs
     return(replicated_motifs)
 }
 

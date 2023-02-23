@@ -1,64 +1,54 @@
-#' Make a list of \linkS4class{CoRecMotif} objects
+#' Make a list of CoRecMotifs
 #'
-#' Creates a list of \linkS4class{CoRecMotif} objects using fluorescence data
-#' from a CoRec experiment.
+#' Creates a list of [CoRecMotifs][CoRecMotif-class] using fluorescence data
+#' from a CoRec experiment. This is a convenience function that calls
+#' [annotate_fluorescence_table()], [fluorescence_to_zscore_table()], and then
+#' [zscore_table_to_corecmotifs()].
 #'
-#' This is a convenience function that calls
-#' \code{\link{annotate_fluorescence_table}},
-#' \code{\link{fluorescence_to_zscore_table}}, and
-#' \code{\link{zscore_table_to_corecmotifs}} and optionally saves the outputs
-#' using file names generated from user input. By default no output files are
-#' created. To save output files, you must provide \code{output_directory},
-#' \code{output_base_name}, or both. If \code{output_directory} is provided but
-#' \code{output_base_name} is not, the files will be saved in the provided
-#' directory using the base name "output". If \code{output_base_name} is
-#' provided but \code{output_directory} is not, the files will be saved in the
-#' current working directory using the provided base name. If \code{array_id} is
-#' provided, it will be appended to \code{output_base_name}. The outputs of
-#' \code{\link{annotate_fluorescence_table}},
-#' \code{\link{fluorescence_to_zscore_table}}, and
-#' \code{\link{zscore_table_to_corecmotifs}} will be saved with the suffixes
-#' "_fluorescence.tsv", "_zscores.tsv", and "_all_corecmotifs.rds" respectively.
+#' By default no output files are created. To save output files, you must
+#' provide `output_directory`, `output_base_name`, or both. The output files are
+#' named according to the following rules.
 #'
+#' * If `output_directory` is provided but `output_base_name` is not, the files
+#'   will be saved in the provided directory using the base name "output".
+#' * If `output_base_name` is provided but `output_directory` is not, the files
+#'   will be saved in the working directory using the provided base name.
+#' * If `array_id` is provided, it will be appended to the output base name.
+#' * The individual output file names will be identified by a suffix appended
+#'   to the output base name after the array ID (if present).
+#' * The output of [annotate_fluorescence_table()] will have the suffix
+#'   "fluorescence.tsv".
+#' * The output of [fluorescence_to_zscore_table()] will have the suffix
+#'   "zscores.tsv"
+#' * The output of [zscore_table_to_corecmotifs()] will have the suffix
+#'   "all_corecmotifs.rds"
+#'
+#' @inheritParams annotate_fluorescence_table
+#' @inheritParams zscore_table_to_corecmotifs
 #' @param fluorescence_file the path to the file containing the fluorescence
-#'   data to load. See 'Details' of \code{\link{annotate_fluorescence_table}}
-#'   for expected columns.
-#' @param pbm_conditions a character vector specifying the PBM conditions (e.g.,
-#'   cell type, treatment, and factor profiled) in the order they appear in
-#'   \code{fluorescence_file}.
+#'   data to load. See 'Details' of [annotate_fluorescence_table()] for expected
+#'   columns.
 #' @param annotation_file the path to the file containing the probe annotations
-#'   to use. See 'Details' of \code{\link{annotate_fluorescence_table}} for
-#'   expected columns.
+#'   to use. See 'Details' of [annotate_fluorescence_table()] for expected
+#'   columns.
 #' @param output_directory the directory where output files will be saved. No
 #'   output files will be created unless output_directory or output_base_name is
-#'   provided.
+#'   provided. (Default: NULL)
 #' @param output_base_name the base name for output files. No output files will
 #'   be created unless output_directory or output_base_name is provided.
-#' @param array_id an optional (but recommended) tag specifying the particular
-#'   array/experiment the fluorescence data is from.
+#'   (Default: NULL)
 #'
-#' @return A list of \linkS4class{CoRecMotif} objects, one for each possible
-#'   combination of the probe sets annotated in \code{annotation_file} and the
-#'   PBM conditions listed in \code{pbm_conditions}.
+#' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
+#'   combination of the probe sets annotated in `annotation_file` and the PBM
+#'   conditions listed in `pbm_conditions`.
+#'
+#' @seealso [annotate_fluorescence_table()], [fluorescence_to_zscore_table()],
+#'   [zscore_table_to_corecmotifs()]
 #'
 #' @export
 #'
-#' @seealso \link{annotate_fluorescence_table},
-#'   \link{fluorescence_to_zscore_table}, \link{zscore_table_to_corecmotifs}
 #' @examples
-#' corecmotifs <-
-#'     make_corecmotifs(
-#'         fluorescence_file =
-#'             "example_data/hTF_v1_example_fluorescence_rep1.dat",
-#'         pbm_conditions = c(
-#'             "UT_SUDHL4_SWISNF_mix",
-#'             "UT_SUDHL4_HDAC1_mix",
-#'             "UT_SUDHL4_PRMT5",
-#'             "UT_SUDHL4_JMJD2A"
-#'         ),
-#'         annotation_file = "example_data/hTF_v1_example_annotation.tsv"
-#'         array_id = "v1_a6_run1"
-#'     )
+#' print("FILL THIS IN!")
 make_corecmotifs <-
     function(
         fluorescence_file,
@@ -126,18 +116,62 @@ make_corecmotifs <-
     return(corecmotifs)
 }
 
-pipeline_part_2 <-
+#' Filter a list of CoRecMotifs and match them to reference motifs
+#'
+#' Removes [CoRecMotifs][CoRecMotif-class] with low z-scores or motif strengths
+#' and CoRecMotifs that do not replicate, then compares the remaining
+#' CoRecMotifs to a database of reference motifs to identify the best match.
+#' This is a convenience function that calls [filter_corecmotifs()],
+#' [match_replicates()], [find_match()], then [filter_corecmotifs()] and
+#' [match_replicates()] again, and finally [summarize_corecmotifs()].
+#'
+#' By default no output files are created. To save output files, you must
+#' provide `output_directory`, `output_base_name`, or both. The output files are
+#' named according to the following rules.
+#'
+#' * If `output_directory` is provided but `output_base_name` is not, the files
+#'   will be saved in the provided directory using the base name "output".
+#' * If `output_base_name` is provided but `output_directory` is not, the files
+#'   will be saved in the working directory using the provided base name.
+#' * The individual output file names will be identified by a suffix appended
+#'   to the output base name.
+#' * The output after the first call to [filter_corecmotifs()] and
+#'   [match_replicates()] will have the suffix "filtered_corecmotifs.rds".
+#' * The output of [find_match()] will have the suffix
+#'   "matched_corecmotifs.rds".
+#' * The output after the second call to [filter_corecmotifs()] and
+#'   [match_replicates()] will have the suffix "significant_corecmotifs.rds".
+#' * The output of [summarize_corecmotifs()] will have the suffix
+#'   "significant_corecmotifs_summary.tsv".
+#'
+#' @inheritParams filter_corecmotifs
+#' @inheritParams match_replicates
+#' @inheritParams find_match
+#' @inheritParams make_corecmotifs
+#' @param corecmotifs The list of [CoRecMotifs][CoRecMotif-clas] to process.
+#'
+#' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
+#'   match a reference motif.
+#'
+#' @seealso [filter_corecmotifs()], [match_replicates()], [find_match()],
+#'   [summarize_corecmotifs()]
+#'
+#' @export
+#'
+#' @examples
+#' print("FILL THIS IN")
+process_corecmotifs <-
     function(
         corecmotifs,
         reference_motifs_file,
-        min_rolling_ic = 1,
-        min_motif_strength = 1,
-        min_n_replicates = 2,
-        max_eucl_distance = 0.4,
-        min_overlap = 5,
         cluster_assignments = NULL,
-        max_match_pvalue = 0.05,
-        meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
+        meme_path = NULL,
+        rolling_ic = 1,
+        motif_strength = 1,
+        n_replicates = 2,
+        eucl_distance = 0.4,
+        min_overlap = 5,
+        match_pvalue = 0.05,
         output_directory = NULL,
         output_base_name = NULL
     ) {
@@ -183,16 +217,17 @@ pipeline_part_2 <-
     filtered_corecmotifs <-
         filter_corecmotifs(
             corecmotifs,
-            rolling_ic = min_rolling_ic,
-            motif_strength = min_motif_strength
+            rolling_ic = rolling_ic,
+            motif_strength = motif_strength
         )
 
     # Filter out CoRecMotifs that don't replicate
     replicated_corecmotifs <-
         match_replicates(
             corecmotifs = filtered_corecmotifs,
-            min_n_replicates = min_n_replicates,
-            max_eucl_distance = max_eucl_distance
+            min_n_replicates = n_replicates,
+            max_eucl_distance = eucl_distance,
+            output_file = filtered_output
         )
 
     # Find the best matching reference motif for each CoRecMotif
@@ -210,12 +245,12 @@ pipeline_part_2 <-
     final_corecmotifs <-
         filter_corecmotifs(
             matched_corecmotifs,
-            match_pvalue = max_match_pvalue
+            match_pvalue = match_pvalue
         ) %>%
 
         # Make sure at least min_n_replicates match a reference motif well
         match_replicates(
-            min_n_replicates = min_n_replicates,
+            min_n_replicates = n_replicates,
             max_eucl_distance = NULL,
             output_file = final_output
         )

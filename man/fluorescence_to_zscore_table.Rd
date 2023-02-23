@@ -12,14 +12,14 @@ fluorescence_to_zscore_table(
 }
 \arguments{
 \item{fluorescence_table}{a data frame of fluorescence values and annotations
-for each probe. See 'Details' of \code{\link{annotate_fluorescence_table}}
-for a description of the expected annotation columns.}
+for each probe. See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a
+description of the expected annotation columns.}
 
 \item{fluorescence_columns}{a character vector specifying the names of the
 columns of \code{fluorescence_table} that contain fluorescence data.}
 
 \item{output_file}{the path to the TSV file where the annotated z-score table
-will be written. If NULL (the default), no file is written.}
+will be written. If NULL, no file is written. (Default: NULL)}
 }
 \value{
 A data frame of column-wise fluorescence z-scores and probe
@@ -36,24 +36,5 @@ using the mean and standard deviation of the fluorescence values of the
 background probes in that condition.
 }
 \examples{
-# Load the example fluorescence data
-fluorescence_table <-
-    read.table(
-        "example_data/output/example_rep1_v1_a11_run1_fluorescence.tsv",
-        header = TRUE,
-        sep = "\t",
-        stringsAsFactors = FALSE
-    )
-
-# Convert the fluorescence data into z-scores
-zscore_table <-
-    fluorescence_to_zscore_table(
-        fluorescence_table,
-        fluorescence_columns = c(
-            "UT_SUDHL4_SWISNF_mix",
-            "UT_SUDHL4_HDAC1_mix",
-            "UT_SUDHL4_PRMT5",
-            "UT_SUDHL4_JMJD2A"
-        )
-    )
+print("FILL THIS IN")
 }

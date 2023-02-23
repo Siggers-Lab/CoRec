@@ -1,47 +1,44 @@
-#' Filter a list of \linkS4class{CoRecMotif} objects
+#' Filter a list of CoRecMotifs
 #'
-#' Filter a list of \linkS4class{CoRecMotif} objects based on the contents of
-#' \linkS4class{CoRecMotif} slots.
+#' Filter a list of [CoRecMotifs][CoRecMotif-class] based on the contents of
+#' CoRecMotif slots.
 #'
-#' @param corecmotifs the list of CoRecMotif objects to filter.
+#' To skip filtering by a particular slot, set the corresponding argument to
+#' NULL (the default).
+#'
+#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to filter.
 #' @param seed_name a character vector specifying the seed names (probe sets) to
-#'   keep.
+#'   keep. (Default: NULL)
 #' @param pbm_condition a character vector specifying the PBM conditions to
-#'   keep.
+#'   keep. (Default: NULL)
 #' @param array_id a character vector specifying the array IDs to keep.
+#'   (Default: NULL)
 #' @param rolling_ic a single number specifying the minimum rolling IC to keep.
+#'   (Default: NULL)
 #' @param motif_strength a single number specifying the minimum motif strength
-#'   to keep.
+#'   to keep. (Default: NULL)
 #' @param seed_sequence a character vector specifying the seed sequences to
-#'   keep.
+#'   keep. (Default: NULL)
 #' @param motif_name a character vector specifying the motif names to keep.
+#'   (Default: NULL)
 #' @param match_name a character vector specifying the matching motif names to
-#'   keep.
+#'   keep. (Default: NULL)
 #' @param match_altname a character vector specifying the matching motif
-#'   altnames to keep.
+#'   altnames to keep. (Default: NULL)
 #' @param match_pvalue a single number specifying the maximum match p-value to
-#'   keep.
+#'   keep. (Default: NULL)
 #' @param match_cluster a character vector specifying the matching clusters to
-#'   keep.
+#'   keep. (Default: NULL)
+#' @param output_file the path to the RDS file where the filtered list of
+#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL, no file is
+#'   written. (Default: NULL)
 #'
-#' @return A list of \linkS4class{CoRecMotif} objects that pass the filters.
+#' @return A list of [CoRecMotifs][CoRecMotif-class] that pass the filters.
 #'
 #' @export
 #'
 #' @examples
-#' # Load example CoRecMotifs
-#' corecmotifs <-
-#'     readRDS(
-#'         "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
-#'     )
-#'
-#' # Filter by rolling IC and motif strength
-#' filtered_corecmotifs <-
-#'     filter_corecmotifs(
-#'         corecmotifs,
-#'         rolling_ic = 1,
-#'         motif_strength = 1
-#'     )
+#' print("FILL THIS IN")
 filter_corecmotifs <-
     function(
         corecmotifs,

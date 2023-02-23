@@ -1,46 +1,39 @@
-#' Match a list of \linkS4class{CoRecMotif} objects to reference motifs
+#' Match a list of CoRecMotifs to reference motifs
 #'
 #' Identifies the reference motif that is the best match to each
-#' \linkS4class{CoRecMotif}.
+#' [CoRecMotif][CoRecMotif-class].
 #'
-#' The PPM representation of each CoRecMotif is compared to the reference motifs
-#' with \link{\code{memes::runTomTom()}} using Euclidean distance ("ed") as the
-#' distance metric. The match_motif and match_pvalue slots are filled in based
-#' on the best match returned by \link{\code{memes::runTomTom()}}. The
+#' The PPM representation of each [CoRecMotif][CoRecMotif-class] is compared to
+#' the reference motifs with [memes::runTomTom()] using Euclidean distance
+#' ("ed") as the distance metric. The match_motif and match_pvalue slots are
+#' filled in based on the best match returned by [memes::runTomTom()]. The
 #' match_pvalue slot is corrected for multiple comparisons by multiplying the
 #' raw match p-value by the number of motifs in the reference database. The
 #' match_cluster slot is filled in based on the user-provided cluster
 #' assignments or left empty if no cluster assignments are provided.
 #'
-#' @param corecmotifs the list of CoRecMotif objects to match to reference
-#'   motifs.
+#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to match to
+#'   reference motifs.
 #' @param reference_motifs_file the path to a MEME format file of reference
 #'   motifs to match to.
 #' @param cluster_assignments a data frame mapping the reference motifs to motif
 #'   clusters or NULL to skip the cluster assignment step.
-#' @param min_overlap a single positive integer specifying the minimum amount of
-#'   overlap to require when comparing a CoRecMotif to a reference motif.
 #' @param meme_path the path to "meme/bin/" or NULL to rely on
-#'   \link{\code{memes::runTomTom()}} to find it.
+#'   [memes::runTomTom()] to find it.
+#' @param min_overlap a single positive integer specifying the minimum amount of
+#'   overlap to require when comparing a [CoRecMotif][CoRecMotif-class] to a
+#'   reference motif.
+#' @param output_file the path to the RDS file where the list of matched
+#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL (the default), no
+#'   file is written.
 #'
-#' @return A list of \linkS4class{CoRecMotif} objects with the match_motif,
+#' @return A list of [CoRecMotifs][CoRecMotif-class] with the match_motif,
 #'   match_pvalue, and (optionally) match_cluster slots filled in.
 #'
 #' @export
 #'
 #' @examples
-#' # Load example CoRecMotifs
-#' corecmotifs <-
-#'     readRDS(
-#'         "example_data/output/example_rep1_v1_a11_run1_all_corecmotifs.rds"
-#'     )
-#'
-#' # Compare the CoRecMotifs to the reference motifs
-#' matched_corecmotifs <-
-#'     find_match(
-#'         corecmotifs,
-#'         "example_data/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
-#'     )
+#' print("FILL THIS IN")
 find_match <-
     function(
         corecmotifs,

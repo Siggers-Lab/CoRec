@@ -8,11 +8,11 @@ make_zscore_motif(zscore_table, probe_set, pbm_condition)
 }
 \arguments{
 \item{zscore_table}{a data frame of z-scores and annotations for each probe.
-See 'Details' of \code{\link{annotate_fluorescence_table}} for a
-description of the expected annotation columns.}
+See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a description of the
+expected annotation columns.}
 
-\item{probe_set}{a character string containing the name of the probe set
-for which to create the z-score motif.}
+\item{probe_set}{a character string containing the name of the probe set for
+which to create the z-score motif.}
 
 \item{pbm_condition}{a character string containing the name of the PBM
 condition for which to create the z-score motif.}
@@ -28,20 +28,5 @@ correspond to nucleotides and the columns correspond to positions in the
 motif.
 }
 \examples{
-# Load the example z-score table
-zscore_table <-
-    read.table(
-        "example_data/output/example_rep1_v1_a11_run1_zscores.tsv",
-        header = TRUE,
-        sep = "\t",
-        stringsAsFactors = FALSE
-    )
-
-# Create a z-score motif
-zscore_motif <-
-    make_zscore_motif(
-        zscore_table,
-        probe_set = "MA0052.3_MEF2A",
-        pbm_condition = "UT_SUDHL4_PRMT5"
-    )
+print("FILL THIS IN")
 }
