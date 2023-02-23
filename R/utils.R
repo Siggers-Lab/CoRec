@@ -18,6 +18,30 @@ get_zscore_motif <- function(corecmotif) {
     return(corecmotif@zscore_motif)
 }
 
+# Convert a z-score motif to a delta z-score motif
+#
+# Transforms the given z-score motif by subtracting the median z-score at each
+# position from the z-score for each probe at that position.
+#
+# @param zscore_motif A data frame representing a z-score motif, where the rows
+#   are nucleotides and the columns are positions in the motif.
+#
+# @return A data frame representing the delta z-score motif corresponding to the
+#   provided z-score motif, where the rows are nucleotides and the columns are
+#   positions in the motif.
+get_delta_zscore_motif <- function(corecmotif) {
+    # Get the z-score motif
+    zscore_motif <- get_zscore_motif(corecmotif)
+
+    # Transform the z-scores to reflect their deviation from column-wise median
+    delta_zscore_motif <-
+        # Subtract the column-wise median from each value in each column
+        apply(zscore_motif, 2, function(col) {col - median(col)})
+
+    # Return the delta z-score motif
+    return(delta_zscore_motif)
+}
+
 get_rolling_ic <- function(corecmotif) {
     return(corecmotif@rolling_ic)
 }
@@ -100,4 +124,63 @@ summarize_corecmotifs <- function(corecmotifs) {
     # Return the dataframe of corecmotif information
     return(corecmotif_df)
 }
+
+#' Update the match cluster of a CoRecMotif
+#'
+#' Update the `match_cluster` slot of a [CoRecMotif][CoRecMotif-class] based on
+#' the provided cluster assignments and the name of the motif in the
+#' CoRecMotif's `match_motif` slot.
+#'
+#' @param corecmotif the [CoRecMotif][CoRecMotif-class] to update.
+#' @param cluster_assignments a data frame of reference motif names and the
+#'   clusters they are assigned to or NULL to reset the `match_cluster` slot to
+#'   NA. (Default: NULL)
+#'
+#' @return A [CoRecMotif][CoRecMotif-class] with its `match_cluster` slot
+#'   updated.
+#' @export
+#'
+#' @examples
+#' print("FILL THIS IN")
+update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
+    # Clear the cluster match slot if there are no clusters or no motif match
+    if (is.null(cluster_assignments) || is.null(corecmotif@match_motif)) {
+        corecmotif@match_cluster <- NA_character_
+
+        # Return the updated corecmotif
+        return(corecmotif)
+    }
+
+    # Clear the cluster match slot if the motif match isn't in the clusters
+    if (!(corecmotif@match_motif@altname %in% cluster_assignments$motif)) {
+        corecmotif@match_cluster <- NA_character_
+
+        # Print a warning message
+        warning(
+            "Motif match altname not in cluster assignments table; ",
+            "setting cluster match to NA"
+        )
+
+        # Return the updated corecmotif
+        return(corecmotif)
+    }
+
+    # Figure out the cluster the best match motif is in
+    best_cluster <-
+        cluster_assignments %>%
+
+        # Keep just the row corresponding to the best match motif
+        dplyr::filter(motif == corecmotif@match_motif@altname) %>%
+
+        # Pull out the cluster name for this motif
+        dplyr::pull(cluster)
+
+    # Update the cluster match slot
+    corecmotif@match_cluster <-
+        as.character(best_cluster)
+
+    # Return the updated corecmotif
+    return(corecmotif)
+}
+
 

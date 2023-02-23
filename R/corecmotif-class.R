@@ -36,6 +36,8 @@ setClassUnion("universalmotif_or_NULL", c("universalmotif", "NULL"))
 #'
 #' @return An object of class `CoRecMotif`.
 #'
+#' @export
+#'
 #' @name CoRecMotif-class
 #' @rdname CoRecMotif-class
 setClass(
@@ -75,11 +77,9 @@ setClass(
     )
 )
 
-
-
 #' Make a new CoRecMotif
 #'
-#' Create a CoRecMotif from a matrix of z-scores.
+#' Create a CoRecMotif from a 4 x n matrix of z-scores.
 #'
 #' @param seed_name a string specifying the seed (or probe set) name.
 #' @param pbm_condition a string specifying the PBM condition (e.g., cell type,
@@ -104,205 +104,27 @@ CoRecMotif <-
         array_id = NA_character_,
         seed_sequence = NA_character_
     ) {
-        motif_name <-
-            paste(seed_name, pbm_condition, sep = "_")
+        motif_name <- paste(seed_name, pbm_condition, sep = "_")
 
-        beta <-
-            calculate_beta(zscore_motif)
+        beta <- calculate_beta(zscore_motif)
 
-        ppm <-
-            zscore_to_ppm(zscore_motif, beta, motif_name)
+        motif_strength <- calculate_strength(zscore_motif)
 
-        rolling_ic <-
-            calculate_rolling_ic(ppm)
+        ppm <- zscore_to_ppm(zscore_motif, beta, motif_name)
 
-        motif_strength <-
-            calculate_strength(zscore_motif)
+        rolling_ic <- calculate_rolling_ic(ppm)
 
         new(
             "CoRecMotif",
             seed_name = seed_name,
             pbm_condition = pbm_condition,
+            zscore_motif = zscore_motif,
             array_id = array_id,
             beta = beta,
-            zscore_motif = zscore_motif,
-            rolling_ic = rolling_ic,
             motif_strength = motif_strength,
+            rolling_ic = rolling_ic,
             seed_sequence = seed_sequence,
-            ppm = ppm,
-            match_motif = match_motif,
-            match_pvalue = match_pvalue,
-            match_cluster = match_cluster
+            ppm = ppm
         )
     }
-
-# Calculate the beta parameter to use when converting z-score motifs to PPMs
-calculate_beta <- function(zscore_motif) {
-    # Find the seed probe z-score
-    seed_zscore <- find_seed_zscore(zscore_motif)
-
-    # Calculate beta
-    beta <- 4 - (0.5 * seed_zscore)
-
-    # Restrict beta to a range of 1 to 4
-    beta <- max(min(4, beta), 1)
-
-    # Return beta
-    return(beta)
-}
-
-
-# Convert a z-score motif to a delta z-score motif
-#
-# Transforms the given z-score motif by subtracting the median z-score at each
-# position from the z-score for each probe at that position.
-#
-# @param zscore_motif A data frame representing a z-score motif, where the rows
-#   are nucleotides and the columns are positions in the motif.
-#
-# @return A data frame representing the delta z-score motif corresponding to the
-#   provided z-score motif, where the rows are nucleotides and the columns are
-#   positions in the motif.
-get_delta_zscore_motif <- function(corecmotif) {
-    # Get the z-score motif
-    zscore_motif <- get_zscore_motif(corecmotif)
-
-    # Transform the z-scores to reflect their deviation from column-wise median
-    delta_zscore_motif <-
-        # Subtract the column-wise median from each value in each column
-        apply(zscore_motif, 2, function(col) {col - median(col)})
-
-    # Return the delta z-score motif
-    return(delta_zscore_motif)
-}
-
-
-# Convert a z-score motif to a PPM
-zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
-    # Transform the z-scores using the beta parameter
-    ppm <-
-        # Multiply each z-score by beta and then take the exponential
-        exp(beta * zscore_motif) %>%
-
-        # Normalize by dividing each value in each column by the column-wise sum
-        apply(2, function(col) {col / sum(col)}) %>%
-
-        # Convert to a universalmotif object
-        universalmotif::create_motif(name = name)
-
-    # Return the PPM
-    return(ppm)
-}
-
-
-# Calculate the motif strength (median of top 15% of probes)
-calculate_strength <- function(zscore_motif) {
-    # Get a sorted list of all the probe z-scores
-    z_scores <-
-        sort(unique(unlist(zscore_motif)), decreasing = TRUE)
-
-    # Figure out how many probes to average (rounded up to the nearest integer)
-    num_probes <- ceiling(length(z_scores) * (15 / 100))
-
-    # Find the median z-score of the highest num_probes probes
-    median_zscore <- median(z_scores[1:num_probes])
-
-    # Return the average z-score
-    return(median_zscore)
-}
-
-
-#' Update the match cluster of a CoRecMotif
-#'
-#' Update the `match_cluster` slot of a [CoRecMotif][CoRecMotif-class] based on
-#' the provided cluster assignments and the name of the motif in the
-#' CoRecMotif's `match_motif` slot.
-#'
-#' @param corecmotif the [CoRecMotif][CoRecMotif-class] to update.
-#' @param cluster_assignments a data frame of reference motif names and the
-#'   clusters they are assigned to or NULL to reset the `match_cluster` slot to
-#'   NA. (Default: NULL)
-#'
-#' @return A [CoRecMotif][CoRecMotif-class] with its `match_cluster` slot
-#'   updated.
-#' @export
-#'
-#' @examples
-#' print("FILL THIS IN")
-update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
-    # Clear the cluster match slot if there are no clusters or no motif match
-    if (is.null(cluster_assignments) || is.null(corecmotif@match_motif)) {
-        corecmotif@match_cluster <- NA_character_
-
-        # Return the updated corecmotif
-        return(corecmotif)
-    }
-
-    # Clear the cluster match slot if the motif match isn't in the clusters
-    if (!(corecmotif@match_motif@altname %in% cluster_assignments$motif)) {
-        corecmotif@match_cluster <- NA_character_
-
-        # Print a warning message
-        warning(
-            "Motif match altname not in cluster assignments table; ",
-            "setting cluster match to NA"
-        )
-
-        # Return the updated corecmotif
-        return(corecmotif)
-    }
-
-    # Figure out the cluster the best match motif is in
-    best_cluster <-
-        cluster_assignments %>%
-
-        # Keep just the row corresponding to the best match motif
-        dplyr::filter(motif == corecmotif@match_motif@altname) %>%
-
-        # Pull out the cluster name for this motif
-        dplyr::pull(cluster)
-
-    # Update the cluster match slot
-    corecmotif@match_cluster <-
-        as.character(best_cluster)
-
-    # Return the updated corecmotif
-    return(corecmotif)
-}
-
-
-# Figure out the seed probe z-score from a z-score motif
-# This is separate from get_seed_zscore because this is used during creation of
-#   a new CoRecMotif, meaning you don't have the whole CoRecMotif object yet
-find_seed_zscore <- function(zscore_motif) {
-    seed_zscore <-
-        # The seed probe z-score shows up at every position of the z-score motif
-        which(table(zscore_motif) >= ncol(zscore_motif)) %>%
-
-        # The names of the frequency table are the z-scores
-        names() %>%
-
-        # Convert to numeric
-        as.numeric()
-
-    # Return the z-score
-    return(seed_zscore)
-}
-
-
-# Calculate the rolling information content over a window of length 5
-calculate_rolling_ic <- function(ppm) {
-    # Convert the PPM to an information content matrix
-    icm <-
-        universalmotif::convert_type(ppm, type = "ICM")
-
-    #
-    max_sliding_window_ic <-
-        icm@motif %>%
-        colSums() %>%
-        zoo::rollmean(5) %>%
-        max()
-
-    return(max_sliding_window_ic)
-}
 
