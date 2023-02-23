@@ -30,6 +30,24 @@ get_seed_sequence <- function(corecmotif) {
     return(corecmotif@seed_sequence)
 }
 
+# Seed probe z-score
+#
+# Finds the fluorescence value z-score of the seed probe of the z-score motif.
+#
+# @param zscore_motif A data frame representing a z-score motif, where the rows
+#   are nucleotides and the columns are positions in the motif.
+#
+# @return The fluorescence value z-score of the seed probe of the z-score motif.
+get_seed_zscore <- function(corecmotif) {
+    # Get the z-score motif
+    zscore_motif <- get_zscore_motif(corecmotif)
+
+    seed_zscore <- find_seed_zscore(zscore_motif)
+
+    # Return the z-score
+    return(seed_zscore)
+}
+
 get_ppm <- function(corecmotif) {
     return(corecmotif@ppm)
 }
@@ -81,46 +99,5 @@ summarize_corecmotifs <- function(corecmotifs) {
 
     # Return the dataframe of corecmotif information
     return(corecmotif_df)
-}
-
-
-set_seed_name <- function(corecmotif, seed_name) {
-    assertthat::assert_that(assertthat::is.string(seed_name))
-
-    corecmotif@seed_name <- seed_name
-
-    return(corecmotif)
-}
-
-set_pbm_condition <- function(corecmotif, pbm_condition) {
-    assertthat::assert_that(assertthat::is.string(pbm_condition))
-
-    corecmotif@pbm_condition <- pbm_condition
-
-    return(corecmotif)
-}
-
-set_array_id <- function(corecmotif, array_id) {
-    assertthat::assert_that(assertthat::is.string(array_id))
-
-    corecmotif@array_id <- array_id
-
-    return(corecmotif)
-}
-
-set_seed_sequence <- function(corecmotif, seed_sequence) {
-    assertthat::assert_that(assertthat::is.string(seed_sequence))
-
-    corecmotif@seed_sequence <- seed_sequence
-
-    return(corecmotif)
-}
-
-set_motif_name <- function(corecmotif, motif_name) {
-    assertthat::assert_that(assertthat::is.string(motif_name))
-
-    corecmotif@ppm@name <- motif_name
-
-    return(corecmotif)
 }
 
