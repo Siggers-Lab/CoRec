@@ -143,19 +143,28 @@ zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
     return(ppm)
 }
 
-# Calculate the rolling information content over a window of length 5
+# Calculate the max mean rolling information content over a window of length 5
 calculate_rolling_ic <- function(ppm) {
-    # Convert the PPM to an information content matrix
-    icm <-
-        universalmotif::convert_type(ppm, type = "ICM")
+    # Convert the PPM to an information content (IC) matrix
+    icm <- universalmotif::convert_type(ppm, type = "ICM")
 
-    #
-    max_sliding_window_ic <-
-        icm@motif %>%
-        colSums() %>%
-        zoo::rollmean(5) %>%
+    # Figure out the total IC at each position
+    ic_per_position <- universalmotif::colSums(icm)
+
+    # Get the mean IC over each window of length 5
+    max_rolling_ic <-
+        vapply(
+            1:(length(ic_per_position) - 5),
+            function(i) {
+                mean(ic_per_position[i:(i + 4)])
+            },
+            numeric(1)
+        ) %>%
+
+        # Find the window with the highest mean IC
         max()
 
-    return(max_sliding_window_ic)
+    # Return the max rolling IC
+    return(max_rolling_ic)
 }
 
