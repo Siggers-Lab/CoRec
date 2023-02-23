@@ -38,12 +38,12 @@ fluorescence_to_zscore_table <-
 
     # Make sure the fluorescence table has the expected columns
     expected_cols <- c(
-        "probeID",
+        "probe_id",
         "probe_type",
-        "probe_seq",
-        "seed_names",
-        "SNV_pos_offset",
-        "SNV_nuc",
+        "probe_sequence",
+        "probe_set",
+        "snv_position",
+        "snv_nucleotide",
         fluorescence_columns
     )
     if (!all(expected_cols %in% colnames(fluorescence_table))) {

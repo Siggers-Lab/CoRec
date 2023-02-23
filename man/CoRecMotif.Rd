@@ -30,7 +30,7 @@ z-score motif is from.}
 An object of class \link[=CoRecMotif-class]{CoRecMotif}.
 }
 \description{
-Create a CoRecMotif from a matrix of z-scores.
+Create a CoRecMotif from a 4 x n matrix of z-scores.
 }
 \examples{
 print("FILL THIS IN")

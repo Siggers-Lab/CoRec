@@ -7,7 +7,7 @@
 annotate_fluorescence_table(
   fluorescence_file,
   pbm_conditions,
-  annotation_file,
+  annotation,
   output_file = NULL
 )
 }
@@ -19,8 +19,8 @@ data to load. See 'Details' for expected columns.}
 cell type, treatment, and factor profiled) in the order they appear in
 \code{fluorescence_file}.}
 
-\item{annotation_file}{the path to the file containing the probe annotations
-to use. See 'Details' for expected columns.}
+\item{annotation}{a data frame containing the probe annotations to use. See
+\link{hTF_v1_annotation} for expected columns.}
 
 \item{output_file}{the path to the TSV file where the annotated fluorescence
 table will be written. If NULL, no file is created. (Default: NULL)}
@@ -33,7 +33,7 @@ annotation file. See 'Details' for a description of each column.
 \description{
 Reads a file containing fluorescence data (in which rows correspond to probes
 and columns correspond to fluorescence values) and adds probe metadata from
-an annotation file.
+an annotation table.
 }
 \details{
 \subsection{Fluorescence File}{
@@ -53,33 +53,17 @@ Columns 4 through \eqn{(n + 3)} must contain the fluorescence values for the
 PBM conditions in the order they appear in \code{pbm_conditions}.
 }
 
-\subsection{Annotation File}{
+\subsection{Annotation}{
 
-The probe annotation file supplied to the \code{annotation_file} parameter must
-have a header and must contain tab-delimited columns named \code{probeID},
-\code{probe_type}, \code{probe_seq}, \code{seed_names}, \code{SNV_pos_offset}, and \code{SNV_nuc}. The
-expected content of these columns is described below. The ordering of the
-columns does not matter. If additional columns are present, they will be
-removed.
-\itemize{
-\item \code{probeID}: The probe ID.
-\item \code{probe_type}: The probe type. This column should contain the values "MOTIF"
-and "BACKGROUND".
-\item \code{probe_seq}: The probe sequence
-\item \code{seed_names}: The seed name (the name of the probe set this probe is part
-of).
-\item \code{SNV_pos_offset}: The position of the SNV in the sequence.
-\item \code{SNV_nuc}: The nucleotide at the SNV position.
-}
-
-The IDs in the \code{probeID} column must match the IDs in the first column of the
-fluorescence data file (after the orientation tag has been removed). IDs that
-are not present in both will be dropped.The output data frame contains \eqn{6
-+ n} columns, where n is again the number of PBM conditions supplied to the
-\code{pbm_conditions} parameter. The first six columns will be the columns from
-the annotation file (described above). The remaining columns will contain the
-fluorescence values for each condition and will be named based on the vector
-of PBM conditions supplied to \code{pbm_conditions}.
+The IDs in the \code{probe_id} column must match the IDs in the first column of
+the fluorescence data file (after the orientation tag has been removed). IDs
+that are not present in both will be dropped.The output data frame contains
+\eqn{6 + n} columns, where n is again the number of PBM conditions supplied
+to the \code{pbm_conditions} parameter. The first six columns will be the columns
+from the annotation table (see \link{hTF_v1_annotation} for expected columns). The
+remaining columns will contain the fluorescence values for each condition and
+will be named based on the vector of PBM conditions supplied to
+\code{pbm_conditions}.
 }
 }
 \examples{

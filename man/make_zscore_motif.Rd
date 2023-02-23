@@ -4,15 +4,15 @@
 \alias{make_zscore_motif}
 \title{Create a z-score motif for a given probe set and PBM condition}
 \usage{
-make_zscore_motif(zscore_table, probe_set, pbm_condition)
+make_zscore_motif(zscore_table, probe_set_name, pbm_condition)
 }
 \arguments{
 \item{zscore_table}{a data frame of z-scores and annotations for each probe.
 See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a description of the
 expected annotation columns.}
 
-\item{probe_set}{a character string containing the name of the probe set for
-which to create the z-score motif.}
+\item{probe_set_name}{a character string containing the name of the probe set
+for which to create the z-score motif.}
 
 \item{pbm_condition}{a character string containing the name of the PBM
 condition for which to create the z-score motif.}

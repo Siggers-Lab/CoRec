@@ -28,9 +28,6 @@
 #' @param fluorescence_file the path to the file containing the fluorescence
 #'   data to load. See 'Details' of [annotate_fluorescence_table()] for expected
 #'   columns.
-#' @param annotation_file the path to the file containing the probe annotations
-#'   to use. See 'Details' of [annotate_fluorescence_table()] for expected
-#'   columns.
 #' @param output_directory the directory where output files will be saved. No
 #'   output files will be created unless output_directory or output_base_name is
 #'   provided. (Default: NULL)
@@ -39,7 +36,7 @@
 #'   (Default: NULL)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
-#'   combination of the probe sets annotated in `annotation_file` and the PBM
+#'   combination of the probe sets annotated in `annotation` and the PBM
 #'   conditions listed in `pbm_conditions`.
 #'
 #' @seealso [annotate_fluorescence_table()], [fluorescence_to_zscore_table()],
@@ -53,7 +50,7 @@ make_corecmotifs <-
     function(
         fluorescence_file,
         pbm_conditions,
-        annotation_file,
+        annotation,
         array_id = NULL,
         output_directory = NULL,
         output_base_name = NULL
@@ -63,8 +60,7 @@ make_corecmotifs <-
         assertthat::is.string(fluorescence_file) &&
             file.exists(fluorescence_file),
         is.character(pbm_conditions),
-        assertthat::is.string(annotation_file) &&
-            file.exists(annotation_file),
+        is.data.frame(annotation),
         assertthat::is.string(output_directory) || is.null(output_directory),
         assertthat::is.string(output_base_name) || is.null(output_base_name),
         assertthat::is.string(array_id) || is.null(array_id)
@@ -72,7 +68,7 @@ make_corecmotifs <-
 
     # Update the output base name with the output directory and array ID
     output_base_name <-
-        update_output_base_name(output_base_name, output_directory, array_id)
+        update_output_base_name(output_directory, output_base_name, array_id)
 
     # Do not save any output files by default
     fluorescence_output <- NULL
@@ -91,7 +87,7 @@ make_corecmotifs <-
         annotate_fluorescence_table(
             fluorescence_file = fluorescence_file,
             pbm_conditions = pbm_conditions,
-            annotation_file = annotation_file,
+            annotation = annotation,
             output_file = fluorescence_output
         )
 
@@ -148,7 +144,7 @@ make_corecmotifs <-
 #' @inheritParams check_replicates
 #' @inheritParams find_match
 #' @inheritParams make_corecmotifs
-#' @param corecmotifs The list of [CoRecMotifs][CoRecMotif-clas] to process.
+#' @param corecmotifs The list of [CoRecMotifs][CoRecMotif-class] to process.
 #'
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
 #'   match a reference motif.
@@ -193,7 +189,7 @@ process_corecmotifs <-
 
     # Update the output base name with the output directory
     output_base_name <-
-        update_output_base_name(output_base_name, output_directory)
+        update_output_base_name(output_directory, output_base_name)
 
     # Do not save any output files by default
     filtered_output <- NULL
@@ -225,8 +221,8 @@ process_corecmotifs <-
     replicated_corecmotifs <-
         check_replicates(
             corecmotifs = filtered_corecmotifs,
-            min_n_replicates = n_replicates,
-            max_eucl_distance = eucl_distance,
+            n_replicates = n_replicates,
+            eucl_distance = eucl_distance,
             output_file = filtered_output
         )
 
@@ -250,8 +246,8 @@ process_corecmotifs <-
 
         # Make sure at least min_n_replicates match a reference motif well
         check_replicates(
-            min_n_replicates = n_replicates,
-            max_eucl_distance = NULL,
+            n_replicates = n_replicates,
+            eucl_distance = NULL,
             output_file = final_output
         )
 

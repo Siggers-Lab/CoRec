@@ -40,12 +40,12 @@ zscore_table_to_corecmotifs <-
 
     # Make sure the z-score table has the expected columns
     expected_cols <- c(
-        "probeID",
+        "probe_id",
         "probe_type",
-        "probe_seq",
-        "seed_names",
-        "SNV_pos_offset",
-        "SNV_nuc",
+        "probe_sequence",
+        "probe_set",
+        "snv_position",
+        "snv_nucleotide",
         zscore_columns
     )
     if (!all(expected_cols %in% colnames(zscore_table))) {
@@ -67,10 +67,10 @@ zscore_table_to_corecmotifs <-
         zscore_table %>%
 
         # Keep only the seed probe row for each non-background probe set
-        dplyr::filter(SNV_pos_offset == 0) %>%
+        dplyr::filter(snv_position == 0) %>%
 
         # Keep only the probe set name and probe sequence columns
-        dplyr::select(seed_names, probe_seq) %>%
+        dplyr::select(probe_set, probe_sequence) %>%
 
         # Get all possible combinations of probe set names and PBM conditions
         tidyr::expand_grid(pbm_conditions = zscore_columns) %>%
@@ -78,7 +78,7 @@ zscore_table_to_corecmotifs <-
         # Make the z-score motif for each probe set/condition combination
         dplyr::mutate(
             zscore_motif = purrr::map2(
-                seed_names,
+                probe_set,
                 pbm_conditions,
                 make_zscore_motif,
                 zscore_table = zscore_table
@@ -89,10 +89,10 @@ zscore_table_to_corecmotifs <-
     corecmotifs <-
         purrr::pmap(
             list(
-                seed_name = motif_table$seed_names,
+                seed_name = motif_table$probe_set,
                 pbm_condition = motif_table$pbm_conditions,
                 zscore_motif = motif_table$zscore_motif,
-                seed_sequence = motif_table$probe_seq,
+                seed_sequence = motif_table$probe_sequence,
                 array_id = array_id
             ),
             CoRecMotif
@@ -112,8 +112,8 @@ zscore_table_to_corecmotifs <-
 #' motif.
 #'
 #' @inheritParams zscore_table_to_corecmotifs
-#' @param probe_set a character string containing the name of the probe set for
-#'   which to create the z-score motif.
+#' @param probe_set_name a character string containing the name of the probe set
+#'   for which to create the z-score motif.
 #' @param pbm_condition a character string containing the name of the PBM
 #'   condition for which to create the z-score motif.
 #'
@@ -125,22 +125,22 @@ zscore_table_to_corecmotifs <-
 #'
 #' @examples
 #' print("FILL THIS IN")
-make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
+make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         is.data.frame(zscore_table),
-        assertthat::is.string(probe_set),
+        assertthat::is.string(probe_set_name),
         assertthat::is.string(pbm_condition)
     )
 
     # Make sure the z-score table has the expected columns
     expected_cols <- c(
-        "probeID",
+        "probe_id",
         "probe_type",
-        "probe_seq",
-        "seed_names",
-        "SNV_pos_offset",
-        "SNV_nuc",
+        "probe_sequence",
+        "probe_set",
+        "snv_position",
+        "snv_nucleotide",
         pbm_condition
     )
     if (!all(expected_cols %in% colnames(zscore_table))) {
@@ -157,7 +157,7 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
         zscore_table %>%
 
         # Keep only the seed probe row from the relevant probe set
-        dplyr::filter(seed_names == probe_set & SNV_pos_offset == 0) %>%
+        dplyr::filter(probe_set == probe_set_name & snv_position == 0) %>%
 
         # Pull the z-score from the relevant PBM condition column
         dplyr::pull(pbm_condition)
@@ -166,7 +166,7 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
     if (length(seed_zscore) != 1) {
         stop(
             "Expected 1 seed probe for the probe set ",
-            probe_set,
+            probe_set_name,
             " but found ",
             length(seed_zscore),
             call. = FALSE
@@ -178,30 +178,30 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
         zscore_table %>%
 
         # Keep only the SV probe rows from the relevant probe set
-        dplyr::filter(seed_names == probe_set & SNV_pos_offset > 0) %>%
+        dplyr::filter(probe_set == probe_set_name & snv_position > 0) %>%
 
         # Keep only the nucleotide, position, and z-score columns
         dplyr::select(
-            SNV_pos_offset,
-            SNV_nuc,
+            snv_position,
+            snv_nucleotide,
             zscore = !!as.symbol(pbm_condition)
         ) %>%
 
         # Fill in missing SNV_pos_offset/SNV_nuc combos with the seed z-score
         tidyr::complete(
-            SNV_pos_offset,
-            SNV_nuc,
+            snv_position,
+            snv_nucleotide,
             fill = list(zscore = seed_zscore)
         ) %>%
 
         # Reformat so the columns are positions and the rows are nucleotides
         tidyr::pivot_wider(
-            names_from = SNV_pos_offset,
+            names_from = snv_position,
             values_from = zscore
         ) %>%
 
         # Make the nucleotides the row names
-        tibble::column_to_rownames("SNV_nuc") %>%
+        tibble::column_to_rownames("snv_nucleotide") %>%
 
         # Convert to a matrix
         as.matrix()

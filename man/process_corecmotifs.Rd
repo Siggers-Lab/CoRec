@@ -20,7 +20,7 @@ process_corecmotifs(
 )
 }
 \arguments{
-\item{corecmotifs}{The list of \link[=CoRecMotif-clas]{CoRecMotifs} to process.}
+\item{corecmotifs}{The list of \link[=CoRecMotif-class]{CoRecMotifs} to process.}
 
 \item{reference_motifs_file}{the path to a MEME format file of reference
 motifs to match to.}

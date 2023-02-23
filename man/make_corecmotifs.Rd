@@ -7,7 +7,7 @@
 make_corecmotifs(
   fluorescence_file,
   pbm_conditions,
-  annotation_file,
+  annotation,
   array_id = NULL,
   output_directory = NULL,
   output_base_name = NULL
@@ -22,9 +22,8 @@ columns.}
 cell type, treatment, and factor profiled) in the order they appear in
 \code{fluorescence_file}.}
 
-\item{annotation_file}{the path to the file containing the probe annotations
-to use. See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for expected
-columns.}
+\item{annotation}{a data frame containing the probe annotations to use. See
+\link{hTF_v1_annotation} for expected columns.}
 
 \item{array_id}{an optional (but recommended) tag specifying the particular
 array/experiment the fluorescence data is from. (Default: NULL)}
@@ -39,7 +38,7 @@ be created unless output_directory or output_base_name is provided.
 }
 \value{
 A list of \link[=CoRecMotif-class]{CoRecMotifs}, one for each possible
-combination of the probe sets annotated in \code{annotation_file} and the PBM
+combination of the probe sets annotated in \code{annotation} and the PBM
 conditions listed in \code{pbm_conditions}.
 }
 \description{
