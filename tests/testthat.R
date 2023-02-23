@@ -1,4 +1,4 @@
 library(testthat)
-library(hTFArrayAnalysis)
+library(CoRec)
 
-test_check("hTFArrayAnalysis")
+test_check("CoRec")

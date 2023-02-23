@@ -1,4 +1,4 @@
-# Load the hTFArrayAnalysis package
+# Load the CoRec package
 devtools::load_all()
 
 # Load the PBM conditions for replicate 1

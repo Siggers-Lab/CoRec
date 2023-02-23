@@ -3,7 +3,7 @@ test_that("bad arguments for fluorescence_file are handled correctly", {
     test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
     test_annotation_file <- system.file(
         "example_data/hTF_v1_example_annotation.tsv",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
 
     # Fails when given a value that isn't a character vector
@@ -22,11 +22,11 @@ test_that("bad arguments for fluorescence_file are handled correctly", {
             c(
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 ),
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 )
             ),
             pbm_conditions = test_pbm_conditions,
@@ -40,7 +40,7 @@ test_that("bad arguments for fluorescence_file are handled correctly", {
         annotate_fluorescence_table(
             system.file(
                 "example_data/nonexistent_file.txt",
-                package = "hTFArrayAnalysis"
+                package = "CoRec"
             ),
             pbm_conditions = test_pbm_conditions,
             annotation_file = test_annotation_file
@@ -53,11 +53,11 @@ test_that("bad arguments for pbm_conditions are handled correctly", {
     # Define some valid values for the other parameters
     test_fluorescence_file <- system.file(
         "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
     test_annotation_file <- system.file(
         "example_data/hTF_v1_example_annotation.tsv",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
 
     # Fails when given a value that isn't a character vector
@@ -85,7 +85,7 @@ test_that("bad arguments for annotation_file are handled correctly", {
     # Define some valid values for the other parameters
     test_fluorescence_file <- system.file(
         "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
     test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
 
@@ -107,11 +107,11 @@ test_that("bad arguments for annotation_file are handled correctly", {
             annotation_file = c(
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 ),
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 )
             )
         ),
@@ -125,7 +125,7 @@ test_that("bad arguments for annotation_file are handled correctly", {
             pbm_conditions = test_pbm_conditions,
             annotation_file = system.file(
                 "example_data/nonexistent_file.txt",
-                package = "hTFArrayAnalysis"
+                package = "CoRec"
             )
         ),
         "Path .* does not exist"
@@ -146,12 +146,12 @@ test_that("bad arguments for output_file are handled correctly", {
     # Define some valid values for the other parameters
     test_fluorescence_file <- system.file(
         "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
     test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
     test_annotation_file <- system.file(
         "example_data/hTF_v1_example_annotation.tsv",
-        package = "hTFArrayAnalysis"
+        package = "CoRec"
     )
 
     # Fails when given a value that isn't a character vector
@@ -174,11 +174,11 @@ test_that("bad arguments for output_file are handled correctly", {
             output_file = c(
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 ),
                 system.file(
                     "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 )
             )
         ),
@@ -194,7 +194,7 @@ test_that("bad arguments for output_file are handled correctly", {
             output_file = paste0(
                 system.file(
                     "example_data/output",
-                    package = "hTFArrayAnalysis"
+                    package = "CoRec"
                 ),
                 "/nonexistent_folder/nonexistent_file.txt"
             )
