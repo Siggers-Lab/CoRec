@@ -35,10 +35,10 @@ match_replicates <-
         max_eucl_distance = 0.4
     ) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(assertthat::is.count(min_n_replicates))
     assertthat::assert_that(
-        assertthat::is.number(max_eucl_distance) || is.null(max_eucl_distance),
-        msg = "max_eucl_distance is not a single number or NULL"
+        assertthat::is.count(n_replicates),
+        assertthat::is.number(eucl_distance) || is.null(eucl_distance),
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
     # Make sure corecmotifs is a list

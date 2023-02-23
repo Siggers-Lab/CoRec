@@ -68,19 +68,16 @@ make_corecmotifs <-
         output_base_name = NULL,
         array_id = NULL
     ) {
-    # Make sure the output arguments are the right type
-    # Everything else is checked in the other functions this one calls
+    # Make sure all the arguments are the right type
     assertthat::assert_that(
+        assertthat::is.string(fluorescence_file) &&
+            file.exists(fluorescence_file),
+        is.character(pbm_conditions),
+        assertthat::is.string(annotation_file) &&
+            file.exists(annotation_file),
         assertthat::is.string(output_directory) || is.null(output_directory),
-        msg = "output_directory is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         assertthat::is.string(output_base_name) || is.null(output_base_name),
-        msg = "output_base_name is not a character vector or NULL"
-    )
-    assertthat::assert_that(
-        assertthat::is.string(array_id) || is.null(array_id),
-        msg = "array_id is not a character vector or NULL"
+        assertthat::is.string(array_id) || is.null(array_id)
     )
 
     # Do not save any output files by default
@@ -161,7 +158,22 @@ pipeline_part_2 <-
         max_match_pvalue = 0.05,
         meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
     ) {
-    # Filter out corecmotifs with low motif strength and/or rolling IC scores
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        assertthat::is.string(reference_motifs_file) &&
+            file.exists(reference_motifs_file),
+        assertthat::is.string(output_directory) || is.null(output_directory),
+        assertthat::is.string(output_base_name) || is.null(output_base_name),
+        is.data.frame(cluster_assignments) || is.null(cluster_assignments),
+        assertthat::is.string(meme_path) || is.null(meme_path),
+        assertthat::is.number(rolling_ic) || is.null(rolling_ic),
+        assertthat::is.number(motif_strength) || is.null(motif_strength),
+        assertthat::is.count(n_replicates),
+        assertthat::is.number(eucl_distance) || is.null(eucl_distance),
+        assertthat::is.count(min_overlap),
+        assertthat::is.number(match_pvalue) || is.null(match_pvalue)
+    )
+
     filtered_corecmotifs <-
         filter_corecmotifs(
             corecmotifs,

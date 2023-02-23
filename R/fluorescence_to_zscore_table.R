@@ -49,11 +49,10 @@ fluorescence_to_zscore_table <-
         output_file = NULL
     ) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(is.data.frame(fluorescence_table))
-    assertthat::assert_that(is.character(fluorescence_columns))
     assertthat::assert_that(
-        assertthat::is.string(output_file) || is.null(output_file),
-        msg = "output_file is not a character vector or NULL"
+        is.data.frame(fluorescence_table),
+        is.character(fluorescence_columns),
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
     # Make sure the fluorescence table has the expected columns
@@ -66,7 +65,7 @@ fluorescence_to_zscore_table <-
         "SNV_nuc",
         fluorescence_columns
     )
-    if (! all(expected_cols %in% colnames(fluorescence_table))) {
+    if (!all(expected_cols %in% colnames(fluorescence_table))) {
         stop(
             "fluorescence_table is missing one or more expected columns\n",
             "Expected columns: ",

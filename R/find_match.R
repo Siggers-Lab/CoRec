@@ -50,15 +50,13 @@ find_match <-
         meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
     ) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(assertthat::is.readable(reference_motifs_file))
     assertthat::assert_that(
+        assertthat::is.string(reference_motifs_file) &&
+            file.exists(reference_motifs_file),
         is.data.frame(cluster_assignments) || is.null(cluster_assignments),
-        msg = "cluster_assignments is not a data frame or NULL"
-    )
-    assertthat::assert_that(assertthat::is.count(min_overlap))
-    assertthat::assert_that(
         assertthat::is.string(meme_path) || is.null(meme_path),
-        msg = "meme_path is not a character vector or NULL"
+        assertthat::is.count(min_overlap),
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
     # Make sure corecmotifs is a list

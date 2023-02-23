@@ -50,15 +50,11 @@ zscore_table_to_corecmotifs <-
         array_id = NULL
     ) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(is.data.frame(zscore_table))
-    assertthat::assert_that(is.character(zscore_columns))
     assertthat::assert_that(
+        is.data.frame(zscore_table),
+        is.character(zscore_columns),
         assertthat::is.string(output_file) || is.null(output_file),
-        msg = "output_file is not a character vector or NULL"
-    )
-    assertthat::assert_that(
-        assertthat::is.string(array_id) || is.null(array_id),
-        msg = "array_id is not a character vector or NULL"
+        assertthat::is.string(array_id) || is.null(array_id)
     )
 
     # Make sure the z-score table has the expected columns
@@ -71,7 +67,7 @@ zscore_table_to_corecmotifs <-
         "SNV_nuc",
         zscore_columns
     )
-    if (! all(expected_cols %in% colnames(zscore_table))) {
+    if (!all(expected_cols %in% colnames(zscore_table))) {
         stop(
             "zscore_table is missing one or more expected columns\n",
             "Expected columns: ",
@@ -186,9 +182,11 @@ zscore_table_to_corecmotifs <-
 #'     )
 make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(is.data.frame(zscore_table))
-    assertthat::assert_that(assertthat::is.string(probe_set))
-    assertthat::assert_that(assertthat::is.string(pbm_condition))
+    assertthat::assert_that(
+        is.data.frame(zscore_table),
+        assertthat::is.string(probe_set),
+        assertthat::is.string(pbm_condition)
+    )
 
     # Make sure the z-score table has the expected columns
     expected_cols <- c(
@@ -200,7 +198,7 @@ make_zscore_motif <- function(zscore_table, probe_set, pbm_condition) {
         "SNV_nuc",
         pbm_condition
     )
-    if (! all(expected_cols %in% colnames(zscore_table))) {
+    if (!all(expected_cols %in% colnames(zscore_table))) {
         stop(
             "zscore_table is missing one or more expected columns\n",
             "Expected columns: ",

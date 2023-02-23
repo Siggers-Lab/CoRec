@@ -60,47 +60,17 @@ filter_corecmotifs <-
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         is.character(seed_name) || is.null(seed_name),
-        msg = "seed_name is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         is.character(pbm_condition) || is.null(pbm_condition),
-        msg = "pbm_condition is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         is.character(array_id) || is.null(array_id),
-        msg = "array_id is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         assertthat::is.number(rolling_ic) || is.null(rolling_ic),
-        msg = "rolling_ic is not a single number or NULL"
-    )
-    assertthat::assert_that(
         assertthat::is.number(motif_strength) || is.null(motif_strength),
-        msg = "motif_strength is not a single number or NULL"
-    )
-    assertthat::assert_that(
         is.character(seed_sequence) || is.null(seed_sequence),
-        msg = "seed_sequence is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         is.character(motif_name) || is.null(motif_name),
-        msg = "motif_name is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         is.character(match_name) || is.null(match_name),
-        msg = "match_name is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         is.character(match_altname) || is.null(match_altname),
-        msg = "match_altname is not a character vector or NULL"
-    )
-    assertthat::assert_that(
         assertthat::is.number(match_pvalue) || is.null(match_pvalue),
-        msg = "match_pvalue is not a single number or NULL"
-    )
-    assertthat::assert_that(
         is.character(match_cluster) || is.null(match_cluster),
-        msg = "match_cluster is not a character vector or NULL"
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
     # Make sure corecmotifs is a list

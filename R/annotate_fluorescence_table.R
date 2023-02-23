@@ -98,12 +98,13 @@ annotate_fluorescence_table <-
         output_file = NULL
     ) {
     # Make sure all the arguments are the right type
-    assertthat::assert_that(assertthat::is.readable(fluorescence_file))
-    assertthat::assert_that(is.character(pbm_conditions))
-    assertthat::assert_that(assertthat::is.readable(annotation_file))
     assertthat::assert_that(
-        assertthat::is.string(output_file) || is.null(output_file),
-        msg = "output_file is not a character vector or NULL"
+        assertthat::is.string(fluorescence_file) &&
+            file.exists(fluorescence_file),
+        is.character(pbm_conditions),
+        assertthat::is.string(annotation_file) &&
+            file.exists(annotation_file),
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
     # Load the table of fluorescence values
@@ -147,7 +148,7 @@ annotate_fluorescence_table <-
         "SNV_pos_offset",
         "SNV_nuc"
     )
-    if (! all(expected_cols %in% colnames(annotation))) {
+    if (!all(expected_cols %in% colnames(annotation))) {
         stop(
             "annotation_file is missing one or more expected columns\n",
             "Expected columns: ",
