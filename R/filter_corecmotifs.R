@@ -55,7 +55,8 @@ filter_corecmotifs <-
         match_name = NULL,
         match_altname = NULL,
         match_pvalue = NULL,
-        match_cluster = NULL
+        match_cluster = NULL,
+        output_file = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -143,6 +144,9 @@ filter_corecmotifs <-
         vals <- vapply(corecmotifs, get_match_cluster, character(1))
         corecmotifs <- corecmotifs[vals %in% match_cluster]
     }
+
+    # Try to save the filtered CoRecMotifs as an RDS file if necessary
+    try_catch_save_output(corecmotifs, output_file, "rds")
 
     # Return the filtered list
     return(corecmotifs)

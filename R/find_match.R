@@ -46,8 +46,9 @@ find_match <-
         corecmotifs,
         reference_motifs_file,
         cluster_assignments = NULL,
+        meme_path = NULL,
         min_overlap = 5,
-        meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
+        output_file = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -96,6 +97,9 @@ find_match <-
         # Return the updated CoRecMotif
         return(corecmotifs[[index]])
     })
+
+    # Try to save the matched CoRecMotifs as an RDS file if necessary
+    try_catch_save_output(corecmotifs, output_file, "rds")
 
     # Return the list of updated CoRecMotifs
     return(corecmotifs)

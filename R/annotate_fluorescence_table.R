@@ -210,31 +210,8 @@ annotate_fluorescence_table <-
         )
     }
 
-    # Save the annotated fluorescence table if necessary
-    if (!is.null(output_file)) {
-        tryCatch(
-            # Try to save the fluorescence table to the output file
-            suppressWarnings(
-                write.table(
-                    fluorescence_table,
-                    output_file,
-                    quote = FALSE,
-                    sep = "\t",
-                    row.names = FALSE,
-                    col.names = TRUE
-                )
-            ),
-            # If it fails, skip the output saving step with a warning
-            error = function(e) {
-                warning(
-                    "Could not write to output file '",
-                    output_file,
-                    "'\nSkipping output file creation...",
-                    call. = FALSE
-                )
-            }
-        )
-    }
+    # Try to save the annotated fluorescence table if necessary
+    try_catch_save_output(fluorescence_table, output_file, "tsv")
 
     # Return the annotated fluorescence table
     return(fluorescence_table)

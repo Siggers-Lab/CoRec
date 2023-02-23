@@ -46,8 +46,8 @@ zscore_table_to_corecmotifs <-
     function(
         zscore_table,
         zscore_columns,
-        output_file = NULL,
-        array_id = NULL
+        array_id = NULL,
+        output_file = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -104,7 +104,7 @@ zscore_table_to_corecmotifs <-
             )
         )
 
-    # Convert the data frame into a list of CoRecMotif objects
+    # Convert the data frame into a list of CoRecMotifs
     corecmotifs <-
         purrr::pmap(
             list(
@@ -117,27 +117,8 @@ zscore_table_to_corecmotifs <-
             CoRecMotif
         )
 
-    # Save the list of all CoRecMotifs as an RDS file if necessary
-    if (!is.null(output_file)) {
-        tryCatch(
-            # Try to save the CoRecMotifs to the output file
-            suppressWarnings(
-                saveRDS(
-                    corecmotifs,
-                    output_file
-                )
-            ),
-            # If it fails, skip the output saving step with a warning
-            error = function(e) {
-                warning(
-                    "Could not write to output file '",
-                    output_file,
-                    "'\nSkipping output file creation...",
-                    call. = FALSE
-                )
-            }
-        )
-    }
+    # Try to save the CoRecMotifs as an RDS file if necessary
+    try_catch_save_output(corecmotifs, output_file, "rds")
 
     # Return the list of CoRecMotifs
     return(corecmotifs)

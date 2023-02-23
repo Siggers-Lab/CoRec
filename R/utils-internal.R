@@ -1,0 +1,79 @@
+# Paste together the output directory, output base name, and array ID
+update_output_base_name <-
+    function(
+        output_directory = NULL,
+        output_base_name = NULL,
+        array_id = NULL
+    ) {
+    if (is.null(output_directory) && is.null(output_base_name)) {
+        # Return NULL if neither the output directory or base name is provided
+        return(NULL)
+    } else if (is.null(output_directory) && !is.null(output_base_name)) {
+        # If no output directory is provided, use current working directory
+        output_directory <- getwd()
+    } else if (!is.null(output_directory) && is.null(output_base_name)) {
+        # If no output base name is provided, use "output"
+        output_base_name <- "output"
+    }
+
+    # Create the output directory if it doesn't already exist
+    if (!dir.exists(output_directory)) {
+        dir.create(output_directory)
+    }
+
+    # Add the output directory path to the base file name for output files
+    output_base_name <- paste(output_directory, output_base_name, sep = "/")
+
+    # Add the array ID to the base file name if it's provided
+    if (!is.null(array_id)) {
+        output_base_name <- paste(output_base_name, array_id, sep = "_")
+    }
+
+    # Return the updated output base name
+    return(output_base_name)
+}
+
+# Try to save a TSV or RDS file but catch errors and give a warning instead
+try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
+    # Make sure the file type is either tsv or rds
+    file_type <- match.arg(file_type)
+
+    # Save the file only if an output file path is provided
+    if (!is.null(output_file)) {
+        tryCatch(
+            {
+                if (file_type == "tsv") {
+                    # Try to save a TSV file
+                    suppressWarnings(
+                        write.table(
+                            x,
+                            output_file,
+                            quote = FALSE,
+                            sep = "\t",
+                            row.names = FALSE,
+                            col.names = TRUE
+                        )
+                    )
+                } else if (file_type == "rds") {
+                    # Try to save an RDS file
+                    suppressWarnings(
+                        saveRDS(
+                            x,
+                            output_file
+                        )
+                    )
+                }
+            },
+            # If it fails, skip the output saving step with a warning
+            error = function(e) {
+                warning(
+                    "Could not write to output file '",
+                    output_file,
+                    "'\nSkipping output file creation...",
+                    call. = FALSE
+                )
+            }
+        )
+    }
+}
+

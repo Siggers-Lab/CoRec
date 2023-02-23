@@ -64,9 +64,9 @@ make_corecmotifs <-
         fluorescence_file,
         pbm_conditions,
         annotation_file,
+        array_id = NULL,
         output_directory = NULL,
-        output_base_name = NULL,
-        array_id = NULL
+        output_base_name = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -80,36 +80,17 @@ make_corecmotifs <-
         assertthat::is.string(array_id) || is.null(array_id)
     )
 
+    # Update the output base name with the output directory and array ID
+    output_base_name <-
+        update_output_base_name(output_base_name, output_directory, array_id)
+
     # Do not save any output files by default
     fluorescence_output <- NULL
     zscore_output <- NULL
     corec_output <- NULL
 
-    # If only the output directory or base name is provided, set the other
-    if (is.null(output_directory) & !is.null(output_base_name)) {
-        # If no output directory is provided, use current working directory
-        output_directory <- getwd()
-    } else if (!is.null(output_directory) & is.null(output_base_name)) {
-        # If no output base name is provided, use "output"
-        output_base_name <- "output"
-    }
-
-    # If both the output directory and base name exist, set output file names
-    if (!is.null(output_directory) & !is.null(output_base_name)) {
-        # Create the output directory if it doesn't already exist
-        if (!dir.exists(output_directory)) {
-            dir.create(output_directory)
-        }
-
-        # Add the output directory path to the base file name for output files
-        output_base_name <- paste(output_directory, output_base_name, sep = "/")
-
-        # Add the array ID to the base file name if it's provided
-        if (!is.null(array_id)) {
-            output_base_name <- paste(output_base_name, array_id, sep = "_")
-        }
-
-        # Create names for the three output files
+    # Create names for the output files if necessary
+    if (!is.null(output_base_name)) {
         fluorescence_output <- paste0(output_base_name, "_fluorescence.tsv")
         zscore_output <- paste0(output_base_name, "_zscores.tsv")
         corec_output <- paste0(output_base_name, "_all_corecmotifs.rds")
@@ -132,16 +113,16 @@ make_corecmotifs <-
             output_file = zscore_output
         )
 
-    # Make corecmotif objects for all the seed/condition combos
+    # Make CoRecMotifs for all the seed/condition combos
     corecmotifs <-
         zscore_table_to_corecmotifs(
             zscore_table = zscore_table,
             zscore_columns = pbm_conditions,
-            output_file = corec_output,
-            array_id = array_id
+            array_id = array_id,
+            output_file = corec_output
         )
 
-    # Return the list of corecmotifs
+    # Return the list of CoRecMotifs
     return(corecmotifs)
 }
 
@@ -157,6 +138,8 @@ pipeline_part_2 <-
         cluster_assignments = NULL,
         max_match_pvalue = 0.05,
         meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
+        output_directory = NULL,
+        output_base_name = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -174,6 +157,29 @@ pipeline_part_2 <-
         assertthat::is.number(match_pvalue) || is.null(match_pvalue)
     )
 
+    # Update the output base name with the output directory
+    output_base_name <-
+        update_output_base_name(output_base_name, output_directory)
+
+    # Do not save any output files by default
+    filtered_output <- NULL
+    matched_output <- NULL
+    final_output <- NULL
+    summary_output <- NULL
+
+    # Create names for the output files if necessary
+    if (!is.null(output_base_name)) {
+        filtered_output <-
+            paste0(output_base_name, "_filtered_corecmotifs.rds")
+        matched_output <-
+            paste0(output_base_name, "_matched_corecmotifs.rds")
+        final_output <-
+            paste0(output_base_name, "_significant_corecmotifs.rds")
+        summary_output <-
+            paste0(output_base_name, "_significant_corecmotifs_summary.tsv")
+    }
+
+    # Filter out CoRecMotifs with low motif strength and/or rolling IC scores
     filtered_corecmotifs <-
         filter_corecmotifs(
             corecmotifs,
@@ -196,11 +202,12 @@ pipeline_part_2 <-
             reference_motifs_file = reference_motifs_file,
             cluster_assignments = cluster_assignments,
             min_overlap = min_overlap,
-            meme_path = meme_path
+            meme_path = meme_path,
+            output_file = matched_output
         )
 
     # Filter out CoRecMotifs that don't match any reference motifs well
-    filtered_matched_corecmotifs <-
+    final_corecmotifs <-
         filter_corecmotifs(
             matched_corecmotifs,
             match_pvalue = max_match_pvalue
@@ -209,7 +216,19 @@ pipeline_part_2 <-
         # Make sure at least min_n_replicates match a reference motif well
         match_replicates(
             min_n_replicates = min_n_replicates,
-            max_eucl_distance = NULL
+            max_eucl_distance = NULL,
+            output_file = final_output
         )
+
+    # Make and save a summary table if necessary
+    if (!is.null(summary_output)) {
+        corecmotif_summary <-
+            summarize_corecmotifs(final_corecmotifs)
+
+        try_catch_save_output(corecmotif_summary, summary_output, "tsv")
+    }
+
+    # Return the list of CoRecMotifs
+    return(final_corecmotifs)
 }
 
