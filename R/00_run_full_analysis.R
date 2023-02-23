@@ -122,8 +122,8 @@ make_corecmotifs <-
 #' and CoRecMotifs that do not replicate, then compares the remaining
 #' CoRecMotifs to a database of reference motifs to identify the best match.
 #' This is a convenience function that calls [filter_corecmotifs()],
-#' [match_replicates()], [find_match()], then [filter_corecmotifs()] and
-#' [match_replicates()] again, and finally [summarize_corecmotifs()].
+#' [check_replicates()], [find_match()], then [filter_corecmotifs()] and
+#' [check_replicates()] again, and finally [summarize_corecmotifs()].
 #'
 #' By default no output files are created. To save output files, you must
 #' provide `output_directory`, `output_base_name`, or both. The output files are
@@ -136,16 +136,16 @@ make_corecmotifs <-
 #' * The individual output file names will be identified by a suffix appended
 #'   to the output base name.
 #' * The output after the first call to [filter_corecmotifs()] and
-#'   [match_replicates()] will have the suffix "filtered_corecmotifs.rds".
+#'   [check_replicates()] will have the suffix "filtered_corecmotifs.rds".
 #' * The output of [find_match()] will have the suffix
 #'   "matched_corecmotifs.rds".
 #' * The output after the second call to [filter_corecmotifs()] and
-#'   [match_replicates()] will have the suffix "significant_corecmotifs.rds".
+#'   [check_replicates()] will have the suffix "significant_corecmotifs.rds".
 #' * The output of [summarize_corecmotifs()] will have the suffix
 #'   "significant_corecmotifs_summary.tsv".
 #'
 #' @inheritParams filter_corecmotifs
-#' @inheritParams match_replicates
+#' @inheritParams check_replicates
 #' @inheritParams find_match
 #' @inheritParams make_corecmotifs
 #' @param corecmotifs The list of [CoRecMotifs][CoRecMotif-clas] to process.
@@ -153,7 +153,7 @@ make_corecmotifs <-
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
 #'   match a reference motif.
 #'
-#' @seealso [filter_corecmotifs()], [match_replicates()], [find_match()],
+#' @seealso [filter_corecmotifs()], [check_replicates()], [find_match()],
 #'   [summarize_corecmotifs()]
 #'
 #' @export
@@ -223,7 +223,7 @@ process_corecmotifs <-
 
     # Filter out CoRecMotifs that don't replicate
     replicated_corecmotifs <-
-        match_replicates(
+        check_replicates(
             corecmotifs = filtered_corecmotifs,
             min_n_replicates = n_replicates,
             max_eucl_distance = eucl_distance,
@@ -249,7 +249,7 @@ process_corecmotifs <-
         ) %>%
 
         # Make sure at least min_n_replicates match a reference motif well
-        match_replicates(
+        check_replicates(
             min_n_replicates = n_replicates,
             max_eucl_distance = NULL,
             output_file = final_output

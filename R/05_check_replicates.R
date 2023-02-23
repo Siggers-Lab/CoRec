@@ -19,7 +19,7 @@
 #'
 #' @examples
 #' print("FILL THIS IN")
-match_replicates <-
+check_replicates <-
     function(
         corecmotifs,
         n_replicates = 2,
