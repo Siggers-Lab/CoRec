@@ -62,6 +62,17 @@ make_corecmotifs <-
         assertthat::is.string(output_base_name) || is.null(output_base_name)
     )
 
+    # If no array ID is given, generate a random ID
+    # CoRecMotifs have to have different names or check_replicates() won't work
+    if (is.null(array_id)) {
+        array_id <-
+            paste(
+                "random_id",
+                paste(sample(0:9, 8, replace = TRUE), collapse = ""),
+                sep = "_"
+            )
+    }
+
     # Update the output base name with the output directory and array ID
     output_base_name <-
         update_output_base_name(output_directory, output_base_name, array_id)

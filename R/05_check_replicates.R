@@ -3,17 +3,28 @@
 #' Filter a list of [CoRecMotifs][CoRecMotif-class] based on whether they are
 #' reproducible, i.e., found in multiple replicate experiments.
 #'
-#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to filter.
-#' @param n_replicates a single positive integer specifying the minimum number
-#'   of replicates to require.
-#' @param eucl_distance a single number specifying the maximum allowable
-#'   Euclidean distance between replicate motifs or NULL to skip the replicate
-#'   comparison step.
-#' @param output_file the path to the RDS file where the list of reproducible
-#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL (the default), no
-#'   file is written.
+#' This function is intended to be used in concert with [filter_corecmotifs()].
+#' For example, you may want to remove any PBM condition/probe set combination
+#' that does not have at least 3 replicate [CoRecMotifs][CoRecMotif-class] with
+#' a motif strength of at least 1. In this case you would use
+#' [filter_corecmotifs()] with `motif_strength = 1` to remove individual
+#' [CoRecMotifs][CoRecMotif-class] with low motif strengths followed by
+#' `check_replicates()` with `n_replicates = 3` to remove any replicate groups
+#' that have fewer than 3 remaining [CoRecMotifs][CoRecMotif-class].
 #'
-#' @return A list of [CoRecMotifs][CoRecMotif-class] that are reproducible.
+#' @inheritParams annotate_fluorescence_table
+#' @inheritParams filter_corecmotifs
+#' @param n_replicates `integer(1)`. The minimum number of replicates to
+#'   require. Set this to 1 to skip filtering by number of replicates. (Default:
+#'   2)
+#' @param eucl_distance `numeric(1)` or `NULL`. The maximum allowable Euclidean
+#'   distance between replicate motifs or NULL to skip the replicate comparison
+#'   step. (Default: 0.4)
+#'
+#' @return A list of [CoRecMotifs][CoRecMotif-class] that are replicating.
+#'
+#' @seealso [filter_corecmotifs()] for filtering individual
+#'   [CoRecMotifs][CoRecMotif-class].
 #'
 #' @export
 #'
@@ -78,6 +89,17 @@ check_replicates <-
         # Get the names of the motifs in this group
         motif_names <- lapply(group, get_motif_name)
 
+        # Make sure there aren't any duplicate names
+        if (any(duplicated(motif_names))) {
+            warning(
+                "CoRecMotif names are not unique!\n",
+                "This could cause unexpected behavior. Please make sure the ",
+                "names are unique by providing a different array ID for each ",
+                "motif in a group of replicates.",
+                call. = FALSE
+            )
+        }
+
         # Compare all the motifs to each other
         motif_comparison <-
             universalmotif::compare_motifs(
@@ -98,16 +120,20 @@ check_replicates <-
             as.data.frame() %>%
 
             # Convert the rownames into a column
-            tibble::rownames_to_column() %>%
+            tibble::rownames_to_column("motif_1") %>%
 
-            # Convert to long format (columns: motif 1, motif 2, distance)
-            tidyr::pivot_longer(cols = colnames(motif_comparison)) %>%
+            # Convert to long format
+            tidyr::pivot_longer(
+                cols = colnames(motif_comparison),
+                names_to = "motif_2",
+                values_to = "distance"
+            ) %>%
 
             # Filter out self comparisons and dissimilar motifs
-            dplyr::filter(rowname != name & value <= eucl_distance) %>%
+            dplyr::filter(motif_1 != motif_2 & distance <= eucl_distance) %>%
 
             # Get the names of all the remaining similar motifs
-            dplyr::pull(rowname)
+            dplyr::pull(motif_1)
 
         # Return the replicate CoRecMotifs that are replicating
         return(group[motif_names %in% replicated_motif_names])

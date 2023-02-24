@@ -19,7 +19,8 @@ z-scores. See \link{hTF_v1_annotation} for expected annotation columns.}
 that contain fluorescence z-scores.}
 
 \item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
-the fluorescence z-scores are from. (Default: NULL)}
+the fluorescence z-scores are from. If \code{NULL}, a random ID will be
+generated. (Default: NULL)}
 
 \item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
 results should be saved, or NULL not to save the results. (Default: NULL)}
@@ -42,7 +43,11 @@ from one PBM condition, and the column name will be used to populate the
 \code{pbm_condition} slot of the resulting \link[=CoRecMotif-class]{CoRecMotifs}. The
 names of the non-background probe sets found in the \code{probe_set} column will
 populate the \code{probe_set} slot, and \code{array_id} (if provided) will populate the
-\code{array_id} slot.
+\code{array_id} slot. If no array ID is provided, a random one will be generated
+in the format "random_id_xxxxxxxx" where "xxxxxxxx" is replaced with a
+randomly generated 8 digit number. The \code{probe_set}, \code{pbm_condition}, and
+\code{array_id} slots will be pasted together to create a uniquely identifying
+name for each \link[=CoRecMotif-class]{CoRecMotif}.
 }
 \examples{
 print("FILL THIS IN")

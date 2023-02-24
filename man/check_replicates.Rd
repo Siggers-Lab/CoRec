@@ -12,26 +12,40 @@ check_replicates(
 )
 }
 \arguments{
-\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
+\item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
 
-\item{n_replicates}{a single positive integer specifying the minimum number
-of replicates to require.}
+\item{n_replicates}{\code{integer(1)}. The minimum number of replicates to
+require. Set this to 1 to skip filtering by number of replicates. (Default:
+2)}
 
-\item{eucl_distance}{a single number specifying the maximum allowable
-Euclidean distance between replicate motifs or NULL to skip the replicate
-comparison step.}
+\item{eucl_distance}{\code{numeric(1)} or \code{NULL}. The maximum allowable Euclidean
+distance between replicate motifs or NULL to skip the replicate comparison
+step. (Default: 0.4)}
 
-\item{output_file}{the path to the RDS file where the list of reproducible
-\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL (the default), no
-file is written.}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
-A list of \link[=CoRecMotif-class]{CoRecMotifs} that are reproducible.
+A list of \link[=CoRecMotif-class]{CoRecMotifs} that are replicating.
 }
 \description{
 Filter a list of \link[=CoRecMotif-class]{CoRecMotifs} based on whether they are
 reproducible, i.e., found in multiple replicate experiments.
 }
+\details{
+This function is intended to be used in concert with \code{\link[=filter_corecmotifs]{filter_corecmotifs()}}.
+For example, you may want to remove any PBM condition/probe set combination
+that does not have at least 3 replicate \link[=CoRecMotif-class]{CoRecMotifs} with
+a motif strength of at least 1. In this case you would use
+\code{\link[=filter_corecmotifs]{filter_corecmotifs()}} with \code{motif_strength = 1} to remove individual
+\link[=CoRecMotif-class]{CoRecMotifs} with low motif strengths followed by
+\code{check_replicates()} with \code{n_replicates = 3} to remove any replicate groups
+that have fewer than 3 remaining \link[=CoRecMotif-class]{CoRecMotifs}.
+}
 \examples{
 print("FILL THIS IN")
+}
+\seealso{
+\code{\link[=filter_corecmotifs]{filter_corecmotifs()}} for filtering individual
+\link[=CoRecMotif-class]{CoRecMotifs}.
 }

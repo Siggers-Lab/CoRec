@@ -11,7 +11,11 @@
 #' `pbm_condition` slot of the resulting [CoRecMotifs][CoRecMotif-class]. The
 #' names of the non-background probe sets found in the `probe_set` column will
 #' populate the `probe_set` slot, and `array_id` (if provided) will populate the
-#' `array_id` slot.
+#' `array_id` slot. If no array ID is provided, a random one will be generated
+#' in the format "random_id_xxxxxxxx" where "xxxxxxxx" is replaced with a
+#' randomly generated 8 digit number. The `probe_set`, `pbm_condition`, and
+#' `array_id` slots will be pasted together to create a uniquely identifying
+#' name for each [CoRecMotif][CoRecMotif-class].
 #'
 #' @inheritParams annotate_fluorescence_table
 #' @param zscore_table `data.frame`. An annotated table of fluorescence
@@ -19,7 +23,8 @@
 #' @param zscore_columns `character`. The names of the columns of `zscore_table`
 #'   that contain fluorescence z-scores.
 #' @param array_id `character(1)` or `NULL`. The name of the array/experiment
-#'   the fluorescence z-scores are from. (Default: NULL)
+#'   the fluorescence z-scores are from. If `NULL`, a random ID will be
+#'   generated. (Default: NULL)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
 #'   combination of the probe sets in `zscore_table$probe_set` and the PBM
@@ -61,9 +66,15 @@ zscore_table_to_corecmotifs <-
     # Make sure fluorescence_table has the expected columns and remove extras
     zscore_table <- check_colnames(zscore_table, expected_cols)
 
-    # If array_id is NULL, switch it to NA_character_
+    # If no array ID is given, generate a random ID
+    # CoRecMotifs have to have different names or check_replicates() won't work
     if (is.null(array_id)) {
-        array_id <- NA_character_
+        array_id <-
+            paste(
+                "random_id",
+                paste(sample(0:9, 8, replace = TRUE), collapse = ""),
+                sep = "_"
+            )
     }
 
     # Make a table of motif data

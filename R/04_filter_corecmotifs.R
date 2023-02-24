@@ -31,6 +31,9 @@
 #' @return A list of [CoRecMotifs][CoRecMotif-class] that pass the given
 #'   filters.
 #'
+#' @seealso [check_replicates()] for filtering groups of replicate
+#'   [CoRecMotifs][CoRecMotif-class].
+#'
 #' @export
 #'
 #' @examples

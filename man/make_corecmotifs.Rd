@@ -24,7 +24,8 @@ fluorescence table. See \link{hTF_v1_annotation} for expected annotation
 columns.}
 
 \item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
-the fluorescence z-scores are from. (Default: NULL)}
+the fluorescence z-scores are from. If \code{NULL}, a random ID will be
+generated. (Default: NULL)}
 
 \item{output_directory}{the directory where output files will be saved. No
 output files will be created unless output_directory or output_base_name is

@@ -70,3 +70,7 @@ satisfy all of your conditions.
 \examples{
 print("FILL THIS IN")
 }
+\seealso{
+\code{\link[=check_replicates]{check_replicates()}} for filtering groups of replicate
+\link[=CoRecMotif-class]{CoRecMotifs}.
+}
