@@ -46,7 +46,7 @@ check_replicates <-
         dplyr::mutate(index = dplyr::row_number()) %>%
 
         # Group replicates together
-        dplyr::group_by(seed_name, pbm_condition) %>%
+        dplyr::group_by(probe_set, pbm_condition) %>%
 
         # Remove any replicate groups that don't have enough motifs
         dplyr::filter(dplyr::n() >= n_replicates)

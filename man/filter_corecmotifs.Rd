@@ -6,7 +6,7 @@
 \usage{
 filter_corecmotifs(
   corecmotifs,
-  seed_name = NULL,
+  probe_set = NULL,
   pbm_condition = NULL,
   array_id = NULL,
   rolling_ic = NULL,
@@ -23,8 +23,8 @@ filter_corecmotifs(
 \arguments{
 \item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
 
-\item{seed_name}{a character vector specifying the seed names (probe sets) to
-keep. (Default: NULL)}
+\item{probe_set}{a character vector specifying the probe sets to keep.
+(Default: NULL)}
 
 \item{pbm_condition}{a character vector specifying the PBM conditions to
 keep. (Default: NULL)}

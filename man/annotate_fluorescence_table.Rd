@@ -18,7 +18,8 @@ annotate_fluorescence_table(
 \code{fluorescence_table} that contain fluorescence data.}
 
 \item{annotation}{\code{data.frame}. The probe annotations to add to the
-fluorescence table. See \link{hTF_v1_annotation} for expected columns.}
+fluorescence table. See \link{hTF_v1_annotation} for expected annotation
+columns.}
 
 \item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
 results should be saved, or NULL not to save the results. (Default: NULL)}

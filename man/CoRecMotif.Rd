@@ -5,7 +5,7 @@
 \title{Make a new CoRecMotif}
 \usage{
 CoRecMotif(
-  seed_name,
+  probe_set,
   pbm_condition,
   zscore_motif,
   array_id = NA_character_,
@@ -13,7 +13,7 @@ CoRecMotif(
 )
 }
 \arguments{
-\item{seed_name}{a string specifying the seed (or probe set) name.}
+\item{probe_set}{a string specifying the probe set name.}
 
 \item{pbm_condition}{a string specifying the PBM condition (e.g., cell type,
 treatment, and factor profiled).}

@@ -7,8 +7,8 @@
 #' NULL (the default).
 #'
 #' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to filter.
-#' @param seed_name a character vector specifying the seed names (probe sets) to
-#'   keep. (Default: NULL)
+#' @param probe_set a character vector specifying the probe sets to keep.
+#'   (Default: NULL)
 #' @param pbm_condition a character vector specifying the PBM conditions to
 #'   keep. (Default: NULL)
 #' @param array_id a character vector specifying the array IDs to keep.
@@ -42,7 +42,7 @@
 filter_corecmotifs <-
     function(
         corecmotifs,
-        seed_name = NULL,
+        probe_set = NULL,
         pbm_condition = NULL,
         array_id = NULL,
         rolling_ic = NULL,
@@ -57,7 +57,7 @@ filter_corecmotifs <-
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
-        is.character(seed_name) || is.null(seed_name),
+        is.character(probe_set) || is.null(probe_set),
         is.character(pbm_condition) || is.null(pbm_condition),
         is.character(array_id) || is.null(array_id),
         assertthat::is.number(rolling_ic) || is.null(rolling_ic),
@@ -76,10 +76,10 @@ filter_corecmotifs <-
         corecmotifs <- list(corecmotifs)
     }
 
-    # Filter by seed_name
-    if (!is.null(seed_name)) {
-        vals <- vapply(corecmotifs, get_seed_name, character(1))
-        corecmotifs <- corecmotifs[vals %in% seed_name]
+    # Filter by probe_set
+    if (!is.null(probe_set)) {
+        vals <- vapply(corecmotifs, get_probe_set, character(1))
+        corecmotifs <- corecmotifs[vals %in% probe_set]
     }
 
     # Filter by pbm_condition

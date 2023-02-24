@@ -1,5 +1,5 @@
-get_seed_name <- function(corecmotif) {
-    return(corecmotif@seed_name)
+get_probe_set <- function(corecmotif) {
+    return(corecmotif@probe_set)
 }
 
 get_pbm_condition <- function(corecmotif) {
@@ -266,5 +266,4 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
     # Return the updated corecmotif
     return(corecmotif)
 }
-
 

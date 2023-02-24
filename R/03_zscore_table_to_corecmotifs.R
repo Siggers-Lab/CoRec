@@ -89,7 +89,7 @@ zscore_table_to_corecmotifs <-
     corecmotifs <-
         purrr::pmap(
             list(
-                seed_name = motif_table$probe_set,
+                probe_set = motif_table$probe_set,
                 pbm_condition = motif_table$pbm_conditions,
                 zscore_motif = motif_table$zscore_motif,
                 seed_sequence = motif_table$probe_sequence,
@@ -152,7 +152,7 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
         )
     }
 
-    # Get the z-score of the seed probe for this seed_name/pbm_condition combo
+    # Get the z-score of the seed probe for this probe_set/pbm_condition combo
     seed_zscore <-
         zscore_table %>%
 
