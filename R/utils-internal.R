@@ -33,6 +33,29 @@ update_output_base_name <-
     return(output_base_name)
 }
 
+# Make sure a data frame has the expected column names
+check_colnames <- function(x, expected_columns) {
+    # Make sure all the expected columns are present
+    if (!all(expected_columns %in% colnames(x))) {
+        stop(
+            deparse(substitute(x)),
+            " is missing one or more expected columns\n",
+            "Expected columns: ",
+            paste(expected_columns, collapse = ", "),
+            call. = FALSE
+        )
+    }
+
+    # Remove any extra columns
+    x <- dplyr::select(x, expected_columns)
+
+    # Also get rid of duplicate rows if there are any
+    x <- dplyr::distinct(x)
+
+    # Return the data frame
+    return(x)
+}
+
 # Try to save a TSV or RDS file but catch errors and give a warning instead
 try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
     # Make sure the file type is either tsv or rds

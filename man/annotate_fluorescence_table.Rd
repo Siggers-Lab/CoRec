@@ -2,70 +2,54 @@
 % Please edit documentation in R/01_annotate_fluorescence_table.R
 \name{annotate_fluorescence_table}
 \alias{annotate_fluorescence_table}
-\title{Import and annotate fluorescence data}
+\title{Annotate fluorescence data}
 \usage{
 annotate_fluorescence_table(
-  fluorescence_file,
-  pbm_conditions,
+  fluorescence_table,
+  fluorescence_columns,
   annotation,
   output_file = NULL
 )
 }
 \arguments{
-\item{fluorescence_file}{the path to the file containing the fluorescence
-data to load. See 'Details' for expected columns.}
+\item{fluorescence_table}{\code{data.frame}. A table of fluorescence values.}
 
-\item{pbm_conditions}{a character vector specifying the PBM conditions (e.g.,
-cell type, treatment, and factor profiled) in the order they appear in
-\code{fluorescence_file}.}
+\item{fluorescence_columns}{\code{character}. The names of the columns of
+\code{fluorescence_table} that contain fluorescence data.}
 
-\item{annotation}{a data frame containing the probe annotations to use. See
-\link{hTF_v1_annotation} for expected columns.}
+\item{annotation}{\code{data.frame}. The probe annotations to add to the
+fluorescence table. See \link{hTF_v1_annotation} for expected columns.}
 
-\item{output_file}{the path to the TSV file where the annotated fluorescence
-table will be written. If NULL, no file is created. (Default: NULL)}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
-A data frame containing the fluorescence values from the specified
-fluorescence data file and the probe annotations from the specified
-annotation file. See 'Details' for a description of each column.
+A data frame of fluorescence values and the corresponding probe
+information. See \link{hTF_v1_annotation} for a description of the probe
+annotation columns.
 }
 \description{
-Reads a file containing fluorescence data (in which rows correspond to probes
-and columns correspond to fluorescence values) and adds probe metadata from
-an annotation table.
+Adds probe information to a table of fluorescence data from a CoRec
+experiment.
 }
 \details{
-\subsection{Fluorescence File}{
+The fluorescence data table must have a column named "\code{probe_id}". The
+remaining column names must match the names listed in \code{fluorescence_columns}.
+Any additional columns will be dropped.
 
-The fluorescence data file supplied to \code{fluorescence_file} must contain
-\eqn{n + 3} tab-delimited columns, where n is the number of PBM conditions
-supplied to \code{pbm_conditions}. This file must NOT have a header. The columns
-must be as follows:
-\enumerate{
-\item The probe ID. The orientation tags (i.e., "_o1" or "_o2") will be removed
-from these IDs.
-\item The probe sequence.
-\item The number of PBM conditions profiled on this array.
-}
+See \link{hTF_v1_annotation} for a description of the expected columns of the
+annotation table. Any additional columns will be dropped.
 
-Columns 4 through \eqn{(n + 3)} must contain the fluorescence values for the
-PBM conditions in the order they appear in \code{pbm_conditions}.
-}
-
-\subsection{Annotation}{
-
-The IDs in the \code{probe_id} column must match the IDs in the first column of
-the fluorescence data file (after the orientation tag has been removed). IDs
-that are not present in both will be dropped.The output data frame contains
-\eqn{6 + n} columns, where n is again the number of PBM conditions supplied
-to the \code{pbm_conditions} parameter. The first six columns will be the columns
-from the annotation table (see \link{hTF_v1_annotation} for expected columns). The
-remaining columns will contain the fluorescence values for each condition and
-will be named based on the vector of PBM conditions supplied to
-\code{pbm_conditions}.
-}
+The IDs in the "\code{probe_id}" column in the annotation table must match the IDs
+in the "\code{probe_id}" column of the fluorescence table. IDs that are present in
+the annotation table but not the fluorescence table will be dropped silently.
+IDs that are present in the fluorescence table but not the annotation table
+will be dropped with a warning.
 }
 \examples{
 print("FILL THIS IN")
+}
+\seealso{
+\link{hTF_v1_annotation} for a description of the probe annotation
+columns.
 }

@@ -1,49 +1,36 @@
-#' Import and annotate fluorescence data
+#' Annotate fluorescence data
 #'
-#' Reads a file containing fluorescence data (in which rows correspond to probes
-#' and columns correspond to fluorescence values) and adds probe metadata from
-#' an annotation table.
+#' Adds probe information to a table of fluorescence data from a CoRec
+#' experiment.
 #'
-#' ## Fluorescence File
+#' The fluorescence data table must have a column named "`probe_id`". The
+#' remaining column names must match the names listed in `fluorescence_columns`.
+#' Any additional columns will be dropped.
 #'
-#' The fluorescence data file supplied to `fluorescence_file` must contain
-#' \eqn{n + 3} tab-delimited columns, where n is the number of PBM conditions
-#' supplied to `pbm_conditions`. This file must NOT have a header. The columns
-#' must be as follows:
+#' See [hTF_v1_annotation] for a description of the expected columns of the
+#' annotation table. Any additional columns will be dropped.
 #'
-#' 1. The probe ID. The orientation tags (i.e., "_o1" or "_o2") will be removed
-#' from these IDs.
-#' 2. The probe sequence.
-#' 3. The number of PBM conditions profiled on this array.
+#' The IDs in the "`probe_id`" column in the annotation table must match the IDs
+#' in the "`probe_id`" column of the fluorescence table. IDs that are present in
+#' the annotation table but not the fluorescence table will be dropped silently.
+#' IDs that are present in the fluorescence table but not the annotation table
+#' will be dropped with a warning.
 #'
-#' Columns 4 through \eqn{(n + 3)} must contain the fluorescence values for the
-#' PBM conditions in the order they appear in `pbm_conditions`.
+#' @param fluorescence_table `data.frame`. A table of fluorescence values.
+#' @param fluorescence_columns `character`. The names of the columns of
+#'   `fluorescence_table` that contain fluorescence data.
+#' @param annotation `data.frame`. The probe annotations to add to the
+#'   fluorescence table. See [hTF_v1_annotation] for expected annotation
+#'   columns.
+#' @param output_file `character(1)` or `NULL`. The path to the file where the
+#'   results should be saved, or NULL not to save the results. (Default: NULL)
 #'
-#' ## Annotation
+#' @seealso [hTF_v1_annotation] for a description of the probe annotation
+#'   columns.
 #'
-#' The IDs in the `probe_id` column must match the IDs in the first column of
-#' the fluorescence data file (after the orientation tag has been removed). IDs
-#' that are not present in both will be dropped.The output data frame contains
-#' \eqn{6 + n} columns, where n is again the number of PBM conditions supplied
-#' to the `pbm_conditions` parameter. The first six columns will be the columns
-#' from the annotation table (see [hTF_v1_annotation] for expected columns). The
-#' remaining columns will contain the fluorescence values for each condition and
-#' will be named based on the vector of PBM conditions supplied to
-#' `pbm_conditions`.
-#'
-#' @param fluorescence_file the path to the file containing the fluorescence
-#'   data to load. See 'Details' for expected columns.
-#' @param pbm_conditions a character vector specifying the PBM conditions (e.g.,
-#'   cell type, treatment, and factor profiled) in the order they appear in
-#'   `fluorescence_file`.
-#' @param annotation a data frame containing the probe annotations to use. See
-#'   [hTF_v1_annotation] for expected columns.
-#' @param output_file the path to the TSV file where the annotated fluorescence
-#'   table will be written. If NULL, no file is created. (Default: NULL)
-#'
-#' @return A data frame containing the fluorescence values from the specified
-#'   fluorescence data file and the probe annotations from the specified
-#'   annotation file. See 'Details' for a description of each column.
+#' @return A data frame of fluorescence values and the corresponding probe
+#'   information. See [hTF_v1_annotation] for a description of the probe
+#'   annotation columns.
 #'
 #' @export
 #'
@@ -51,44 +38,22 @@
 #' print("FILL THIS IN")
 annotate_fluorescence_table <-
     function(
-        fluorescence_file,
-        pbm_conditions,
+        fluorescence_table,
+        fluorescence_columns,
         annotation,
         output_file = NULL
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
-        assertthat::is.string(fluorescence_file) &&
-            file.exists(fluorescence_file),
-        is.character(pbm_conditions),
+        is.data.frame(fluorescence_table),
+        is.character(fluorescence_columns),
         is.data.frame(annotation),
         assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Load the table of fluorescence values
-    fluorescence_table <-
-        read.table(
-            fluorescence_file,
-            header = FALSE,
-            sep = "\t",
-            strip.white = TRUE,
-            stringsAsFactors = FALSE
-        )
-
-    # Make sure the list of PBM conditions is the right length
-    if (ncol(fluorescence_table) != (length(pbm_conditions) + 3)) {
-        stop(
-            "pbm_conditions is the wrong length\n",
-            "Expected ",
-            ncol(fluorescence_table) -3,
-            " values but got ",
-            length(pbm_conditions),
-            call. = FALSE
-        )
-    }
-
-    # Make sure the annotation table has the expected column names
-    expected_cols <- c(
+    # Set the expected column names
+    expected_fluo_cols <- c("probe_id", fluorescence_columns)
+    expected_anno_cols <- c(
         "probe_id",
         "probe_type",
         "probe_sequence",
@@ -96,41 +61,25 @@ annotate_fluorescence_table <-
         "snv_position",
         "snv_nucleotide"
     )
-    if (!all(expected_cols %in% colnames(annotation))) {
-        stop(
-            "annotation_file is missing one or more expected columns\n",
-            "Expected columns: ",
-            paste(expected_cols, collapse = ", "),
-            call. = FALSE
-        )
-    }
+
+    # Make sure fluorescence_table has the expected columns and remove extras
+    fluorescence_table <- check_colnames(fluorescence_table, expected_fluo_cols)
+
+    # Make sure annotation has the expected columns and remove extras
+    annotation <- check_colnames(annotation, expected_anno_cols)
 
     # Check how many rows the fluorescence table has
     n_rows <- nrow(fluorescence_table)
 
-    # Reformat the fluorescence table and add the probe annotations
+    # Add the probe annotations to the fluorescence table
     fluorescence_table <-
-        fluorescence_table %>%
-
-        # Rename the columns
-        magrittr::set_colnames(
-            c("probe_id", "probe_seq", "num_conditions", pbm_conditions)
-        ) %>%
-
-        # Remove the unnecessary columns
-        dplyr::select(-probe_seq, -num_conditions) %>%
-
-        # Remove the orientation tag from the probe IDs
-        dplyr::mutate(probe_id = gsub("_o[1-2]", "", probe_id)) %>%
-
-        # Merge with the annotation table
-        dplyr::inner_join(annotation, ., by = c("probe_id"))
+        dplyr::inner_join(annotation, fluorescence_table, by = c("probe_id"))
 
     # Give a warning if the fluorescence table lost any rows
     if (nrow(fluorescence_table) < n_rows) {
         warning(
-            "Annotation file is missing probeIDs present in fluorescence file",
-            "\nAre you sure you're using the correct annotation file?",
+            "annotation is missing probe IDs present in fluorescence_table\n",
+            "Are you sure you're using the correct annotation table?",
             call. = FALSE
         )
     }
