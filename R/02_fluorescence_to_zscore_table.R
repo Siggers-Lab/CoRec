@@ -18,6 +18,7 @@
 #'
 #' @seealso [hTF_v1_annotation] for a description of the probe annotation
 #'   columns.
+#'
 #' @export
 #'
 #' @examples

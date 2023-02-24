@@ -12,30 +12,42 @@ zscore_table_to_corecmotifs(
 )
 }
 \arguments{
-\item{zscore_table}{a data frame of z-scores and annotations for each probe.
-See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a description of the
-expected annotation columns.}
+\item{zscore_table}{\code{data.frame}. An annotated table of fluorescence
+z-scores. See \link{hTF_v1_annotation} for expected annotation columns.}
 
-\item{zscore_columns}{a character vector specifying the names of the columns
-of \code{zscore_table} that contain z-score data.}
+\item{zscore_columns}{\code{character}. The names of the columns of \code{zscore_table}
+that contain fluorescence z-scores.}
 
-\item{array_id}{an optional (but recommended) tag specifying the particular
-array/experiment the fluorescence data is from. (Default: NULL)}
+\item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
+the fluorescence z-scores are from. (Default: NULL)}
 
-\item{output_file}{the path to the RDS file where the list of
-\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL, no file is
-written. (Default: NULL)}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
 A list of \link[=CoRecMotif-class]{CoRecMotifs}, one for each possible
-combination of the probe sets in \code{zscore_table} and the PBM conditions
-listed in \code{zscore_columns}.
+combination of the probe sets in \code{zscore_table$probe_set} and the PBM
+conditions listed in \code{zscore_columns}.
 }
 \description{
-Creates a list of \link[=CoRecMotif-class]{CoRecMotifs} for all possible
-combinations of the probe sets present in \code{zscore_table} and the PBM
-conditions given in \code{zscore_columns}.
+Converts a table of fluorescence z-scores into a list of
+\link[=CoRecMotif-class]{CoRecMotifs}.
+}
+\details{
+This function creates a \link[=CoRecMotif-class]{CoRecMotif} for every possible
+combination of the z-score columns listed in \code{zscore_columns} and the
+non-background probe sets that appear in the \code{probe_set} column of
+\code{zscore_table}. Each column listed in \code{zscore_columns} should contain data
+from one PBM condition, and the column name will be used to populate the
+\code{pbm_condition} slot of the resulting \link[=CoRecMotif-class]{CoRecMotifs}. The
+names of the non-background probe sets found in the \code{probe_set} column will
+populate the \code{probe_set} slot, and \code{array_id} (if provided) will populate the
+\code{array_id} slot.
 }
 \examples{
 print("FILL THIS IN")
+}
+\seealso{
+\link{hTF_v1_annotation} for a description of the probe annotation
+columns.
 }

@@ -34,15 +34,15 @@ Adds probe information to a table of fluorescence data from a CoRec
 experiment.
 }
 \details{
-The fluorescence data table must have a column named "\code{probe_id}". The
+The fluorescence data table must have a column named \code{probe_id}. The
 remaining column names must match the names listed in \code{fluorescence_columns}.
 Any additional columns will be dropped.
 
 See \link{hTF_v1_annotation} for a description of the expected columns of the
 annotation table. Any additional columns will be dropped.
 
-The IDs in the "\code{probe_id}" column in the annotation table must match the IDs
-in the "\code{probe_id}" column of the fluorescence table. IDs that are present in
+The IDs in the \code{probe_id} column in the annotation table must match the IDs
+in the \code{probe_id} column of the fluorescence table. IDs that are present in
 the annotation table but not the fluorescence table will be dropped silently.
 IDs that are present in the fluorescence table but not the annotation table
 will be dropped with a warning.

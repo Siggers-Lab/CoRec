@@ -2,25 +2,23 @@
 % Please edit documentation in R/03_zscore_table_to_corecmotifs.R
 \name{make_zscore_motif}
 \alias{make_zscore_motif}
-\title{Create a z-score motif for a given probe set and PBM condition}
+\title{Create a z-score motif}
 \usage{
 make_zscore_motif(zscore_table, probe_set_name, pbm_condition)
 }
 \arguments{
-\item{zscore_table}{a data frame of z-scores and annotations for each probe.
-See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a description of the
-expected annotation columns.}
+\item{zscore_table}{\code{data.frame}. An annotated table of fluorescence
+z-scores. See \link{hTF_v1_annotation} for expected annotation columns.}
 
-\item{probe_set_name}{a character string containing the name of the probe set
-for which to create the z-score motif.}
+\item{probe_set_name}{\code{character(1)}. The name of the probe set to use.}
 
-\item{pbm_condition}{a character string containing the name of the PBM
-condition for which to create the z-score motif.}
+\item{pbm_condition}{\code{character(1)}. The name of the PBM condition to use.}
 }
 \value{
-A data frame with rows corresponding to nucleotides and columns
-corresponding to positions in the motif. Each cell is filled with the
-z-score of the relevant probe in the given PBM condition.
+A matrix with rows corresponding to nucleotides and columns
+corresponding to positions in the motif. Each cell is filled with the PBM
+condition-specific z-score of the probe with that nucleotide at that
+position.
 }
 \description{
 Creates a z-score motif for a given probe set and PBM condition. The rows

@@ -1,23 +1,32 @@
 #' Create CoRecMotifs from a table of z-score data
 #'
-#' Creates a list of [CoRecMotifs][CoRecMotif-class] for all possible
-#' combinations of the probe sets present in `zscore_table` and the PBM
-#' conditions given in `zscore_columns`.
+#' Converts a table of fluorescence z-scores into a list of
+#' [CoRecMotifs][CoRecMotif-class].
 #'
-#' @param zscore_table a data frame of z-scores and annotations for each probe.
-#'   See 'Details' of [annotate_fluorescence_table()] for a description of the
-#'   expected annotation columns.
-#' @param zscore_columns a character vector specifying the names of the columns
-#'   of `zscore_table` that contain z-score data.
-#' @param array_id an optional (but recommended) tag specifying the particular
-#'   array/experiment the fluorescence data is from. (Default: NULL)
-#' @param output_file the path to the RDS file where the list of
-#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL, no file is
-#'   written. (Default: NULL)
+#' This function creates a [CoRecMotif][CoRecMotif-class] for every possible
+#' combination of the z-score columns listed in `zscore_columns` and the
+#' non-background probe sets that appear in the `probe_set` column of
+#' `zscore_table`. Each column listed in `zscore_columns` should contain data
+#' from one PBM condition, and the column name will be used to populate the
+#' `pbm_condition` slot of the resulting [CoRecMotifs][CoRecMotif-class]. The
+#' names of the non-background probe sets found in the `probe_set` column will
+#' populate the `probe_set` slot, and `array_id` (if provided) will populate the
+#' `array_id` slot.
+#'
+#' @inheritParams annotate_fluorescence_table
+#' @param zscore_table `data.frame`. An annotated table of fluorescence
+#'   z-scores. See [hTF_v1_annotation] for expected annotation columns.
+#' @param zscore_columns `character`. The names of the columns of `zscore_table`
+#'   that contain fluorescence z-scores.
+#' @param array_id `character(1)` or `NULL`. The name of the array/experiment
+#'   the fluorescence z-scores are from. (Default: NULL)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
-#'   combination of the probe sets in `zscore_table` and the PBM conditions
-#'   listed in `zscore_columns`.
+#'   combination of the probe sets in `zscore_table$probe_set` and the PBM
+#'   conditions listed in `zscore_columns`.
+#'
+#' @seealso [hTF_v1_annotation] for a description of the probe annotation
+#'   columns.
 #'
 #' @export
 #'
@@ -34,11 +43,11 @@ zscore_table_to_corecmotifs <-
     assertthat::assert_that(
         is.data.frame(zscore_table),
         is.character(zscore_columns),
-        assertthat::is.string(output_file) || is.null(output_file),
-        assertthat::is.string(array_id) || is.null(array_id)
+        assertthat::is.string(array_id) || is.null(array_id),
+        assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Make sure the z-score table has the expected columns
+    # Set the expected column names
     expected_cols <- c(
         "probe_id",
         "probe_type",
@@ -48,14 +57,9 @@ zscore_table_to_corecmotifs <-
         "snv_nucleotide",
         zscore_columns
     )
-    if (!all(expected_cols %in% colnames(zscore_table))) {
-        stop(
-            "zscore_table is missing one or more expected columns\n",
-            "Expected columns: ",
-            paste(expected_cols, collapse = ", "),
-            call. = FALSE
-        )
-    }
+
+    # Make sure fluorescence_table has the expected columns and remove extras
+    zscore_table <- check_colnames(zscore_table, expected_cols)
 
     # If array_id is NULL, switch it to NA_character_
     if (is.null(array_id)) {
@@ -105,21 +109,20 @@ zscore_table_to_corecmotifs <-
     return(corecmotifs)
 }
 
-#' Create a z-score motif for a given probe set and PBM condition
+#' Create a z-score motif
 #'
 #' Creates a z-score motif for a given probe set and PBM condition. The rows
 #' correspond to nucleotides and the columns correspond to positions in the
 #' motif.
 #'
 #' @inheritParams zscore_table_to_corecmotifs
-#' @param probe_set_name a character string containing the name of the probe set
-#'   for which to create the z-score motif.
-#' @param pbm_condition a character string containing the name of the PBM
-#'   condition for which to create the z-score motif.
+#' @param probe_set_name `character(1)`. The name of the probe set to use.
+#' @param pbm_condition `character(1)`. The name of the PBM condition to use.
 #'
-#' @return A data frame with rows corresponding to nucleotides and columns
-#'   corresponding to positions in the motif. Each cell is filled with the
-#'   z-score of the relevant probe in the given PBM condition.
+#' @return A matrix with rows corresponding to nucleotides and columns
+#'   corresponding to positions in the motif. Each cell is filled with the PBM
+#'   condition-specific z-score of the probe with that nucleotide at that
+#'   position.
 #'
 #' @export
 #'
@@ -133,7 +136,7 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
         assertthat::is.string(pbm_condition)
     )
 
-    # Make sure the z-score table has the expected columns
+    # Set the expected column names
     expected_cols <- c(
         "probe_id",
         "probe_type",
@@ -141,16 +144,11 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
         "probe_set",
         "snv_position",
         "snv_nucleotide",
-        pbm_condition
+        zscore_columns
     )
-    if (!all(expected_cols %in% colnames(zscore_table))) {
-        stop(
-            "zscore_table is missing one or more expected columns\n",
-            "Expected columns: ",
-            paste(expected_cols, collapse = ", "),
-            call. = FALSE
-        )
-    }
+
+    # Make sure fluorescence_table has the expected columns and remove extras
+    zscore_table <- check_colnames(zscore_table, expected_cols)
 
     # Get the z-score of the seed probe for this probe_set/pbm_condition combo
     seed_zscore <-
@@ -187,7 +185,7 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
             zscore = !!as.symbol(pbm_condition)
         ) %>%
 
-        # Fill in missing SNV_pos_offset/SNV_nuc combos with the seed z-score
+        # Missing snv_position/snv_nucleotide should have the seed z-score
         tidyr::complete(
             snv_position,
             snv_nucleotide,

@@ -3,15 +3,15 @@
 #' Adds probe information to a table of fluorescence data from a CoRec
 #' experiment.
 #'
-#' The fluorescence data table must have a column named "`probe_id`". The
+#' The fluorescence data table must have a column named `probe_id`. The
 #' remaining column names must match the names listed in `fluorescence_columns`.
 #' Any additional columns will be dropped.
 #'
 #' See [hTF_v1_annotation] for a description of the expected columns of the
 #' annotation table. Any additional columns will be dropped.
 #'
-#' The IDs in the "`probe_id`" column in the annotation table must match the IDs
-#' in the "`probe_id`" column of the fluorescence table. IDs that are present in
+#' The IDs in the `probe_id` column in the annotation table must match the IDs
+#' in the `probe_id` column of the fluorescence table. IDs that are present in
 #' the annotation table but not the fluorescence table will be dropped silently.
 #' IDs that are present in the fluorescence table but not the annotation table
 #' will be dropped with a warning.
