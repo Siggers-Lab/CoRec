@@ -133,20 +133,16 @@ calculate_beta <- function(zscore_motif) {
     return(beta)
 }
 
-# Calculate the motif strength (median of top 15% of probes)
+# Calculate the motif strength (93rd percentile of z-scores)
 calculate_strength <- function(zscore_motif) {
-    # Get a sorted list of all the probe z-scores
-    z_scores <-
-        sort(unique(unlist(zscore_motif)), decreasing = TRUE)
+    motif_strength <-
+        zscore_motif %>%
+        sort() %>%
+        unique() %>%
+        quantile(0.93, names = FALSE)
 
-    # Figure out how many probes to average (rounded up to the nearest integer)
-    num_probes <- ceiling(length(z_scores) * (15 / 100))
-
-    # Find the median z-score of the highest num_probes probes
-    median_zscore <- median(z_scores[1:num_probes])
-
-    # Return the average z-score
-    return(median_zscore)
+    # Return the motif strength
+    return(motif_strength)
 }
 
 # Convert a z-score motif to a PPM
