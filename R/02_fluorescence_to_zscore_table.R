@@ -8,17 +8,16 @@
 #' using the mean and standard deviation of the fluorescence values of the
 #' background probes in that condition.
 #'
-#' @param fluorescence_table a data frame of fluorescence values and annotations
-#'   for each probe. See 'Details' of [annotate_fluorescence_table()] for a
-#'   description of the expected annotation columns.
-#' @param fluorescence_columns a character vector specifying the names of the
-#'   columns of `fluorescence_table` that contain fluorescence data.
-#' @param output_file the path to the TSV file where the annotated z-score table
-#'   will be written. If NULL, no file is written. (Default: NULL)
+#' @inheritParams annotate_fluorescence_table
+#' @param fluorescence_table `data.frame`. An annotated table of fluorescence
+#'   values. See [hTF_v1_annotation] for expected annotation columns.
 #'
-#' @return A data frame of column-wise fluorescence z-scores and probe
-#'   annotations.
+#' @return A data frame of fluorescence z-scores and the corresponding probe
+#'   information. See [hTF_v1_annotation] for a description of the probe
+#'   annotation columns.
 #'
+#' @seealso [hTF_v1_annotation] for a description of the probe annotation
+#'   columns.
 #' @export
 #'
 #' @examples
@@ -36,7 +35,7 @@ fluorescence_to_zscore_table <-
         assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Make sure the fluorescence table has the expected columns
+    # Set the expected column names
     expected_cols <- c(
         "probe_id",
         "probe_type",
@@ -46,18 +45,12 @@ fluorescence_to_zscore_table <-
         "snv_nucleotide",
         fluorescence_columns
     )
-    if (!all(expected_cols %in% colnames(fluorescence_table))) {
-        stop(
-            "fluorescence_table is missing one or more expected columns\n",
-            "Expected columns: ",
-            paste(expected_cols, collapse = ", "),
-            call. = FALSE
-        )
-    }
+
+    # Make sure fluorescence_table has the expected columns and remove extras
+    fluorescence_table <- check_colnames(fluorescence_table, expected_cols)
 
     # Find the indices of the rows that contain background probes
-    background_rows <-
-        which(fluorescence_table$probe_type == "BACKGROUND")
+    background_rows <- which(fluorescence_table$probe_type == "BACKGROUND")
 
     # Calculate the column-wise z-scores for each PBM condition
     zscore_table <-

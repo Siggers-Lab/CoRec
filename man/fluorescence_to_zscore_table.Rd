@@ -11,19 +11,19 @@ fluorescence_to_zscore_table(
 )
 }
 \arguments{
-\item{fluorescence_table}{a data frame of fluorescence values and annotations
-for each probe. See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for a
-description of the expected annotation columns.}
+\item{fluorescence_table}{\code{data.frame}. An annotated table of fluorescence
+values. See \link{hTF_v1_annotation} for expected annotation columns.}
 
-\item{fluorescence_columns}{a character vector specifying the names of the
-columns of \code{fluorescence_table} that contain fluorescence data.}
+\item{fluorescence_columns}{\code{character}. The names of the columns of
+\code{fluorescence_table} that contain fluorescence data.}
 
-\item{output_file}{the path to the TSV file where the annotated z-score table
-will be written. If NULL, no file is written. (Default: NULL)}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
-A data frame of column-wise fluorescence z-scores and probe
-annotations.
+A data frame of fluorescence z-scores and the corresponding probe
+information. See \link{hTF_v1_annotation} for a description of the probe
+annotation columns.
 }
 \description{
 Converts an annotated data frame of fluorescence data into z-scores.
@@ -37,4 +37,8 @@ background probes in that condition.
 }
 \examples{
 print("FILL THIS IN")
+}
+\seealso{
+\link{hTF_v1_annotation} for a description of the probe annotation
+columns.
 }
