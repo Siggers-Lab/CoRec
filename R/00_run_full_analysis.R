@@ -25,12 +25,12 @@
 #'
 #' @inheritParams annotate_fluorescence_table
 #' @inheritParams zscore_table_to_corecmotifs
-#' @param output_directory the directory where output files will be saved. No
-#'   output files will be created unless output_directory or output_base_name is
-#'   provided. (Default: NULL)
-#' @param output_base_name the base name for output files. No output files will
-#'   be created unless output_directory or output_base_name is provided.
-#'   (Default: NULL)
+#' @param output_directory `character(1)` or `NULL`. The path to the directory
+#'   where output files will be saved. No output files will be created unless
+#'   `output_directory` or `output_base_name` is provided. (Default: NULL)
+#' @param output_base_name `character(1)` or `NULL`. The base name for output
+#'   files. No output files will be created unless `output_directory` or
+#'   `output_base_name ` is provided. (Default: NULL)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
 #'   combination of the probe sets annotated in `annotation` and the PBM
@@ -147,11 +147,16 @@ make_corecmotifs <-
 #' * The output of [summarize_corecmotifs()] will have the suffix
 #'   "significant_corecmotifs_summary.tsv".
 #'
-#' @inheritParams filter_corecmotifs
 #' @inheritParams check_replicates
 #' @inheritParams find_match
 #' @inheritParams make_corecmotifs
-#' @param corecmotifs The list of [CoRecMotifs][CoRecMotif-class] to process.
+#' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to process.
+#' @param motif_strength `numeric(1)` or `NULL`. The minimum motif strength to
+#'   keep or NULL not to filter by motif strength. (Default: 1)
+#' @param rolling_ic `numeric(1)` or `NULL`. The minimum rolling IC to keep or
+#'   NULL not to filter by rolling IC. (Default: 1)
+#' @param match_pvalue `numeric(1)` or `NULL`. The maximum match p-value to keep
+#'   or NULL not to filter by match p-value. (Default: 0.05)
 #'
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
 #'   match a reference motif.
@@ -169,8 +174,8 @@ process_corecmotifs <-
         reference_motifs_file,
         cluster_assignments = NULL,
         meme_path = NULL,
-        rolling_ic = 1,
         motif_strength = 1,
+        rolling_ic = 1,
         n_replicates = 2,
         eucl_distance = 0.4,
         min_overlap = 5,
@@ -186,8 +191,8 @@ process_corecmotifs <-
         assertthat::is.string(output_base_name) || is.null(output_base_name),
         is.data.frame(cluster_assignments) || is.null(cluster_assignments),
         assertthat::is.string(meme_path) || is.null(meme_path),
-        assertthat::is.number(rolling_ic) || is.null(rolling_ic),
         assertthat::is.number(motif_strength) || is.null(motif_strength),
+        assertthat::is.number(rolling_ic) || is.null(rolling_ic),
         assertthat::is.count(n_replicates),
         assertthat::is.number(eucl_distance) || is.null(eucl_distance),
         assertthat::is.count(min_overlap),
@@ -220,8 +225,8 @@ process_corecmotifs <-
     filtered_corecmotifs <-
         filter_corecmotifs(
             corecmotifs,
-            rolling_ic = rolling_ic,
-            motif_strength = motif_strength
+            motif_strength = motif_strength,
+            rolling_ic = rolling_ic
         )
 
     # Filter out CoRecMotifs that don't replicate

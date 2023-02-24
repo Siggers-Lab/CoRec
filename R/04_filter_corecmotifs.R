@@ -11,10 +11,10 @@
 #'   NULL not to filter by PBM condition. (Default: NULL)
 #' @param array_id `character` or `NULL`. The array IDs to keep or NULL not to
 #'   filter by array ID. (Default: NULL)
-#' @param rolling_ic `numeric(1)` or `NULL`. The minimum rolling IC to keep or
-#'   NULL not to filter by rolling IC. (Default: NULL)
 #' @param motif_strength `numeric(1)` or `NULL`. The minimum motif strength to
 #'   keep or NULL not to filter by motif strength. (Default: NULL)
+#' @param rolling_ic `numeric(1)` or `NULL`. The minimum rolling IC to keep or
+#'   NULL not to filter by rolling IC. (Default: NULL)
 #' @param seed_sequence `character` or `NULL`. The seed sequences to keep or
 #'   NULL not to filter by seed sequence. (Default: NULL)
 #' @param motif_name `character` or `NULL`. The motif names to keep or NULL not

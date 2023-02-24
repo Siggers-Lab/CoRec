@@ -9,8 +9,8 @@ process_corecmotifs(
   reference_motifs_file,
   cluster_assignments = NULL,
   meme_path = NULL,
-  rolling_ic = 1,
   motif_strength = 1,
+  rolling_ic = 1,
   n_replicates = 2,
   eucl_distance = 0.4,
   min_overlap = 5,
@@ -20,44 +20,46 @@ process_corecmotifs(
 )
 }
 \arguments{
-\item{corecmotifs}{The list of \link[=CoRecMotif-class]{CoRecMotifs} to process.}
+\item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to process.}
 
-\item{reference_motifs_file}{the path to a MEME format file of reference
-motifs to match to.}
+\item{reference_motifs_file}{\code{character(1)}. The path to the MEME format file
+of reference motifs to match to.}
 
-\item{cluster_assignments}{a data frame mapping the reference motifs to motif
-clusters or NULL to skip the cluster assignment step.}
+\item{cluster_assignments}{\code{data.frame} or \code{NULL}. A table mapping the
+reference motifs to motif clusters or NULL to skip the cluster assignment
+step. See \link{motif_clusters} for expected columns. (Default: NULL)}
 
-\item{meme_path}{the path to "meme/bin/" or NULL to rely on
-\code{\link[memes:runTomTom]{memes::runTomTom()}} to find it.}
+\item{meme_path}{\code{character(1)} or \code{NULL}. The path to "meme/bin/" or NULL to
+rely on \code{\link[memes:runTomTom]{memes::runTomTom()}} to find it. (Default: NULL)}
 
-\item{rolling_ic}{a single number specifying the minimum rolling IC to keep.
-(Default: NULL)}
+\item{motif_strength}{\code{numeric(1)} or \code{NULL}. The minimum motif strength to
+keep or NULL not to filter by motif strength. (Default: 1)}
 
-\item{motif_strength}{a single number specifying the minimum motif strength
-to keep. (Default: NULL)}
+\item{rolling_ic}{\code{numeric(1)} or \code{NULL}. The minimum rolling IC to keep or
+NULL not to filter by rolling IC. (Default: 1)}
 
-\item{n_replicates}{a single positive integer specifying the minimum number
-of replicates to require.}
+\item{n_replicates}{\code{integer(1)}. The minimum number of replicates to
+require. Set this to 1 to skip filtering by number of replicates. (Default:
+2)}
 
-\item{eucl_distance}{a single number specifying the maximum allowable
-Euclidean distance between replicate motifs or NULL to skip the replicate
-comparison step.}
+\item{eucl_distance}{\code{numeric(1)} or \code{NULL}. The maximum allowable Euclidean
+distance between replicate motifs or NULL to skip the replicate comparison
+step. (Default: 0.4)}
 
-\item{min_overlap}{a single positive integer specifying the minimum amount of
-overlap to require when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a
-reference motif.}
+\item{min_overlap}{\code{integer(1)}. The minimum amount of overlap to require
+when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a reference motif.
+(Default: 5)}
 
-\item{match_pvalue}{a single number specifying the maximum match p-value to
-keep. (Default: NULL)}
+\item{match_pvalue}{\code{numeric(1)} or \code{NULL}. The maximum match p-value to keep
+or NULL not to filter by match p-value. (Default: 0.05)}
 
-\item{output_directory}{the directory where output files will be saved. No
-output files will be created unless output_directory or output_base_name is
-provided. (Default: NULL)}
+\item{output_directory}{\code{character(1)} or \code{NULL}. The path to the directory
+where output files will be saved. No output files will be created unless
+\code{output_directory} or \code{output_base_name} is provided. (Default: NULL)}
 
-\item{output_base_name}{the base name for output files. No output files will
-be created unless output_directory or output_base_name is provided.
-(Default: NULL)}
+\item{output_base_name}{\code{character(1)} or \code{NULL}. The base name for output
+files. No output files will be created unless \code{output_directory} or
+\code{output_base_name } is provided. (Default: NULL)}
 }
 \value{
 A filtered list of replicated \link[=CoRecMotif-class]{CoRecMotifs} that

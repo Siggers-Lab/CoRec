@@ -5,31 +5,33 @@
 #'
 #' The PPM representation of each [CoRecMotif][CoRecMotif-class] is compared to
 #' the reference motifs with [memes::runTomTom()] using Euclidean distance
-#' ("ed") as the distance metric. The match_motif and match_pvalue slots are
-#' filled in based on the best match returned by [memes::runTomTom()]. The
-#' match_pvalue slot is corrected for multiple comparisons by multiplying the
-#' raw match p-value by the number of motifs in the reference database. The
-#' match_cluster slot is filled in based on the user-provided cluster
-#' assignments or left empty if no cluster assignments are provided.
+#' ("ed") as the distance metric. The match_motif and match_pvalue slots of the
+#' [CoRecMotif][CoRecMotif-class] are filled in based on the best match returned
+#' by [memes::runTomTom()]. The match_pvalue slot is corrected for multiple
+#' comparisons by multiplying the raw match p-value by the number of motifs in
+#' the reference database. The match_cluster slot is filled in based on the
+#' user-provided cluster assignments or left empty if no cluster assignments are
+#' provided.
 #'
-#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to match to
+#' @inheritParams annotate_fluorescence_table
+#' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to match to
 #'   reference motifs.
-#' @param reference_motifs_file the path to a MEME format file of reference
-#'   motifs to match to.
-#' @param cluster_assignments a data frame mapping the reference motifs to motif
-#'   clusters or NULL to skip the cluster assignment step.
-#' @param meme_path the path to "meme/bin/" or NULL to rely on
-#'   [memes::runTomTom()] to find it.
-#' @param min_overlap a single positive integer specifying the minimum amount of
-#'   overlap to require when comparing a [CoRecMotif][CoRecMotif-class] to a
-#'   reference motif.
-#' @param output_file the path to the RDS file where the list of matched
-#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL (the default), no
-#'   file is written.
+#' @param reference_motifs_file `character(1)`. The path to the MEME format file
+#'   of reference motifs to match to.
+#' @param cluster_assignments `data.frame` or `NULL`. A table mapping the
+#'   reference motifs to motif clusters or NULL to skip the cluster assignment
+#'   step. See [motif_clusters] for expected columns. (Default: NULL)
+#' @param meme_path `character(1)` or `NULL`. The path to "meme/bin/" or NULL to
+#'   rely on [memes::runTomTom()] to find it. (Default: NULL)
+#' @param min_overlap `integer(1)`. The minimum amount of overlap to require
+#'   when comparing a [CoRecMotif][CoRecMotif-class] to a reference motif.
+#'   (Default: 5)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class] with the match_motif,
 #'   match_pvalue, and (optionally) match_cluster slots filled in.
 #'
+#' @seealso [motif_clusters] for a description of the expected columns of
+#'   `cluster_assignments`
 #' @export
 #'
 #' @examples

@@ -14,25 +14,25 @@ find_match(
 )
 }
 \arguments{
-\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to match to
+\item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to match to
 reference motifs.}
 
-\item{reference_motifs_file}{the path to a MEME format file of reference
-motifs to match to.}
+\item{reference_motifs_file}{\code{character(1)}. The path to the MEME format file
+of reference motifs to match to.}
 
-\item{cluster_assignments}{a data frame mapping the reference motifs to motif
-clusters or NULL to skip the cluster assignment step.}
+\item{cluster_assignments}{\code{data.frame} or \code{NULL}. A table mapping the
+reference motifs to motif clusters or NULL to skip the cluster assignment
+step. See \link{motif_clusters} for expected columns. (Default: NULL)}
 
-\item{meme_path}{the path to "meme/bin/" or NULL to rely on
-\code{\link[memes:runTomTom]{memes::runTomTom()}} to find it.}
+\item{meme_path}{\code{character(1)} or \code{NULL}. The path to "meme/bin/" or NULL to
+rely on \code{\link[memes:runTomTom]{memes::runTomTom()}} to find it. (Default: NULL)}
 
-\item{min_overlap}{a single positive integer specifying the minimum amount of
-overlap to require when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a
-reference motif.}
+\item{min_overlap}{\code{integer(1)}. The minimum amount of overlap to require
+when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a reference motif.
+(Default: 5)}
 
-\item{output_file}{the path to the RDS file where the list of matched
-\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL (the default), no
-file is written.}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
 A list of \link[=CoRecMotif-class]{CoRecMotifs} with the match_motif,
@@ -45,13 +45,18 @@ Identifies the reference motif that is the best match to each
 \details{
 The PPM representation of each \link[=CoRecMotif-class]{CoRecMotif} is compared to
 the reference motifs with \code{\link[memes:runTomTom]{memes::runTomTom()}} using Euclidean distance
-("ed") as the distance metric. The match_motif and match_pvalue slots are
-filled in based on the best match returned by \code{\link[memes:runTomTom]{memes::runTomTom()}}. The
-match_pvalue slot is corrected for multiple comparisons by multiplying the
-raw match p-value by the number of motifs in the reference database. The
-match_cluster slot is filled in based on the user-provided cluster
-assignments or left empty if no cluster assignments are provided.
+("ed") as the distance metric. The match_motif and match_pvalue slots of the
+\link[=CoRecMotif-class]{CoRecMotif} are filled in based on the best match returned
+by \code{\link[memes:runTomTom]{memes::runTomTom()}}. The match_pvalue slot is corrected for multiple
+comparisons by multiplying the raw match p-value by the number of motifs in
+the reference database. The match_cluster slot is filled in based on the
+user-provided cluster assignments or left empty if no cluster assignments are
+provided.
 }
 \examples{
 print("FILL THIS IN")
+}
+\seealso{
+\link{motif_clusters} for a description of the expected columns of
+\code{cluster_assignments}
 }

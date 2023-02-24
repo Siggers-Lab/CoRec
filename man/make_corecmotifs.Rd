@@ -27,13 +27,13 @@ columns.}
 the fluorescence z-scores are from. If \code{NULL}, a random ID will be
 generated. (Default: NULL)}
 
-\item{output_directory}{the directory where output files will be saved. No
-output files will be created unless output_directory or output_base_name is
-provided. (Default: NULL)}
+\item{output_directory}{\code{character(1)} or \code{NULL}. The path to the directory
+where output files will be saved. No output files will be created unless
+\code{output_directory} or \code{output_base_name} is provided. (Default: NULL)}
 
-\item{output_base_name}{the base name for output files. No output files will
-be created unless output_directory or output_base_name is provided.
-(Default: NULL)}
+\item{output_base_name}{\code{character(1)} or \code{NULL}. The base name for output
+files. No output files will be created unless \code{output_directory} or
+\code{output_base_name } is provided. (Default: NULL)}
 }
 \value{
 A list of \link[=CoRecMotif-class]{CoRecMotifs}, one for each possible
