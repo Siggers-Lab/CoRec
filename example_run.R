@@ -1,6 +1,10 @@
 # Load the CoRec package
 devtools::load_all()
 
+# Set the common arguments
+reference_motifs_file <-
+    "./inst/extdata/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
+
 # Load the PBM conditions for replicate 1
 pbm_conditions_rep1 <-
     scan(
@@ -31,11 +35,7 @@ fluorescence_table_rep2 <-
         pbm_conditions_rep2
     )
 
-# Set the common arguments
-reference_motifs_file <-
-    "./inst/extdata/Homo_sapiens_JASPAR2022_CORE_filtered.meme"
-
-# Make the corecmotifs for the replicate 1 array
+# Make the CoRecMotifs for the replicate 1 array
 corecmotifs_rep1 <- make_corecmotifs(
     fluorescence_table_rep1,
     fluorescence_columns = pbm_conditions_rep1,
@@ -43,7 +43,7 @@ corecmotifs_rep1 <- make_corecmotifs(
     array_id = "v1_a11_run1"
 )
 
-# Make the corecmotifs for the replicate 2 array
+# Make the CoRecMotifs for the replicate 2 array
 corecmotifs_rep2 <- make_corecmotifs(
     fluorescence_table_rep2,
     fluorescence_columns = pbm_conditions_rep2,
@@ -51,6 +51,7 @@ corecmotifs_rep2 <- make_corecmotifs(
     array_id = "v1_a21_run1"
 )
 
+# Filter the CoRecMotifs and match to reference motifs
 matched_corecmotifs <-
     process_corecmotifs(
         corecmotifs = c(corecmotifs_rep1, corecmotifs_rep2),
@@ -64,5 +65,4 @@ matched_corecmotifs <-
         match_pvalue = 0.05,
         meme_path = "/share/pkg.7/meme/5.3.3/install/bin/"
     )
-
 

@@ -101,8 +101,8 @@ try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
 }
 
 # Figure out the seed probe z-score from a z-score motif
-# This is separate from get_seed_zscore because this is used during creation of
-#   a new CoRecMotif, meaning you don't have the whole CoRecMotif object yet
+# This is separate from the seed_zscore method because this is used during
+# creation of a new CoRecMotif, meaning you don't have the whole object yet
 find_seed_zscore <- function(zscore_motif) {
     seed_zscore <-
         # The seed probe z-score shows up at every position of the z-score motif

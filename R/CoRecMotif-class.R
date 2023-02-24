@@ -130,7 +130,7 @@ setValidity("CoRecMotif", function(object) {
     } else if (!is(object@ppm, "universalmotif")) {
         "@ppm has to be an object of class universalmotif"
     } else if (!is(object@match_motif, "universalmotif") &&
-               !is.null(object@match_motif)) {
+               !is.na(object@match_motif)) {
         "@match_motif has to be an object of class universalmotif or NULL"
     } else {
         TRUE
