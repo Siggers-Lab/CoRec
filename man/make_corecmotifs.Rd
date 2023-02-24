@@ -5,8 +5,8 @@
 \title{Make a list of CoRecMotifs}
 \usage{
 make_corecmotifs(
-  fluorescence_file,
-  pbm_conditions,
+  fluorescence_table,
+  fluorescence_columns,
   annotation,
   array_id = NULL,
   output_directory = NULL,
@@ -14,19 +14,17 @@ make_corecmotifs(
 )
 }
 \arguments{
-\item{fluorescence_file}{the path to the file containing the fluorescence
-data to load. See 'Details' of \code{\link[=annotate_fluorescence_table]{annotate_fluorescence_table()}} for expected
+\item{fluorescence_table}{\code{data.frame}. A table of fluorescence values.}
+
+\item{fluorescence_columns}{\code{character}. The names of the columns of
+\code{fluorescence_table} that contain fluorescence data.}
+
+\item{annotation}{\code{data.frame}. The probe annotations to add to the
+fluorescence table. See \link{hTF_v1_annotation} for expected annotation
 columns.}
 
-\item{pbm_conditions}{a character vector specifying the PBM conditions (e.g.,
-cell type, treatment, and factor profiled) in the order they appear in
-\code{fluorescence_file}.}
-
-\item{annotation}{a data frame containing the probe annotations to use. See
-\link{hTF_v1_annotation} for expected columns.}
-
-\item{array_id}{an optional (but recommended) tag specifying the particular
-array/experiment the fluorescence data is from. (Default: NULL)}
+\item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
+the fluorescence z-scores are from. (Default: NULL)}
 
 \item{output_directory}{the directory where output files will be saved. No
 output files will be created unless output_directory or output_base_name is

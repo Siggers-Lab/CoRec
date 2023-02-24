@@ -25,9 +25,6 @@
 #'
 #' @inheritParams annotate_fluorescence_table
 #' @inheritParams zscore_table_to_corecmotifs
-#' @param fluorescence_file the path to the file containing the fluorescence
-#'   data to load. See 'Details' of [annotate_fluorescence_table()] for expected
-#'   columns.
 #' @param output_directory the directory where output files will be saved. No
 #'   output files will be created unless output_directory or output_base_name is
 #'   provided. (Default: NULL)
@@ -48,8 +45,8 @@
 #' print("FILL THIS IN!")
 make_corecmotifs <-
     function(
-        fluorescence_file,
-        pbm_conditions,
+        fluorescence_table,
+        fluorescence_columns,
         annotation,
         array_id = NULL,
         output_directory = NULL,
@@ -57,13 +54,12 @@ make_corecmotifs <-
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
-        assertthat::is.string(fluorescence_file) &&
-            file.exists(fluorescence_file),
-        is.character(pbm_conditions),
+        is.data.frame(fluorescence_table),
+        is.character(fluorescence_columns),
         is.data.frame(annotation),
+        assertthat::is.string(array_id) || is.null(array_id),
         assertthat::is.string(output_directory) || is.null(output_directory),
-        assertthat::is.string(output_base_name) || is.null(output_base_name),
-        assertthat::is.string(array_id) || is.null(array_id)
+        assertthat::is.string(output_base_name) || is.null(output_base_name)
     )
 
     # Update the output base name with the output directory and array ID
@@ -83,10 +79,10 @@ make_corecmotifs <-
     }
 
     # Load and annotate the table of fluorescence values
-    fluorescence_table <-
+    annotated_fluorescence_table <-
         annotate_fluorescence_table(
-            fluorescence_file = fluorescence_file,
-            pbm_conditions = pbm_conditions,
+            fluorescence_table = fluorescence_table,
+            fluorescence_columns = fluorescence_columns,
             annotation = annotation,
             output_file = fluorescence_output
         )
@@ -94,8 +90,8 @@ make_corecmotifs <-
     # Convert the fluorescence values into condition-wise z-scores
     zscore_table <-
         fluorescence_to_zscore_table(
-            fluorescence_table = fluorescence_table,
-            fluorescence_columns = pbm_conditions,
+            fluorescence_table = annotated_fluorescence_table,
+            fluorescence_columns = fluorescence_columns,
             output_file = zscore_output
         )
 
@@ -103,7 +99,7 @@ make_corecmotifs <-
     corecmotifs <-
         zscore_table_to_corecmotifs(
             zscore_table = zscore_table,
-            zscore_columns = pbm_conditions,
+            zscore_columns = fluorescence_columns,
             array_id = array_id,
             output_file = corec_output
         )

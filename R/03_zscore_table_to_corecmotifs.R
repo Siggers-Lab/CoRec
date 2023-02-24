@@ -144,7 +144,7 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
         "probe_set",
         "snv_position",
         "snv_nucleotide",
-        zscore_columns
+        pbm_condition
     )
 
     # Make sure fluorescence_table has the expected columns and remove extras
