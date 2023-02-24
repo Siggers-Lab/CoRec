@@ -2,15 +2,15 @@
 % Please edit documentation in R/04_filter_corecmotifs.R
 \name{filter_corecmotifs}
 \alias{filter_corecmotifs}
-\title{Filter a list of CoRecMotifs}
+\title{Filter CoRecMotifs}
 \usage{
 filter_corecmotifs(
   corecmotifs,
   probe_set = NULL,
   pbm_condition = NULL,
   array_id = NULL,
-  rolling_ic = NULL,
   motif_strength = NULL,
+  rolling_ic = NULL,
   seed_sequence = NULL,
   motif_name = NULL,
   match_name = NULL,
@@ -21,55 +21,51 @@ filter_corecmotifs(
 )
 }
 \arguments{
-\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
+\item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to filter.}
 
-\item{probe_set}{a character vector specifying the probe sets to keep.
-(Default: NULL)}
+\item{probe_set}{\code{character} or \code{NULL}. The probe sets to keep or NULL not to
+filter by probe set. (Default: NULL)}
 
-\item{pbm_condition}{a character vector specifying the PBM conditions to
-keep. (Default: NULL)}
+\item{pbm_condition}{\code{character} or \code{NULL}. The PBM conditions to keep or
+NULL not to filter by PBM condition. (Default: NULL)}
 
-\item{array_id}{a character vector specifying the array IDs to keep.
-(Default: NULL)}
+\item{array_id}{\code{character} or \code{NULL}. The array IDs to keep or NULL not to
+filter by array ID. (Default: NULL)}
 
-\item{rolling_ic}{a single number specifying the minimum rolling IC to keep.
-(Default: NULL)}
+\item{motif_strength}{\code{numeric(1)} or \code{NULL}. The minimum motif strength to
+keep or NULL not to filter by motif strength. (Default: NULL)}
 
-\item{motif_strength}{a single number specifying the minimum motif strength
-to keep. (Default: NULL)}
+\item{rolling_ic}{\code{numeric(1)} or \code{NULL}. The minimum rolling IC to keep or
+NULL not to filter by rolling IC. (Default: NULL)}
 
-\item{seed_sequence}{a character vector specifying the seed sequences to
-keep. (Default: NULL)}
+\item{seed_sequence}{\code{character} or \code{NULL}. The seed sequences to keep or
+NULL not to filter by seed sequence. (Default: NULL)}
 
-\item{motif_name}{a character vector specifying the motif names to keep.
-(Default: NULL)}
+\item{motif_name}{\code{character} or \code{NULL}. The motif names to keep or NULL not
+to filter by motif name. (Default: NULL)}
 
-\item{match_name}{a character vector specifying the matching motif names to
-keep. (Default: NULL)}
+\item{match_name}{\code{character} or \code{NULL}. The match motif names to keep or
+NULL not to filter by match motif name. (Default: NULL)}
 
-\item{match_altname}{a character vector specifying the matching motif
-altnames to keep. (Default: NULL)}
+\item{match_altname}{\code{character} or \code{NULL}. The match motif altnames to keep
+or NULL not to filter by match motif altname. (Default: NULL)}
 
-\item{match_pvalue}{a single number specifying the maximum match p-value to
-keep. (Default: NULL)}
+\item{match_pvalue}{\code{numeric(1)} or \code{NULL}. The maximum match p-value to keep
+or NULL not to filter by match p-value. (Default: NULL)}
 
-\item{match_cluster}{a character vector specifying the matching clusters to
-keep. (Default: NULL)}
+\item{match_cluster}{\code{character} or \code{NULL}. The match clusters to keep or
+NULL not to filter by match cluster. (Default: NULL)}
 
-\item{output_file}{the path to the RDS file where the filtered list of
-\link[=CoRecMotif-class]{CoRecMotifs} will be written. If NULL, no file is
-written. (Default: NULL)}
+\item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
+results should be saved, or NULL not to save the results. (Default: NULL)}
 }
 \value{
-A list of \link[=CoRecMotif-class]{CoRecMotifs} that pass the filters.
+A list of \link[=CoRecMotif-class]{CoRecMotifs} that pass the given
+filters.
 }
 \description{
-Filter a list of \link[=CoRecMotif-class]{CoRecMotifs} based on the contents of
-CoRecMotif slots.
-}
-\details{
-To skip filtering by a particular slot, set the corresponding argument to
-NULL (the default).
+Filter a list of \link[=CoRecMotif-class]{CoRecMotifs}, retaining only those that
+satisfy all of your conditions.
 }
 \examples{
 print("FILL THIS IN")

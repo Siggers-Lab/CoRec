@@ -1,39 +1,35 @@
-#' Filter a list of CoRecMotifs
+#' Filter CoRecMotifs
 #'
-#' Filter a list of [CoRecMotifs][CoRecMotif-class] based on the contents of
-#' CoRecMotif slots.
+#' Filter a list of [CoRecMotifs][CoRecMotif-class], retaining only those that
+#' satisfy all of your conditions.
 #'
-#' To skip filtering by a particular slot, set the corresponding argument to
-#' NULL (the default).
+#' @inheritParams annotate_fluorescence_table
+#' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to filter.
+#' @param probe_set `character` or `NULL`. The probe sets to keep or NULL not to
+#'   filter by probe set. (Default: NULL)
+#' @param pbm_condition `character` or `NULL`. The PBM conditions to keep or
+#'   NULL not to filter by PBM condition. (Default: NULL)
+#' @param array_id `character` or `NULL`. The array IDs to keep or NULL not to
+#'   filter by array ID. (Default: NULL)
+#' @param rolling_ic `numeric(1)` or `NULL`. The minimum rolling IC to keep or
+#'   NULL not to filter by rolling IC. (Default: NULL)
+#' @param motif_strength `numeric(1)` or `NULL`. The minimum motif strength to
+#'   keep or NULL not to filter by motif strength. (Default: NULL)
+#' @param seed_sequence `character` or `NULL`. The seed sequences to keep or
+#'   NULL not to filter by seed sequence. (Default: NULL)
+#' @param motif_name `character` or `NULL`. The motif names to keep or NULL not
+#'   to filter by motif name. (Default: NULL)
+#' @param match_name `character` or `NULL`. The match motif names to keep or
+#'   NULL not to filter by match motif name. (Default: NULL)
+#' @param match_altname `character` or `NULL`. The match motif altnames to keep
+#'   or NULL not to filter by match motif altname. (Default: NULL)
+#' @param match_pvalue `numeric(1)` or `NULL`. The maximum match p-value to keep
+#'   or NULL not to filter by match p-value. (Default: NULL)
+#' @param match_cluster `character` or `NULL`. The match clusters to keep or
+#'   NULL not to filter by match cluster. (Default: NULL)
 #'
-#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to filter.
-#' @param probe_set a character vector specifying the probe sets to keep.
-#'   (Default: NULL)
-#' @param pbm_condition a character vector specifying the PBM conditions to
-#'   keep. (Default: NULL)
-#' @param array_id a character vector specifying the array IDs to keep.
-#'   (Default: NULL)
-#' @param rolling_ic a single number specifying the minimum rolling IC to keep.
-#'   (Default: NULL)
-#' @param motif_strength a single number specifying the minimum motif strength
-#'   to keep. (Default: NULL)
-#' @param seed_sequence a character vector specifying the seed sequences to
-#'   keep. (Default: NULL)
-#' @param motif_name a character vector specifying the motif names to keep.
-#'   (Default: NULL)
-#' @param match_name a character vector specifying the matching motif names to
-#'   keep. (Default: NULL)
-#' @param match_altname a character vector specifying the matching motif
-#'   altnames to keep. (Default: NULL)
-#' @param match_pvalue a single number specifying the maximum match p-value to
-#'   keep. (Default: NULL)
-#' @param match_cluster a character vector specifying the matching clusters to
-#'   keep. (Default: NULL)
-#' @param output_file the path to the RDS file where the filtered list of
-#'   [CoRecMotifs][CoRecMotif-class] will be written. If NULL, no file is
-#'   written. (Default: NULL)
-#'
-#' @return A list of [CoRecMotifs][CoRecMotif-class] that pass the filters.
+#' @return A list of [CoRecMotifs][CoRecMotif-class] that pass the given
+#'   filters.
 #'
 #' @export
 #'
@@ -45,8 +41,8 @@ filter_corecmotifs <-
         probe_set = NULL,
         pbm_condition = NULL,
         array_id = NULL,
-        rolling_ic = NULL,
         motif_strength = NULL,
+        rolling_ic = NULL,
         seed_sequence = NULL,
         motif_name = NULL,
         match_name = NULL,
@@ -60,8 +56,8 @@ filter_corecmotifs <-
         is.character(probe_set) || is.null(probe_set),
         is.character(pbm_condition) || is.null(pbm_condition),
         is.character(array_id) || is.null(array_id),
-        assertthat::is.number(rolling_ic) || is.null(rolling_ic),
         assertthat::is.number(motif_strength) || is.null(motif_strength),
+        assertthat::is.number(rolling_ic) || is.null(rolling_ic),
         is.character(seed_sequence) || is.null(seed_sequence),
         is.character(motif_name) || is.null(motif_name),
         is.character(match_name) || is.null(match_name),
@@ -94,16 +90,16 @@ filter_corecmotifs <-
         corecmotifs <- corecmotifs[vals %in% array_id]
     }
 
-    # Filter by rolling_ic
-    if (!is.null(rolling_ic)) {
-        vals <- vapply(corecmotifs, get_rolling_ic, numeric(1))
-        corecmotifs <- corecmotifs[vals >= rolling_ic & !is.na(vals)]
-    }
-
     # Filter by motif_strength
     if (!is.null(motif_strength)) {
         vals <- vapply(corecmotifs, get_motif_strength, numeric(1))
         corecmotifs <- corecmotifs[vals >= motif_strength & !is.na(vals)]
+    }
+
+    # Filter by rolling_ic
+    if (!is.null(rolling_ic)) {
+        vals <- vapply(corecmotifs, get_rolling_ic, numeric(1))
+        corecmotifs <- corecmotifs[vals >= rolling_ic & !is.na(vals)]
     }
 
     # Filter by seed_sequence
