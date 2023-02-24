@@ -12,3 +12,14 @@
 #'   \item{snv_nucleotide}{The nucleotide at the SNV position.}
 #' }
 "hTF_v1_annotation"
+
+#' Motif cluster assignments
+#'
+#' A table assigning reference motifs to clusters.
+#'
+#' @format A data frame with 946 rows and 2 columns:
+#' \describe{
+#'   \item{motif}{The name of a reference motif.}
+#'   \item{cluster}{The name of the cluster this reference motif is part of.}
+#' }
+"motif_clusters"
