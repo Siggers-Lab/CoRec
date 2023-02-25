@@ -146,9 +146,9 @@ calculate_strength <- function(zscore_motif) {
 }
 
 # Convert a z-score motif to a PPM
-zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
+zscore_to_universalmotif <- function(zscore_motif, beta, name = "motif") {
     # Transform the z-scores using the beta parameter
-    ppm <-
+    motif <-
         # Multiply each z-score by beta and then take the exponential
         exp(beta * zscore_motif) %>%
 
@@ -159,13 +159,13 @@ zscore_to_ppm <- function(zscore_motif, beta, name = "motif") {
         universalmotif::create_motif(name = name)
 
     # Return the PPM
-    return(ppm)
+    return(motif)
 }
 
 # Calculate the max mean rolling information content over a window of length 5
-calculate_rolling_ic <- function(ppm) {
+calculate_rolling_ic <- function(motif) {
     # Convert the PPM to an information content (IC) matrix
-    icm <- universalmotif::convert_type(ppm, type = "ICM")
+    icm <- universalmotif::convert_type(motif, type = "ICM")
 
     # Figure out the total IC at each position
     ic_per_position <- universalmotif::colSums(icm)

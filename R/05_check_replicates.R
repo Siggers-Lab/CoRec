@@ -84,7 +84,7 @@ check_replicates <-
     # Make sure replicate motifs are actually replicating (i.e., similar)
     replicated_motifs <- lapply(grouped_corecmotifs, function(group) {
         # Get a list of the PPMs in this group of replicates
-        ppms <- lapply(group, ppm)
+        motifs <- lapply(group, motif)
 
         # Get the names of the motifs in this group
         motif_names <- lapply(group, motif_name)
@@ -103,7 +103,7 @@ check_replicates <-
         # Compare all the motifs to each other
         motif_comparison <-
             universalmotif::compare_motifs(
-                ppms,
+                motifs,
                 method = "EUCL",
                 # Don't bother with the reverse complements
                 tryRC = FALSE,

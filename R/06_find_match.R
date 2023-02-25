@@ -61,12 +61,12 @@ find_match <-
     }
 
     # Get the PPMs of the CoRecMotifs to compare
-    ppms <- lapply(corecmotifs, ppm)
+    motifs <- lapply(corecmotifs, motif)
 
     # Compare the PPMs to the full library of reference motifs
     motif_comparison <-
         memes::runTomTom(
-            ppms,
+            motifs,
             database = reference_motifs_file,
             thresh = 1,
             evalue = FALSE,
@@ -78,11 +78,11 @@ find_match <-
     # Update the match slots of the CoRecMotifs
     corecmotifs <- lapply(1:length(corecmotifs), function(index) {
         # Set the match motif
-        corecmotifs[[index]]@match_motif <-
+        match_motif(corecmotifs[[index]]) <-
             motif_comparison[[index]]$best_match_motif[[1]]
 
         # Set the match p-value (actually an E-value, but whatever)
-        corecmotifs[[index]]@match_pvalue <-
+        match_pvalue(corecmotifs[[index]]) <-
             as.numeric(motif_comparison[[index]]$best_match_eval)
 
         # Figure out the match cluster

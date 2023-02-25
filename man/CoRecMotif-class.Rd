@@ -6,20 +6,26 @@
 \alias{probe_set,CoRecMotif-method}
 \alias{pbm_condition,CoRecMotif-method}
 \alias{zscore_motif,CoRecMotif-method}
+\alias{delta_zscore_motif,CoRecMotif-method}
 \alias{array_id,CoRecMotif-method}
 \alias{motif_strength,CoRecMotif-method}
 \alias{rolling_ic,CoRecMotif-method}
+\alias{seed_zscore,CoRecMotif-method}
 \alias{seed_sequence,CoRecMotif-method}
 \alias{beta,CoRecMotif-method}
-\alias{ppm,CoRecMotif-method}
+\alias{motif,CoRecMotif-method}
 \alias{motif_name,CoRecMotif-method}
+\alias{icm,CoRecMotif-method}
+\alias{pwm,CoRecMotif-method}
+\alias{ppm,CoRecMotif-method}
 \alias{match_motif,CoRecMotif-method}
 \alias{match_name,CoRecMotif-method}
 \alias{match_altname,CoRecMotif-method}
+\alias{match_icm,CoRecMotif-method}
+\alias{match_pwm,CoRecMotif-method}
+\alias{match_ppm,CoRecMotif-method}
 \alias{match_pvalue,CoRecMotif-method}
 \alias{match_cluster,CoRecMotif-method}
-\alias{seed_zscore,CoRecMotif-method}
-\alias{delta_zscore_motif,CoRecMotif-method}
 \alias{probe_set<-,CoRecMotif-method}
 \alias{pbm_condition<-,CoRecMotif-method}
 \alias{zscore_motif<-,CoRecMotif-method}
@@ -39,19 +45,29 @@
 
 \S4method{zscore_motif}{CoRecMotif}(x)
 
+\S4method{delta_zscore_motif}{CoRecMotif}(x)
+
 \S4method{array_id}{CoRecMotif}(x)
 
 \S4method{motif_strength}{CoRecMotif}(x)
 
 \S4method{rolling_ic}{CoRecMotif}(x)
 
+\S4method{seed_zscore}{CoRecMotif}(x)
+
 \S4method{seed_sequence}{CoRecMotif}(x)
 
 \S4method{beta}{CoRecMotif}(x)
 
-\S4method{ppm}{CoRecMotif}(x)
+\S4method{motif}{CoRecMotif}(x)
 
 \S4method{motif_name}{CoRecMotif}(x)
+
+\S4method{icm}{CoRecMotif}(x)
+
+\S4method{pwm}{CoRecMotif}(x)
+
+\S4method{ppm}{CoRecMotif}(x)
 
 \S4method{match_motif}{CoRecMotif}(x)
 
@@ -59,13 +75,15 @@
 
 \S4method{match_altname}{CoRecMotif}(x)
 
+\S4method{match_icm}{CoRecMotif}(x)
+
+\S4method{match_pwm}{CoRecMotif}(x)
+
+\S4method{match_ppm}{CoRecMotif}(x)
+
 \S4method{match_pvalue}{CoRecMotif}(x)
 
 \S4method{match_cluster}{CoRecMotif}(x)
-
-\S4method{seed_zscore}{CoRecMotif}(x)
-
-\S4method{delta_zscore_motif}{CoRecMotif}(x)
 
 \S4method{probe_set}{CoRecMotif}(x) <- value
 
@@ -121,10 +139,10 @@ content of the motif over a sliding window of length 5.}
 If beta falls outside the range of 1 to 4 (inclusive), it is set to the
 nearest endpoint. It is used to convert the z-score motif to a PPM.}
 
-\item{\code{ppm}}{\link[universalmotif:universalmotif-class]{universalmotif}. Calculated
-automatically. To convert the z-score motif into a PPM, each z-score is
-first multiplied by beta, and then the product is exponentiated. Each
-column (or position in the motif) is then normalized to sum to 1.}
+\item{\code{motif}}{\link[universalmotif:universalmotif-class]{universalmotif}.
+Calculated automatically. To convert the z-score motif into a PPM, each
+z-score is first multiplied by beta, and then the product is exponentiated.
+Each column (or position in the motif) is then normalized to sum to 1.}
 
 \item{\code{match_motif}}{\link[universalmotif:universalmotif-class]{universalmotif}. The
 best match reference motif.}

@@ -20,10 +20,10 @@
 #'   - (0.5 * z)}, where `z` is the z-score of the seed probe of this probe set.
 #'   If beta falls outside the range of 1 to 4 (inclusive), it is set to the
 #'   nearest endpoint. It is used to convert the z-score motif to a PPM.
-#' @slot ppm [universalmotif][universalmotif::universalmotif-class]. Calculated
-#'   automatically. To convert the z-score motif into a PPM, each z-score is
-#'   first multiplied by beta, and then the product is exponentiated. Each
-#'   column (or position in the motif) is then normalized to sum to 1.
+#' @slot motif [universalmotif][universalmotif::universalmotif-class].
+#'   Calculated automatically. To convert the z-score motif into a PPM, each
+#'   z-score is first multiplied by beta, and then the product is exponentiated.
+#'   Each column (or position in the motif) is then normalized to sum to 1.
 #' @slot match_motif [universalmotif][universalmotif::universalmotif-class]. The
 #'   best match reference motif.
 #' @slot match_pvalue `numeric(1)`. The adjusted p-value of the best match to a
@@ -49,7 +49,7 @@ setClass(
         rolling_ic = "numeric",
         seed_sequence = "character",
         beta = "numeric",
-        ppm = "ANY",
+        motif = "ANY",
         match_motif = "ANY",
         match_pvalue = "numeric",
         match_cluster = "character"
@@ -65,7 +65,7 @@ setClass(
         rolling_ic = NA_real_,
         seed_sequence = NA_character_,
         beta = NA_real_,
-        ppm = NA,
+        motif = NA,
         match_motif = NA,
         match_pvalue = NA_real_,
         match_cluster = NA_character_
@@ -106,9 +106,9 @@ CoRecMotif <-
 
     beta <- calculate_beta(zscore_motif)
 
-    ppm <- zscore_to_ppm(zscore_motif, beta, motif_name)
+    motif <- zscore_to_universalmotif(zscore_motif, beta, motif_name)
 
-    rolling_ic <- calculate_rolling_ic(ppm)
+    rolling_ic <- calculate_rolling_ic(motif)
 
     methods::new(
         "CoRecMotif",
@@ -120,18 +120,18 @@ CoRecMotif <-
         motif_strength = motif_strength,
         rolling_ic = rolling_ic,
         seed_sequence = seed_sequence,
-        ppm = ppm
+        motif = motif
     )
 }
 
 setValidity("CoRecMotif", function(object) {
-    if (length(object@probe_set) > 1) {
+    if (length(probe_set(object)) > 1) {
         "@probe_set has to be a character vector of length 1"
-    } else if (!is(object@ppm, "universalmotif")) {
-        "@ppm has to be an object of class universalmotif"
-    } else if (!is(object@match_motif, "universalmotif") &&
-               !is.na(object@match_motif)) {
-        "@match_motif has to be an object of class universalmotif or NULL"
+    } else if (!is(motif(object), "universalmotif")) {
+        "@motif has to be an object of class universalmotif"
+    } else if (!is(match_motif(object), "universalmotif") &&
+               !is.na(match_motif(object))) {
+        "@match_motif has to be an object of class universalmotif or NA"
     } else {
         TRUE
     }
