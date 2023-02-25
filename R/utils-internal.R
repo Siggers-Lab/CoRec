@@ -1,3 +1,15 @@
+# Set the colors to use for nucleotides when plotting motif logos
+logo_color_scheme <- c(
+    "A" = "#109648",
+    "C" = "#255C99",
+    "G" = "#F7B32B",
+    "T" = "#D62839"
+)
+
+# Set the colors to use for motif logo outlines
+corecmotif_outline_color <- "#abbed1"
+reference_outline_color <- "#added1"
+
 # Paste together the output directory, output base name, and array ID
 update_output_base_name <-
     function(
@@ -185,5 +197,19 @@ calculate_rolling_ic <- function(motif) {
 
     # Return the max rolling IC
     return(max_rolling_ic)
+}
+
+# Sum all the negative numbers in each column of a matrix
+sum_negatives <- function(motif_matrix) {
+    apply(motif_matrix, 2, function(column) {
+        sum(column[column < 0])
+    })
+}
+
+# Sum all the positive numbers in each column of a matrix
+sum_positives <- function(motif_matrix) {
+    apply(motif_matrix, 2, function(column) {
+        sum(column[column > 0])
+    })
 }
 
