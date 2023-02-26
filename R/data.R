@@ -23,3 +23,28 @@
 #'   \item{cluster}{The name of the cluster this reference motif is part of.}
 #' }
 "motif_clusters"
+
+#' Example fluorescence data
+#'
+#' Tables of example CoRec fluorescence data for 5 probe sets in 4 conditions.
+#'
+#' @format A data frame with 533 rows and 5 columns:
+#' \describe{
+#'   \item{probe_id}{The probe ID.}
+#'   \item{UT_SUDHL4_SWISNF_mix}{The fluorescence values for the
+#'     "UT_SUDHL4_SWISNF_mix" PBM condition.}
+#'   \item{UT_SUDHL4_HDAC_mix}{The fluorescence values for the
+#'     "UT_SUDHL4_HDAC_mix" PBM condition.}
+#'   \item{UT_SUDHL4_PRMT5}{The fluorescence values for the
+#'     "UT_SUDHL4_PRMT5" PBM condition.}
+#'   \item{UT_SUDHL4_JMJD2A}{The fluorescence values for the
+#'     "UT_SUDHL4_SWISNF_mix" PBM condition.}
+#' }
+#'
+#' @rdname example_fluorescence_tables
+"example_fluorescence_table_1"
+
+#' @rdname example_fluorescence_tables
+#' @format NULL
+"example_fluorescence_table_2"
+
