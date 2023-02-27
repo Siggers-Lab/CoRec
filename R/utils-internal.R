@@ -80,7 +80,7 @@ try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
                 if (file_type == "tsv") {
                     # Try to save a TSV file
                     suppressWarnings(
-                        write.table(
+                        utils::write.table(
                             x,
                             output_file,
                             quote = FALSE,
@@ -151,7 +151,7 @@ calculate_strength <- function(zscore_motif) {
         zscore_motif %>%
         sort() %>%
         unique() %>%
-        quantile(0.93, names = FALSE)
+        stats::quantile(0.93, names = FALSE)
 
     # Return the motif strength
     return(motif_strength)

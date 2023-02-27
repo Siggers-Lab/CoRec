@@ -13,15 +13,18 @@ Depends:
     R (>= 4.1)
 Imports: 
     assertthat,
+    cowplot,
     dplyr,
     ggplot2,
     magrittr,
     memes,
     methods,
     purrr,
+    stats,
     tibble,
     tidyr,
-    universalmotif
+    universalmotif,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

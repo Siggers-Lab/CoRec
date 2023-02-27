@@ -46,7 +46,7 @@ setMethod("delta_zscore_motif", "CoRecMotif", function(x) {
     # Transform the z-scores to reflect their deviation from column-wise median
     delta_zscore_motif <-
         # Subtract the column-wise median from each value in each column
-        apply(zscore_motif, 2, function(col) col - median(col))
+        apply(zscore_motif, 2, function(col) col - stats::median(col))
 
     # Return the delta z-score motif
     return(delta_zscore_motif)
@@ -109,7 +109,7 @@ setMethod("match_motif", "CoRecMotif", function(x) x@match_motif)
 
 #' @rdname CoRecMotif-class
 setMethod("match_name", "CoRecMotif", function(x) {
-    if (is(x@match_motif, "universalmotif")) {
+    if (methods::is(x@match_motif, "universalmotif")) {
         x@match_motif@name
     } else {
         NA
@@ -118,7 +118,7 @@ setMethod("match_name", "CoRecMotif", function(x) {
 
 #' @rdname CoRecMotif-class
 setMethod("match_altname", "CoRecMotif", function(x) {
-    if (is(x@match_motif, "universalmotif")) {
+    if (methods::is(x@match_motif, "universalmotif")) {
         x@match_motif@altname
     } else {
         NA
@@ -127,7 +127,7 @@ setMethod("match_altname", "CoRecMotif", function(x) {
 
 #' @rdname CoRecMotif-class
 setMethod("match_icm", "CoRecMotif", function(x) {
-    if (is(x@match_motif, "universalmotif")) {
+    if (methods::is(x@match_motif, "universalmotif")) {
         universalmotif::convert_type(x@match_motif, "ICM")@motif
     } else {
         NA
@@ -136,7 +136,7 @@ setMethod("match_icm", "CoRecMotif", function(x) {
 
 #' @rdname CoRecMotif-class
 setMethod("match_pwm", "CoRecMotif", function(x) {
-    if (is(x@match_motif, "universalmotif")) {
+    if (methods::is(x@match_motif, "universalmotif")) {
         universalmotif::convert_type(x@match_motif, "PWM")@motif
     } else {
         NA
@@ -145,7 +145,7 @@ setMethod("match_pwm", "CoRecMotif", function(x) {
 
 #' @rdname CoRecMotif-class
 setMethod("match_ppm", "CoRecMotif", function(x) {
-    if (is(x@match_motif, "universalmotif")) {
+    if (methods::is(x@match_motif, "universalmotif")) {
         universalmotif::convert_type(x@match_motif, "PPM")@motif
     } else {
         NA
@@ -183,14 +183,14 @@ setGeneric(
 #' @rdname CoRecMotif-class
 setMethod("probe_set<-", "CoRecMotif", function(x, value) {
     x@probe_set <- value
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
 #' @rdname CoRecMotif-class
 setMethod("pbm_condition<-", "CoRecMotif", function(x, value) {
     x@pbm_condition <- value
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
@@ -218,28 +218,28 @@ setMethod("zscore_motif<-", "CoRecMotif", function(x, value) {
     x@match_pvalue <- NA_real_
     x@match_cluster <- NA_character_
 
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
 #' @rdname CoRecMotif-class
 setMethod("array_id<-", "CoRecMotif", function(x, value) {
     x@array_id <- value
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
 #' @rdname CoRecMotif-class
 setMethod("seed_sequence<-", "CoRecMotif", function(x, value) {
     x@seed_sequence <- value
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
 #' @rdname CoRecMotif-class
 setMethod("motif_name<-", "CoRecMotif", function(x, value) {
     x@motif@name <- value
-    validObject(x)
+    methods::validObject(x)
     x
 })
 
@@ -255,7 +255,7 @@ setMethod("as.data.frame", "CoRecMotif", function(x) {
         motif_strength = motif_strength(x),
         seed_sequence = seed_sequence(x),
         match_motif = ifelse(
-            is(match_motif(x), "universalmotif"),
+            methods::is(match_motif(x), "universalmotif"),
             match_altname(x),
             NA
         ),

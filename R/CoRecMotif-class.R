@@ -130,9 +130,9 @@ setValidity("CoRecMotif", function(object) {
         dplyr::case_when(
             !is.numeric(zscore_motif(object)) ~
                 "@zscore_motif must be numeric",
-            !is(motif(object), "universalmotif") ~
+            !methods::is(motif(object), "universalmotif") ~
                 "@motif must be an object of class universalmotif",
-            !is(match_motif(object), "universalmotif") &&
+            !methods::is(match_motif(object), "universalmotif") &&
                 !is.na(match_motif(object)) ~
                 "@match_motif must be an object of class universalmotif or NA"
         )

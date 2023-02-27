@@ -43,7 +43,7 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
 
     # Load the table of fluorescence values
     fluorescence_table <-
-        read.table(
+        utils::read.table(
             fluorescence_file,
             header = FALSE,
             sep = "\t",

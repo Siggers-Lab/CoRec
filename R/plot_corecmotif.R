@@ -91,13 +91,17 @@ plot_corecmotif <-
             )
     }
 
-    if (!is(corecmotif_plot, "gg") && !is(reference_plot, "gg")) {
+    # Check if the motifs got plotted
+    corecmotif_is_plot <- methods::is(corecmotif_plot, "gg")
+    reference_is_plot <- methods::is(reference_plot, "gg")
+
+    if (!corecmotif_is_plot && !reference_is_plot) {
         # If no plots were made, return NULL
         return()
-    } else if (is(corecmotif_plot, "gg") && !is(reference_plot, "gg")) {
+    } else if (corecmotif_is_plot && !reference_is_plot) {
         # If there is no reference motif plot, return the CoRecMotif plot
         return(corecmotif_plot)
-    } else if (!is(corecmotif_plot, "gg") && is(reference_plot, "gg")) {
+    } else if (!corecmotif_is_plot && reference_is_plot) {
         # If there is no CoRecMotif plot, return the reference motif plot
         return(reference_plot)
     } else {
