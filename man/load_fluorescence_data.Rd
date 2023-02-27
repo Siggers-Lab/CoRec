@@ -7,11 +7,11 @@
 load_fluorescence_data(fluorescence_file, pbm_conditions)
 }
 \arguments{
-\item{fluorescence_file}{the path to the file containing the fluorescence
-data to load. See 'Details' for expected columns.}
+\item{fluorescence_file}{\code{character(1)}. The path to the fluorescence data
+file to load. See 'Details' for expected columns.}
 
-\item{pbm_conditions}{a character vector specifying the PBM conditions (e.g.,
-cell type, treatment, and factor profiled) in the order they appear in
+\item{pbm_conditions}{\code{character}. The PBM conditions (e.g., cell type,
+treatment, and factor profiled) in the order they appear in
 \code{fluorescence_file}.}
 }
 \value{

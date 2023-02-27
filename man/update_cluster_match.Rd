@@ -7,18 +7,19 @@
 update_cluster_match(corecmotif, cluster_assignments = NULL)
 }
 \arguments{
-\item{corecmotif}{the \link[=CoRecMotif-class]{CoRecMotif} to update.}
+\item{corecmotif}{\link[=CoRecMotif-class]{CoRecMotif}. The
+\link[=CoRecMotif-class]{CoRecMotif} to update.}
 
-\item{cluster_assignments}{a data frame of reference motif names and the
-clusters they are assigned to or NULL to reset the \code{match_cluster} slot to
-NA. (Default: NULL)}
+\item{cluster_assignments}{\code{data.frame} or \code{NULL}. A table mapping the
+reference motifs to motif clusters or NULL to reset the \code{match_cluster}
+slot to NA. See \link{motif_clusters} for expected columns. (Default: NULL)}
 }
 \value{
 A \link[=CoRecMotif-class]{CoRecMotif} with its \code{match_cluster} slot
 updated.
 }
 \description{
-Update the \code{match_cluster} slot of a \link[=CoRecMotif-class]{CoRecMotif} based on
+Updates the \code{match_cluster} slot of a \link[=CoRecMotif-class]{CoRecMotif} based on
 the provided cluster assignments and the name of the motif in the
 CoRecMotif's \code{match_motif} slot.
 }

@@ -18,10 +18,10 @@
 #' Columns 4 through \eqn{(n + 3)} must contain the fluorescence values for the
 #' PBM conditions in the order they appear in `pbm_conditions`.
 #'
-#' @param fluorescence_file the path to the file containing the fluorescence
-#'   data to load. See 'Details' for expected columns.
-#' @param pbm_conditions a character vector specifying the PBM conditions (e.g.,
-#'   cell type, treatment, and factor profiled) in the order they appear in
+#' @param fluorescence_file `character(1)`. The path to the fluorescence data
+#'   file to load. See 'Details' for expected columns.
+#' @param pbm_conditions `character`. The PBM conditions (e.g., cell type,
+#'   treatment, and factor profiled) in the order they appear in
 #'   `fluorescence_file`.
 #'
 #' @return A data frame containing the fluorescence values from the specified
@@ -87,10 +87,11 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
 #' Creates a data frame representation of a list of
 #' [CoRecMotifs][CoRecMotif-class].
 #'
-#' @param corecmotifs the list of [CoRecMotifs][CoRecMotif-class] to summarize.
+#' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to summarize.
 #'
 #' @return A data frame with information about a list of
 #'   [CoRecMotifs][CoRecMotif-class].
+#'
 #' @export
 #'
 #' @examples
@@ -109,17 +110,19 @@ summarize_corecmotifs <- function(corecmotifs) {
 
 #' Update the match cluster of a CoRecMotif
 #'
-#' Update the `match_cluster` slot of a [CoRecMotif][CoRecMotif-class] based on
+#' Updates the `match_cluster` slot of a [CoRecMotif][CoRecMotif-class] based on
 #' the provided cluster assignments and the name of the motif in the
 #' CoRecMotif's `match_motif` slot.
 #'
-#' @param corecmotif the [CoRecMotif][CoRecMotif-class] to update.
-#' @param cluster_assignments a data frame of reference motif names and the
-#'   clusters they are assigned to or NULL to reset the `match_cluster` slot to
-#'   NA. (Default: NULL)
+#' @param corecmotif [CoRecMotif][CoRecMotif-class]. The
+#'   [CoRecMotif][CoRecMotif-class] to update.
+#' @param cluster_assignments `data.frame` or `NULL`. A table mapping the
+#'   reference motifs to motif clusters or NULL to reset the `match_cluster`
+#'   slot to NA. See [motif_clusters] for expected columns. (Default: NULL)
 #'
 #' @return A [CoRecMotif][CoRecMotif-class] with its `match_cluster` slot
 #'   updated.
+#'
 #' @export
 #'
 #' @examples

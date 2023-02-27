@@ -7,7 +7,7 @@
 summarize_corecmotifs(corecmotifs)
 }
 \arguments{
-\item{corecmotifs}{the list of \link[=CoRecMotif-class]{CoRecMotifs} to summarize.}
+\item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to summarize.}
 }
 \value{
 A data frame with information about a list of

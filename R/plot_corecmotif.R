@@ -1,3 +1,23 @@
+#' Plot CoRecMotifs and their matching reference motifs
+#'
+#' Creates a motif logo plot of a [CoRecMotif][CoRecMotif-class] and/or its
+#' matching reference motif. There are several types of logos to choose from.
+#'
+#' @param corecmotif [CoRecMotif][CoRecMotif-class]. The
+#'   [CoRecMotif][CoRecMotif-class] to plot.
+#' @param corecmotif_logo_type `character(1)`. One of "delta_zscore", "ICM",
+#'   "PWM", "PPM", or "none". The type of logo to plot for the
+#'   [CoRecMotif][CoRecMotif-class]. (Default: "delta_zscore")
+#' @param reference_logo_type `character(1)`. One of "ICM", "PWM", "PPM", or
+#'   "none". The type of logo to plot for the matching reference motif.
+#'   (Default: "ICM")
+#'
+#' @return A `ggplot` object.
+#'
+#' @export
+#'
+#' @examples
+#' print("FILL THIS IN")
 plot_corecmotif <-
     function(
         corecmotif,
@@ -72,12 +92,16 @@ plot_corecmotif <-
     }
 
     if (!is(corecmotif_plot, "gg") && !is(reference_plot, "gg")) {
+        # If no plots were made, return NULL
         return()
     } else if (is(corecmotif_plot, "gg") && !is(reference_plot, "gg")) {
+        # If there is no reference motif plot, return the CoRecMotif plot
         return(corecmotif_plot)
     } else if (!is(corecmotif_plot, "gg") && is(reference_plot, "gg")) {
+        # If there is no CoRecMotif plot, return the reference motif plot
         return(reference_plot)
     } else {
+        # If both plots were made, put them side by side and return
         combined_plot <-
             cowplot::plot_grid(corecmotif_plot, reference_plot, nrow = 1)
 
@@ -85,6 +109,7 @@ plot_corecmotif <-
     }
 }
 
+# This is a private helper for plot_corecmotif()
 plot_motif <- function(motif_matrix, logo_type, outline_color) {
     # Figure out what the y axis label should be based on the motif type
     y_label <-
