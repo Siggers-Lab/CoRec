@@ -78,11 +78,11 @@ find_match <-
     # Update the match slots of the CoRecMotifs
     corecmotifs <- lapply(1:length(corecmotifs), function(index) {
         # Set the match motif
-        match_motif(corecmotifs[[index]]) <-
+        corecmotifs[[index]]@match_motif <-
             motif_comparison[[index]]$best_match_motif[[1]]
 
         # Set the match p-value (actually an E-value, but whatever)
-        match_pvalue(corecmotifs[[index]]) <-
+        corecmotifs[[index]]@match_pvalue <-
             as.numeric(motif_comparison[[index]]$best_match_eval)
 
         # Figure out the match cluster

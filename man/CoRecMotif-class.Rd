@@ -32,9 +32,6 @@
 \alias{array_id<-,CoRecMotif-method}
 \alias{seed_sequence<-,CoRecMotif-method}
 \alias{motif_name<-,CoRecMotif-method}
-\alias{match_motif<-,CoRecMotif-method}
-\alias{match_pvalue<-,CoRecMotif-method}
-\alias{match_cluster<-,CoRecMotif-method}
 \alias{as.data.frame,CoRecMotif-method}
 \alias{show,CoRecMotif-method}
 \title{CoRecMotif class}
@@ -96,12 +93,6 @@
 \S4method{seed_sequence}{CoRecMotif}(x) <- value
 
 \S4method{motif_name}{CoRecMotif}(x) <- value
-
-\S4method{match_motif}{CoRecMotif}(x) <- value
-
-\S4method{match_pvalue}{CoRecMotif}(x) <- value
-
-\S4method{match_cluster}{CoRecMotif}(x) <- value
 
 \S4method{as.data.frame}{CoRecMotif}(x)
 

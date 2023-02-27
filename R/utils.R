@@ -130,7 +130,7 @@ summarize_corecmotifs <- function(corecmotifs) {
 update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
     # Clear the cluster match slot if there are no clusters or no motif match
     if (is.null(cluster_assignments) || is.null(match_motif(corecmotif))) {
-        match_cluster(corecmotif) <- NA_character_
+        corecmotif@match_cluster <- NA_character_
 
         # Return the updated corecmotif
         return(corecmotif)
@@ -138,7 +138,7 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
 
     # Clear the cluster match slot if the motif match isn't in the clusters
     if (!(match_altname(corecmotif) %in% cluster_assignments$motif)) {
-        match_cluster(corecmotif) <- NA_character_
+        corecmotif@match_cluster <- NA_character_
 
         # Print a warning message
         warning(
@@ -161,7 +161,7 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
         dplyr::pull(cluster)
 
     # Update the cluster match slot
-    match_cluster(corecmotif) <- as.character(best_cluster)
+    corecmotif@match_cluster <- as.character(best_cluster)
 
     # Return the updated corecmotif
     return(corecmotif)

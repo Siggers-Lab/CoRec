@@ -177,15 +177,6 @@ setGeneric(
 setGeneric(
     "motif_name<-", function(x, value) standardGeneric("motif_name<-")
 )
-setGeneric(
-    "match_motif<-", function(x, value) standardGeneric("match_motif<-")
-)
-setGeneric(
-    "match_pvalue<-", function(x, value) standardGeneric("match_pvalue<-")
-)
-setGeneric(
-    "match_cluster<-", function(x, value) standardGeneric("match_cluster<-")
-)
 
 # Define the methods for all the setters
 
@@ -205,7 +196,28 @@ setMethod("pbm_condition<-", "CoRecMotif", function(x, value) {
 
 #' @rdname CoRecMotif-class
 setMethod("zscore_motif<-", "CoRecMotif", function(x, value) {
+    # Check the input to start with or you'll get unhelpful error messages later
+    if (!is.numeric(value) || !is.matrix(value)) {
+        stop(
+            "zscore_motif must be a numeric matrix",
+            call. = FALSE
+        )
+    }
+
+    # Update the z-score motif itself
     x@zscore_motif <- value
+
+    # Update all the things that depend on the z-score motif
+    x@motif_strength <- calculate_strength(value)
+    x@beta <- calculate_beta(value)
+    x@motif <- zscore_to_universalmotif(value, x@beta, motif_name(x))
+    x@rolling_ic <- calculate_rolling_ic(x@motif)
+
+    # Reset all the match slots
+    x@match_motif <- NA
+    x@match_pvalue <- NA_real_
+    x@match_cluster <- NA_character_
+
     validObject(x)
     x
 })
@@ -227,27 +239,6 @@ setMethod("seed_sequence<-", "CoRecMotif", function(x, value) {
 #' @rdname CoRecMotif-class
 setMethod("motif_name<-", "CoRecMotif", function(x, value) {
     x@motif@name <- value
-    validObject(x)
-    x
-})
-
-#' @rdname CoRecMotif-class
-setMethod("match_motif<-", "CoRecMotif", function(x, value) {
-    x@match_motif <- value
-    validObject(x)
-    x
-})
-
-#' @rdname CoRecMotif-class
-setMethod("match_pvalue<-", "CoRecMotif", function(x, value) {
-    x@match_pvalue <- value
-    validObject(x)
-    x
-})
-
-#' @rdname CoRecMotif-class
-setMethod("match_cluster<-", "CoRecMotif", function(x, value) {
-    x@match_cluster <- value
     validObject(x)
     x
 })
