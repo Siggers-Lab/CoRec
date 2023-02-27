@@ -1,165 +1,96 @@
-test_that("bad arguments for fluorescence_file are handled correctly", {
-    # Define some valid values for the other parameters
-    test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
-    test_annotation_file <- system.file(
-        "example_data/hTF_v1_example_annotation.tsv",
-        package = "CoRec"
-    )
-
-    # Fails when given a value that isn't a character vector
+test_that("bad arguments for fluorescence_table are handled correctly", {
+    # Fails when given a value that isn't a data frame
     expect_error(
         annotate_fluorescence_table(
             4,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file
+            fluorescence_columns = c(
+                "UT_SUDHL4_SWISNF_mix", "UT_SUDHL4_HDAC_mix"
+            ),
+            annotation = hTF_v1_annotation
         ),
-        "fluorescence_file is not a string"
+        "fluorescence_table is not a data frame"
     )
 
-    # Fails when given a character vector with length > 1
+    # Fails when given a data frame with the wrong column names
     expect_error(
         annotate_fluorescence_table(
-            c(
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "CoRec"
-                ),
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "CoRec"
-                )
+            data.frame("probe_id" = c("1", "2", "3"), "column_2" = c(4, 5, 6)),
+            fluorescence_columns = c(
+                "UT_SUDHL4_SWISNF_mix", "UT_SUDHL4_HDAC_mix"
             ),
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file
+            annotation = hTF_v1_annotation
         ),
-        "fluorescence_file is not a string"
-    )
-
-    # Fails when given a path to a file that doesn't exist
-    expect_error(
-        annotate_fluorescence_table(
-            system.file(
-                "example_data/nonexistent_file.txt",
-                package = "CoRec"
-            ),
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file
-        ),
-        "Path .* does not exist"
+        "fluorescence_table is missing one or more expected columns"
     )
 })
 
-test_that("bad arguments for pbm_conditions are handled correctly", {
-    # Define some valid values for the other parameters
-    test_fluorescence_file <- system.file(
-        "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "CoRec"
-    )
-    test_annotation_file <- system.file(
-        "example_data/hTF_v1_example_annotation.tsv",
-        package = "CoRec"
-    )
-
+test_that("bad arguments for fluorescence_columns are handled correctly", {
     # Fails when given a value that isn't a character vector
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = 8,
-            annotation_file = test_annotation_file
+            example_fluorescence_table_1,
+            fluorescence_columns = 8,
+            annotation = hTF_v1_annotation
         ),
-        "pbm_conditions is not a character vector"
+        "fluorescence_columns is not a character vector"
     )
 
-    # Fails when given a character vector with the wrong length
+    # Fails when given a character vector with the wrong names
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = c("cond1", "cond2"),
-            annotation_file = test_annotation_file
+            example_fluorescence_table_1,
+            fluorescence_columns = c("cond1", "cond2"),
+            annotation = hTF_v1_annotation
         ),
-        "pbm_conditions is the wrong length"
+        "fluorescence_table is missing one or more expected columns"
     )
 })
 
-test_that("bad arguments for annotation_file are handled correctly", {
-    # Define some valid values for the other parameters
-    test_fluorescence_file <- system.file(
-        "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "CoRec"
-    )
-    test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
-
-    # Fails when given a value that isn't a character vector
+test_that("bad arguments for annotation are handled correctly", {
+    # Fails when given a value that isn't a data frame
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = 9
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = c("this", "is", "not", "a", "data", "frame")
         ),
-        "annotation_file is not a string"
+        "annotation is not a data frame"
     )
 
-    # Fails when given a character vector with length > 1
+    # Fails when given a data frame with the wrong column names
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = c(
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "CoRec"
-                ),
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "CoRec"
-                )
-            )
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = data.frame(
+                "probe_id" = c("1", "2", "3"),
+                "column_2" = c(4, 5, 6)
+            ),
         ),
-        "annotation_file is not a string"
+        "annotation is missing one or more expected columns"
     )
 
-    # Fails when given a path to a file that doesn't exist
-    expect_error(
+    # Gives a warning when annotation is missing probe IDs in fluorescence_table
+    expect_warning(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = system.file(
-                "example_data/nonexistent_file.txt",
-                package = "CoRec"
-            )
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = dplyr::filter(
+                hTF_v1_annotation,
+                probe_set %in% c("MA0785.1_POU2F1", "MA0686.1_SPDEF")
+            ),
         ),
-        "Path .* does not exist"
-    )
-
-    # Fails when given a path to a file missing the expected columns
-    expect_error(
-        annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_fluorescence_file
-        ),
-        "annotation_file is missing one or more expected columns"
+        "annotation is missing probe IDs present in fluorescence_table"
     )
 })
 
 test_that("bad arguments for output_file are handled correctly", {
-    # Define some valid values for the other parameters
-    test_fluorescence_file <- system.file(
-        "example_data/hTF_v1_example_fluorescence_rep1.dat",
-        package = "CoRec"
-    )
-    test_pbm_conditions <- c("cond1", "cond2", "cond3", "cond4")
-    test_annotation_file <- system.file(
-        "example_data/hTF_v1_example_annotation.tsv",
-        package = "CoRec"
-    )
-
     # Fails when given a value that isn't a character vector
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file,
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = hTF_v1_annotation,
             output_file = 4
         ),
         "output_file is not a string"
@@ -168,19 +99,10 @@ test_that("bad arguments for output_file are handled correctly", {
     # Fails when given a character vector with length > 1
     expect_error(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file,
-            output_file = c(
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep1.dat",
-                    package = "CoRec"
-                ),
-                system.file(
-                    "example_data/hTF_v1_example_fluorescence_rep2.dat",
-                    package = "CoRec"
-                )
-            )
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = hTF_v1_annotation,
+            output_file = c("too", "many", "strings")
         ),
         "output_file is not a string"
     )
@@ -188,12 +110,12 @@ test_that("bad arguments for output_file are handled correctly", {
     # Gives a warning when given a path to a file that can't be created
     expect_warning(
         annotate_fluorescence_table(
-            test_fluorescence_file,
-            pbm_conditions = test_pbm_conditions,
-            annotation_file = test_annotation_file,
+            example_fluorescence_table_1,
+            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            annotation = hTF_v1_annotation,
             output_file = paste0(
                 system.file(
-                    "example_data/output",
+                    "data/",
                     package = "CoRec"
                 ),
                 "/nonexistent_folder/nonexistent_file.txt"
