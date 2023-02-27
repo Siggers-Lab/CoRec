@@ -35,7 +35,7 @@
 #'
 #' @name CoRecMotif-class
 #' @rdname CoRecMotif-class
-setClass(
+methods::setClass(
     # Name the class CoRecMotif
     "CoRecMotif",
 
@@ -124,16 +124,16 @@ CoRecMotif <-
     )
 }
 
-setValidity("CoRecMotif", function(object) {
+methods::setValidity("CoRecMotif", function(object) {
     # Check the types of slots that don't get fully type-checked automatically
     type_checks <-
         dplyr::case_when(
-            !is.numeric(zscore_motif(object)) ~
+            !is.numeric(get_zscore_motif(object)) ~
                 "@zscore_motif must be numeric",
-            !methods::is(motif(object), "universalmotif") ~
+            !methods::is(get_motif(object), "universalmotif") ~
                 "@motif must be an object of class universalmotif",
-            !methods::is(match_motif(object), "universalmotif") &&
-                !is.na(match_motif(object)) ~
+            !methods::is(get_match_motif(object), "universalmotif") &&
+                !is.na(get_match_motif(object)) ~
                 "@match_motif must be an object of class universalmotif or NA"
         )
 
@@ -145,25 +145,25 @@ setValidity("CoRecMotif", function(object) {
     # Check the dimensions of all the slots
     dim_checks <-
         dplyr::case_when(
-            length(probe_set(object)) != 1 ~
+            length(get_probe_set(object)) != 1 ~
                 "@probe_set must be a character vector of length 1",
-            length(pbm_condition(object)) != 1 ~
+            length(get_pbm_condition(object)) != 1 ~
                 "@pbm_condition must be a character vector of length 1",
-            nrow(zscore_motif(object)) != 4 ~
+            nrow(get_zscore_motif(object)) != 4 ~
                 "@zscore_motif must have four rows",
-            length(array_id(object)) != 1 ~
+            length(get_array_id(object)) != 1 ~
                 "@array_id must be a character vector of length 1",
-            length(motif_strength(object)) != 1 ~
+            length(get_motif_strength(object)) != 1 ~
                 "@motif_strength must be a numeric vector of length 1",
-            length(rolling_ic(object)) != 1 ~
+            length(get_rolling_ic(object)) != 1 ~
                 "@rolling_ic must be a numeric vector of length 1",
-            length(seed_sequence(object)) != 1 ~
+            length(get_seed_sequence(object)) != 1 ~
                 "@seed_sequence must be a character vector of length 1",
-            length(beta(object)) != 1 ~
+            length(get_beta(object)) != 1 ~
                 "@beta must be a numeric vector of length 1",
-            length(match_pvalue(object)) != 1 ~
+            length(get_match_pvalue(object)) != 1 ~
                 "@match_pvalue must be a numeric vector of length 1",
-            length(match_cluster(object)) != 1 ~
+            length(get_match_cluster(object)) != 1 ~
                 "@match_cluster must be a character vector of length 1"
         )
 
@@ -174,29 +174,29 @@ setValidity("CoRecMotif", function(object) {
 
     # Figure out some expected values
     expected_rows <- c("A", "C", "G", "T")
-    expected_cols <- as.character(1:ncol(zscore_motif(object)))
-    expected_strength <- calculate_strength(zscore_motif(object))
-    expected_rolling_ic <- calculate_rolling_ic(motif(object))
-    expected_beta <- calculate_beta(zscore_motif(object))
+    expected_cols <- as.character(1:ncol(get_zscore_motif(object)))
+    expected_strength <- calculate_strength(get_zscore_motif(object))
+    expected_rolling_ic <- calculate_rolling_ic(get_motif(object))
+    expected_beta <- calculate_beta(get_zscore_motif(object))
     expected_ppm <-
         zscore_to_universalmotif(
-            zscore_motif(object), expected_beta, motif_name(object)
+            get_zscore_motif(object), expected_beta, get_motif_name(object)
         )@motif
 
     # Check that the CoRecMotif is internally consistent
     consistency_checks <-
         dplyr::case_when(
-            !identical(rownames(zscore_motif(object)), expected_rows) ~
+            !identical(rownames(get_zscore_motif(object)), expected_rows) ~
                 "@zscore_motif rows must be named 'A', 'C', 'G', and 'T'",
-            !identical(colnames(zscore_motif(object)), expected_cols) ~
+            !identical(colnames(get_zscore_motif(object)), expected_cols) ~
                 "@zscore_motif columns must be named '1', '2', '3', etc.",
-            motif_strength(object) != expected_strength ~
+            get_motif_strength(object) != expected_strength ~
                 "@motif_strength is inconsistent with @zscore_motif",
-            rolling_ic(object) != expected_rolling_ic ~
+            get_rolling_ic(object) != expected_rolling_ic ~
                 "@rolling_ic is inconsistent with @zscore_motif",
-            beta(object) != expected_beta ~
+            get_beta(object) != expected_beta ~
                 "@beta is inconsistent with @zscore_motif",
-            !identical(ppm(object), expected_ppm) ~
+            !identical(get_ppm(object), expected_ppm) ~
                 "@motif is inconsistent with @zscore_motif"
         )
 

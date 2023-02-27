@@ -84,10 +84,10 @@ check_replicates <-
     # Make sure replicate motifs are actually replicating (i.e., similar)
     replicated_motifs <- lapply(grouped_corecmotifs, function(group) {
         # Get a list of the PPMs in this group of replicates
-        motifs <- lapply(group, motif)
+        motifs <- lapply(group, get_motif)
 
         # Get the names of the motifs in this group
-        motif_names <- lapply(group, motif_name)
+        motif_names <- lapply(group, get_motif_name)
 
         # Make sure there aren't any duplicate names
         if (any(duplicated(motif_names))) {

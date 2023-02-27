@@ -32,10 +32,10 @@ plot_corecmotif <-
     corecmotif_matrix <-
         switch(
             corecmotif_logo_type,
-            "delta_zscore" = delta_zscore_motif(corecmotif),
-            "ICM" = icm(corecmotif),
-            "PWM" = pwm(corecmotif),
-            "PPM" = ppm(corecmotif),
+            "delta_zscore" = get_delta_zscore_motif(corecmotif),
+            "ICM" = get_icm(corecmotif),
+            "PWM" = get_pwm(corecmotif),
+            "PPM" = get_ppm(corecmotif),
             "none" = NA
         )
 
@@ -43,9 +43,9 @@ plot_corecmotif <-
     reference_matrix <-
         switch(
             reference_logo_type,
-            "ICM" = match_icm(corecmotif),
-            "PWM" = match_pwm(corecmotif),
-            "PPM" = match_ppm(corecmotif),
+            "ICM" = get_match_icm(corecmotif),
+            "PWM" = get_match_pwm(corecmotif),
+            "PPM" = get_match_ppm(corecmotif),
             "none" = NA
         )
 
@@ -65,9 +65,11 @@ plot_corecmotif <-
             # Add a title
             ggplot2::ggtitle(
                 paste0(
-                    motif_name(corecmotif),
-                    "\nMotif strength: ", round(motif_strength(corecmotif), 3),
-                    "\nRolling IC: ", round(rolling_ic(corecmotif), 3)
+                    get_motif_name(corecmotif),
+                    "\nMotif strength: ",
+                    round(get_motif_strength(corecmotif), 3),
+                    "\nRolling IC: ",
+                    round(get_rolling_ic(corecmotif), 3)
                 )
             )
     }
@@ -84,9 +86,11 @@ plot_corecmotif <-
             # Add a title
             ggplot2::ggtitle(
                 paste0(
-                    match_altname(corecmotif),
-                    "\nMatch p-value: ", signif(match_pvalue(corecmotif), 3),
-                    "\nMatch cluster: ", match_cluster(corecmotif)
+                    get_match_altname(corecmotif),
+                    "\nMatch p-value: ",
+                    signif(get_match_pvalue(corecmotif), 3),
+                    "\nMatch cluster: ",
+                    get_match_cluster(corecmotif)
                 )
             )
     }

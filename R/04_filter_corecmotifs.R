@@ -77,67 +77,67 @@ filter_corecmotifs <-
 
     # Filter by probe_set
     if (!is.null(probe_set)) {
-        vals <- vapply(corecmotifs, probe_set, character(1))
+        vals <- vapply(corecmotifs, get_probe_set, character(1))
         corecmotifs <- corecmotifs[vals %in% probe_set]
     }
 
     # Filter by pbm_condition
     if (!is.null(pbm_condition)) {
-        vals <- vapply(corecmotifs, pbm_condition, character(1))
+        vals <- vapply(corecmotifs, get_pbm_condition, character(1))
         corecmotifs <- corecmotifs[vals %in% pbm_condition]
     }
 
     # Filter by array_id
     if (!is.null(array_id)) {
-        vals <- vapply(corecmotifs, array_id, character(1))
+        vals <- vapply(corecmotifs, get_array_id, character(1))
         corecmotifs <- corecmotifs[vals %in% array_id]
     }
 
     # Filter by motif_strength
     if (!is.null(motif_strength)) {
-        vals <- vapply(corecmotifs, motif_strength, numeric(1))
+        vals <- vapply(corecmotifs, get_motif_strength, numeric(1))
         corecmotifs <- corecmotifs[vals >= motif_strength & !is.na(vals)]
     }
 
     # Filter by rolling_ic
     if (!is.null(rolling_ic)) {
-        vals <- vapply(corecmotifs, rolling_ic, numeric(1))
+        vals <- vapply(corecmotifs, get_rolling_ic, numeric(1))
         corecmotifs <- corecmotifs[vals >= rolling_ic & !is.na(vals)]
     }
 
     # Filter by seed_sequence
     if (!is.null(seed_sequence)) {
-        vals <- vapply(corecmotifs, seed_sequence, character(1))
+        vals <- vapply(corecmotifs, get_seed_sequence, character(1))
         corecmotifs <- corecmotifs[vals %in% seed_sequence]
     }
 
     # Filter by motif_name
     if (!is.null(motif_name)) {
-        vals <- vapply(corecmotifs, motif_name, character(1))
+        vals <- vapply(corecmotifs, get_motif_name, character(1))
         corecmotifs <- corecmotifs[vals %in% motif_name]
     }
 
     # Filter by match_name
     if (!is.null(match_name)) {
-        vals <- vapply(corecmotifs, match_name, character(1))
+        vals <- vapply(corecmotifs, get_match_name, character(1))
         corecmotifs <- corecmotifs[vals %in% match_name]
     }
 
     # Filter by match_altname
     if (!is.null(match_altname)) {
-        vals <- vapply(corecmotifs, match_altname, character(1))
+        vals <- vapply(corecmotifs, get_match_altname, character(1))
         corecmotifs <- corecmotifs[vals %in% match_altname]
     }
 
     # Filter by match_pvalue
     if (!is.null(match_pvalue)) {
-        vals <- vapply(corecmotifs, match_pvalue, numeric(1))
+        vals <- vapply(corecmotifs, get_match_pvalue, numeric(1))
         corecmotifs <- corecmotifs[vals <= match_pvalue & !is.na(vals)]
     }
 
     # Filter by match_cluster
     if (!is.null(match_cluster)) {
-        vals <- vapply(corecmotifs, match_cluster, character(1))
+        vals <- vapply(corecmotifs, get_match_cluster, character(1))
         corecmotifs <- corecmotifs[vals %in% match_cluster]
     }
 

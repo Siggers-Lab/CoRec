@@ -61,7 +61,7 @@ find_match <-
     }
 
     # Get the PPMs of the CoRecMotifs to compare
-    motifs <- lapply(corecmotifs, motif)
+    motifs <- lapply(corecmotifs, get_motif)
 
     # Compare the PPMs to the full library of reference motifs
     motif_comparison <-
