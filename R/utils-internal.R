@@ -1,3 +1,5 @@
+# Set useful constants ---------------------------------------------------------
+
 # Set the colors to use for nucleotides when plotting motif logos
 logo_color_scheme <- c(
     "A" = "#109648",
@@ -9,6 +11,15 @@ logo_color_scheme <- c(
 # Set the colors to use for motif logo outlines
 corecmotif_outline_color <- "#abbed1"
 reference_outline_color <- "#added1"
+
+# Define a bunch of dummy variables to get rid of R CMD check notes
+motif_1 <- motif_2 <- NULL
+probe_id <- probe_sequence <- NULL
+snv_position <- snv_nucleotide <- NULL
+cluster <- n_conditions <- distance <- NULL
+pbm_conditions <- zscore <- NULL
+
+# Define useful functions ------------------------------------------------------
 
 # Paste together the output directory, output base name, and array ID
 update_output_base_name <-
@@ -59,7 +70,7 @@ check_colnames <- function(x, expected_columns) {
     }
 
     # Remove any extra columns
-    x <- dplyr::select(x, expected_columns)
+    x <- dplyr::select(x, dplyr::all_of(expected_columns))
 
     # Also get rid of duplicate rows if there are any
     x <- dplyr::distinct(x)

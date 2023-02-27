@@ -152,7 +152,7 @@ check_replicates <-
         purrr::flatten()
 
     # Try to save the replicated CoRecMotifs as an RDS file if necessary
-    try_catch_save_output(replicated_corecmotifs, output_file, "rds")
+    try_catch_save_output(replicated_motifs, output_file, "rds")
 
     # Return the list of replicated CoRecMotifs
     return(replicated_motifs)
