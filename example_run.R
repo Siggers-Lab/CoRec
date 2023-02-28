@@ -13,15 +13,15 @@ pbm_conditions <-
         "UT_SUDHL4_JMJD2A"
     )
 
-# Load the fluorescence data for replicate 1
-fluorescence_table_1 <-
+# Use the example fluorescence data table for replicate 1
+fluorescence_table_1 <- example_fluorescence_table
+
+# Load the fluorescence data for replicate 2
+fluorescence_table_2 <-
     load_fluorescence_data(
-        "./inst/extdata/example_fluorescence_1.dat",
+        "./inst/extdata/example_fluorescence_data_2.dat",
         pbm_conditions = pbm_conditions
     )
-
-# Use the example fluorescence data table for replicate 2
-fluorescence_table_2 <- example_fluorescence_table_1
 
 # Make the CoRecMotifs for the replicate 1 array
 corecmotifs_1 <- make_corecmotifs(

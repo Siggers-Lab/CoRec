@@ -24,27 +24,60 @@
 #' }
 "motif_clusters"
 
-#' Example fluorescence data
+#' Example fluorescence and z-score data
 #'
-#' Tables of example CoRec fluorescence data for 5 probe sets in 4 conditions.
+#' Tables of example CoRec fluorescence data and z-score data for 5 probe sets
+#' in 4 conditions.
 #'
-#' @format A data frame with 533 rows and 5 columns:
-#' \describe{
-#'   \item{probe_id}{The probe ID.}
-#'   \item{UT_SUDHL4_SWISNF_mix}{The fluorescence values for the
-#'     "UT_SUDHL4_SWISNF_mix" PBM condition.}
-#'   \item{UT_SUDHL4_HDAC_mix}{The fluorescence values for the
-#'     "UT_SUDHL4_HDAC_mix" PBM condition.}
-#'   \item{UT_SUDHL4_PRMT5}{The fluorescence values for the
-#'     "UT_SUDHL4_PRMT5" PBM condition.}
-#'   \item{UT_SUDHL4_JMJD2A}{The fluorescence values for the
-#'     "UT_SUDHL4_SWISNF_mix" PBM condition.}
-#' }
+#' @format A data frame with 533 rows and 5 or 10 columns:
+#'
+#'   ## example_fluorescence_table
+#'
+#'   The un-annotated fluorescence table contains 5 columns: `probe_id`, and 4
+#'   columns of raw fluorescence data named `UT_SUDHL4_SWISNF_mix`,
+#'   `UT_SUDHL4_HDAC_mix`, `UT_SUDHL4_PRMT5`, and `UT_SUDHL4_JMJD2A`.
+#'
+#'   ## example_annotated_fluorescence_table
+#'
+#'   The annotated fluorescence table contains the 6 probe information columns
+#'   described in [hTF_v1_annotation] and the 4 raw fluorescence data columns
+#'   described above.
+#'
+#'   ## example_zscore_table
+#'
+#'   The z-score table contains the same columns as the annotated fluorescence
+#'   table after converting the raw fluorescence data into z-scores.
 #'
 #' @rdname example_fluorescence_tables
-"example_fluorescence_table_1"
+"example_fluorescence_table"
 
 #' @rdname example_fluorescence_tables
 #' @format NULL
-"example_fluorescence_table_2"
+"example_annotated_fluorescence_table"
 
+#' @rdname example_fluorescence_tables
+#' @format NULL
+"example_zscore_table"
+
+#' Example CoRecMotifs
+#'
+#' Lists of example [CoRecMotifs][CoRecMotif-class].
+#'
+#' @format A list of 10 or 40 [CoRecMotifs][CoRecMotif-class]
+#'
+#'   ## example_corecmotifs
+#'
+#'   A list of 40 [CoRecMotifs][CoRecMotif-class] that have not been matched to
+#'   reference motifs.
+#'
+#'   ## example_matched_corecmotifs
+#'
+#'   A list of 10 [CoRecMotifs][CoRecMotif-class] that have been matched to
+#'   reference motifs.
+#'
+#' @rdname example_corecmotifs
+"example_corecmotifs"
+
+#' @rdname example_corecmotifs
+#' @format NULL
+"example_matched_corecmotifs"
