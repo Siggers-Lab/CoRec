@@ -69,12 +69,7 @@ zscore_table_to_corecmotifs <-
     # If no array ID is given, generate a random ID
     # CoRecMotifs have to have different names or check_replicates() won't work
     if (is.null(array_id)) {
-        array_id <-
-            paste(
-                "random_id",
-                paste(sample(0:9, 8, replace = TRUE), collapse = ""),
-                sep = "_"
-            )
+        array_id <- create_array_id()
     }
 
     # Make a table of motif data

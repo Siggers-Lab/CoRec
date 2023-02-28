@@ -84,6 +84,11 @@ try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
     # Make sure the file type is either tsv or rds
     file_type <- match.arg(file_type)
 
+    # Make sure the output_file argument is a string
+    assertthat::assert_that(
+        assertthat::is.string(output_file) || is.null(output_file)
+    )
+
     # Save the file only if an output file path is provided
     if (!is.null(output_file)) {
         tryCatch(
@@ -121,6 +126,20 @@ try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
             }
         )
     }
+}
+
+# Create an array ID if one isn't provided
+create_array_id <- function() {
+    # Paste 8 random digits after "random_id_"
+    array_id <-
+        paste(
+            "random_id",
+            paste(sample(0:9, 8, replace = TRUE), collapse = ""),
+            sep = "_"
+        )
+
+    # Return the ID
+    return(array_id)
 }
 
 # Figure out the seed probe z-score from a z-score motif
