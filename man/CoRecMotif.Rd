@@ -8,8 +8,8 @@ CoRecMotif(
   probe_set,
   pbm_condition,
   zscore_motif,
-  array_id,
-  seed_sequence = NA_character_
+  array_id = NULL,
+  seed_sequence = NULL
 )
 }
 \arguments{
@@ -21,11 +21,12 @@ treatment, and factor profiled).}
 \item{zscore_motif}{\code{matrix(numeric())}. The z-score motif. See
 \code{\link[=make_zscore_motif]{make_zscore_motif()}} for a description of the expected format.}
 
-\item{array_id}{\code{character(1)}. The name of the array/experiment the z-score
-motif is from.}
+\item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
+the z-scores are from. If \code{NULL}, a random ID will be generated.
+(Default: NULL)}
 
-\item{seed_sequence}{\code{character(1)}. The sequence of the seed probe.
-(Default: NA)}
+\item{seed_sequence}{\code{character(1)} or \code{NULL}. The sequence of the seed
+probe. (Default: NULL)}
 }
 \value{
 An object of class \link[=CoRecMotif-class]{CoRecMotif}.

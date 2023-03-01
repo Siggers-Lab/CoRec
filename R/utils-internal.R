@@ -79,6 +79,39 @@ check_colnames <- function(x, expected_columns) {
     return(x)
 }
 
+# Make sure an object is a valid z-score motif
+check_valid_zscore_motif <- function(zscore_motif) {
+    # Make sure it's a numeric matrix
+    assertthat::assert_that(
+        is.matrix(zscore_motif) && is.numeric(zscore_motif)
+    )
+
+    # Make sure there are four rows
+    if (nrow(zscore_motif) != 4) {
+        stop(
+            "zscore_motif must have four rows\n",
+            "Rows must be in the order 'A', 'C', 'G', 'T'",
+            call. = FALSE
+        )
+    }
+
+    # Check if the row names are the nucleotides and fix them if not
+    if (!identical(rownames(zscore_motif), c("A", "C", "G", "T"))) {
+        warning(
+            "zscore_motif row names are not 'A', 'C', 'G', 'T'\n",
+            "Make sure rows are in the order 'A', 'C', 'G', 'T'\n",
+            "Changing row names.",
+            call. = FALSE
+        )
+        rownames(zscore_motif) <- c("A", "C", "G", "T")
+    }
+
+    # Make sure the column names are "1", "2", "3", etc.
+    colnames(zscore_motif) <- as.character(1:ncol(zscore_motif))
+
+    return(zscore_motif)
+}
+
 # Try to save a TSV or RDS file but catch errors and give a warning instead
 try_catch_save_output <- function(x, output_file, file_type = c("tsv", "rds")) {
     # Make sure the file type is either tsv or rds

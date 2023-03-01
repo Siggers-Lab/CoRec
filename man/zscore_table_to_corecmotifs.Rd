@@ -19,8 +19,8 @@ z-scores. See \link{hTF_v1_annotation} for expected annotation columns.}
 that contain fluorescence z-scores.}
 
 \item{array_id}{\code{character(1)} or \code{NULL}. The name of the array/experiment
-the fluorescence z-scores are from. If \code{NULL}, a random ID will be
-generated. (Default: NULL)}
+the z-scores are from. If \code{NULL}, a random ID will be generated.
+(Default: NULL)}
 
 \item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
 results should be saved, or NULL not to save the results. (Default: NULL)}

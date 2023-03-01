@@ -60,6 +60,20 @@ find_match <-
         corecmotifs <- list(corecmotifs)
     }
 
+    # Make sure cluster_assignments has the expected columns and remove extras
+    if (!is.null(cluster_assignments)) {
+        cluster_assignments <-
+            check_colnames(cluster_assignments, c("motif", "cluster"))
+    }
+
+    # Make sure the provided meme_path is valid
+    if (!memes::meme_is_installed(meme_path)) {
+        stop(
+            "Invalid meme_path: could not find MEME installation.",
+            call. = FALSE
+        )
+    }
+
     # Get the PPMs of the CoRecMotifs to compare
     motifs <- lapply(corecmotifs, get_motif)
 

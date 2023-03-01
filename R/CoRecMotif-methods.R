@@ -7,8 +7,8 @@ methods::setMethod("as.data.frame", "CoRecMotif", function(x) {
         probe_set = get_probe_set(x),
         pbm_condition = get_pbm_condition(x),
         array_id = get_array_id(x),
-        rolling_ic = get_rolling_ic(x),
         motif_strength = get_motif_strength(x),
+        rolling_ic = get_rolling_ic(x),
         seed_sequence = get_seed_sequence(x),
         match_motif = ifelse(
             methods::is(get_match_motif(x), "universalmotif"),
@@ -27,11 +27,12 @@ methods::setMethod("as.data.frame", "CoRecMotif", function(x) {
 #' @rdname CoRecMotif-class
 methods::setMethod("show", "CoRecMotif", function(object) {
     cat("\n",
-        "   Probe set:      ", get_probe_set(object), "\n",
-        "   PBM condition:  ", get_pbm_condition(object), "\n",
-        "   Array ID:       ", get_array_id(object), "\n",
-        "   Motif strength: ", round(get_motif_strength(object), 2), "\n",
-        "   Rolling IC:     ", round(get_rolling_ic(object), 2), "\n\n"
+        "   Probe set:       ", get_probe_set(object), "\n",
+        "   PBM condition:   ", get_pbm_condition(object), "\n",
+        "   Array ID:        ", get_array_id(object), "\n",
+        "   Motif strength:  ", round(get_motif_strength(object), 2), "\n",
+        "   Rolling IC:      ", round(get_rolling_ic(object), 2), "\n\n",
+        sep = ""
     )
     print(round(get_ppm(object), 2))
 })
@@ -249,13 +250,8 @@ set_pbm_condition <- function(corecmotif, value) {
 #' @export
 #' @rdname accessors
 set_zscore_motif <- function(corecmotif, value) {
-    # Check the input to start with or you'll get unhelpful error messages later
-    if (!is.numeric(value) || !is.matrix(value)) {
-        stop(
-            "zscore_motif must be a numeric matrix",
-            call. = FALSE
-        )
-    }
+    # Make sure zscore_motif is the right format
+    value <- check_valid_zscore_motif(value)
 
     # Update the z-score motif itself
     corecmotif@zscore_motif <- value
@@ -300,3 +296,4 @@ set_motif_name <- function(corecmotif, value) {
     methods::validObject(corecmotif)
     return(corecmotif)
 }
+

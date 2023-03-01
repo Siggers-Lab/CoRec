@@ -81,10 +81,11 @@ methods::setClass(
 #'   treatment, and factor profiled).
 #' @param zscore_motif `matrix(numeric())`. The z-score motif. See
 #'   [make_zscore_motif()] for a description of the expected format.
-#' @param array_id `character(1)`. The name of the array/experiment the z-score
-#'   motif is from.
-#' @param seed_sequence `character(1)`. The sequence of the seed probe.
-#'   (Default: NA)
+#' @param array_id `character(1)` or `NULL`. The name of the array/experiment
+#'   the z-scores are from. If `NULL`, a random ID will be generated.
+#'   (Default: NULL)
+#' @param seed_sequence `character(1)` or `NULL`. The sequence of the seed
+#'   probe. (Default: NULL)
 #'
 #' @return An object of class [CoRecMotif][CoRecMotif-class].
 #'
@@ -97,19 +98,47 @@ CoRecMotif <-
         probe_set,
         pbm_condition,
         zscore_motif,
-        array_id,
-        seed_sequence = NA_character_
+        array_id = NULL,
+        seed_sequence = NULL
     ) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        assertthat::is.string(probe_set),
+        assertthat::is.string(pbm_condition),
+        is.matrix(zscore_motif) && is.numeric(zscore_motif),
+        assertthat::is.string(array_id) || is.null(array_id),
+        assertthat::is.string(seed_sequence) || is.null(seed_sequence)
+    )
+
+    # Make sure zscore_motif is the right format
+    zscore_motif <- check_valid_zscore_motif(zscore_motif)
+
+    # If no array ID is given, generate a random ID
+    if (is.null(array_id)) {
+        array_id <- create_array_id()
+    }
+
+    # If seed_sequence is NULL, switch it to NA_character_
+    if (is.null(seed_sequence)) {
+        seed_sequence <- NA_character_
+    }
+
+    # Paste together the probe set, PBM condition, and array ID to make a name
     motif_name <- paste(probe_set, pbm_condition, array_id, sep = "_")
 
+    # Calculate the motif strength
     motif_strength <- calculate_strength(zscore_motif)
 
+    # Calculate beta
     beta <- calculate_beta(zscore_motif)
 
+    # Convert the z-score motif into a universalmotif
     motif <- zscore_to_universalmotif(zscore_motif, beta, motif_name)
 
+    # Calculate the rolling IC
     rolling_ic <- calculate_rolling_ic(motif)
 
+    # Create a new CoRecMotif
     methods::new(
         "CoRecMotif",
         probe_set = probe_set,

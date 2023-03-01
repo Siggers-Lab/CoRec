@@ -18,13 +18,11 @@
 #' name for each [CoRecMotif][CoRecMotif-class].
 #'
 #' @inheritParams annotate_fluorescence_table
+#' @inheritParams CoRecMotif
 #' @param zscore_table `data.frame`. An annotated table of fluorescence
 #'   z-scores. See [hTF_v1_annotation] for expected annotation columns.
 #' @param zscore_columns `character`. The names of the columns of `zscore_table`
 #'   that contain fluorescence z-scores.
-#' @param array_id `character(1)` or `NULL`. The name of the array/experiment
-#'   the fluorescence z-scores are from. If `NULL`, a random ID will be
-#'   generated. (Default: NULL)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class], one for each possible
 #'   combination of the probe sets in `zscore_table$probe_set` and the PBM

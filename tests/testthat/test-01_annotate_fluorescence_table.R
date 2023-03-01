@@ -28,17 +28,17 @@ test_that("bad arguments for fluorescence_columns are handled correctly", {
     # Fails when given a value that isn't a character vector
     expect_error(
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
+            example_fluorescence_table,
             fluorescence_columns = 8,
             annotation = hTF_v1_annotation
         ),
         "fluorescence_columns is not a character vector"
     )
 
-    # Fails when given a character vector with the wrong names
+    # Fails when given a character vector that doesn't match the column names
     expect_error(
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
+            example_fluorescence_table,
             fluorescence_columns = c("cond1", "cond2"),
             annotation = hTF_v1_annotation
         ),
@@ -50,8 +50,8 @@ test_that("bad arguments for annotation are handled correctly", {
     # Fails when given a value that isn't a data frame
     expect_error(
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            example_fluorescence_table,
+            fluorescence_columns = colnames(example_fluorescence_table)[2:5],
             annotation = c("this", "is", "not", "a", "data", "frame")
         ),
         "annotation is not a data frame"
@@ -60,8 +60,8 @@ test_that("bad arguments for annotation are handled correctly", {
     # Fails when given a data frame with the wrong column names
     expect_error(
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            example_fluorescence_table,
+            fluorescence_columns = colnames(example_fluorescence_table)[2:5],
             annotation = data.frame(
                 "probe_id" = c("1", "2", "3"),
                 "column_2" = c(4, 5, 6)
@@ -73,8 +73,8 @@ test_that("bad arguments for annotation are handled correctly", {
     # Gives a warning when annotation is missing probe IDs in fluorescence_table
     expect_warning(
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
+            example_fluorescence_table,
+            fluorescence_columns = colnames(example_fluorescence_table)[2:5],
             annotation = dplyr::filter(
                 hTF_v1_annotation,
                 probe_set %in% c("MA0785.1_POU2F1", "MA0686.1_SPDEF")
@@ -84,44 +84,29 @@ test_that("bad arguments for annotation are handled correctly", {
     )
 })
 
-test_that("bad arguments for output_file are handled correctly", {
-    # Fails when given a value that isn't a character vector
-    expect_error(
+test_that("example annotated fluorescence tables are reproducible", {
+    # Annotate the example un-annotated fluorescence table
+    annotated_fluorescence_1 <-
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
-            annotation = hTF_v1_annotation,
-            output_file = 4
-        ),
-        "output_file is not a string"
-    )
+            example_fluorescence_table,
+            fluorescence_columns = colnames(example_fluorescence_table)[2:5],
+            annotation = hTF_v1_annotation
+        )
 
-    # Fails when given a character vector with length > 1
-    expect_error(
-        annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
-            annotation = hTF_v1_annotation,
-            output_file = c("too", "many", "strings")
-        ),
-        "output_file is not a string"
-    )
+    # Make sure it's equal to the example annotated fluorescence table
+    expect_equal(annotated_fluorescence_1, example_annotated_fluorescence_table)
 
-    # Gives a warning when given a path to a file that can't be created
-    expect_warning(
+    # Annotate part of the example un-annotated fluorescence table
+    annotated_fluorescence_2 <-
         annotate_fluorescence_table(
-            example_fluorescence_table_1,
-            fluorescence_columns = colnames(example_fluorescence_table_1)[2:5],
-            annotation = hTF_v1_annotation,
-            output_file = paste0(
-                system.file(
-                    "data/",
-                    package = "CoRec"
-                ),
-                "/nonexistent_folder/nonexistent_file.txt"
-            )
-        ),
-        "Could not write to output file .*Skipping output file creation..."
+            example_fluorescence_table,
+            fluorescence_columns = colnames(example_fluorescence_table[2:3]),
+            annotation = hTF_v1_annotation
+        )
+
+    # Make sure the extra columns got dropped
+    expect_equal(
+        annotated_fluorescence_2, example_annotated_fluorescence_table[1:8]
     )
 })
 

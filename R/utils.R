@@ -128,13 +128,23 @@ summarize_corecmotifs <- function(corecmotifs) {
 #' @examples
 #' print("FILL THIS IN")
 update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        is.data.frame(cluster_assignments) || is.null(cluster_assignments)
+    )
+
     # Clear the cluster match slot if there are no clusters or no motif match
-    if (is.null(cluster_assignments) || is.null(get_match_motif(corecmotif))) {
+    if (is.null(cluster_assignments) ||
+        !methods::is(get_match_motif(corecmotif), "universalmotif")) {
         corecmotif@match_cluster <- NA_character_
 
         # Return the updated corecmotif
         return(corecmotif)
     }
+
+    # Make sure cluster_assignments has the expected columns and remove extras
+    cluster_assignments <-
+        check_colnames(cluster_assignments, c("motif", "cluster"))
 
     # Clear the cluster match slot if the motif match isn't in the clusters
     if (!(get_match_altname(corecmotif) %in% cluster_assignments$motif)) {
