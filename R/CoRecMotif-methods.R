@@ -31,9 +31,14 @@ methods::setMethod("show", "CoRecMotif", function(object) {
         "   PBM condition:   ", get_pbm_condition(object), "\n",
         "   Array ID:        ", get_array_id(object), "\n",
         "   Motif strength:  ", round(get_motif_strength(object), 2), "\n",
-        "   Rolling IC:      ", round(get_rolling_ic(object), 2), "\n\n",
+        "   Rolling IC:      ", round(get_rolling_ic(object), 2), "\n",
+        "   Match motif:     ", get_match_altname(object), "\n",
+        "   Match cluster:   ", get_match_cluster(object), "\n\n",
+        "Delta z-score motif:\n\n",
         sep = ""
     )
+    print(round(get_delta_zscore_motif(object), 1))
+    cat("\nPPM:\n\n")
     print(round(get_ppm(object), 2))
 })
 

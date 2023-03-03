@@ -135,17 +135,17 @@ plot_motif <- function(motif_matrix, logo_type, outline_color) {
 
     # Set the minimum and maximum values for the y axis
     if (logo_type == "ICM") {
-        ymin <- -0.01
-        ymax <- 2.01
+        ymin <- -0.03
+        ymax <- 2.03
     } else if (logo_type == "PPM") {
-        ymin <- -0.01
-        ymax <- 1.01
+        ymin <- -0.03
+        ymax <- 1.03
     } else {
         # Sum all the negative numbers in each column and find the most extreme
-        ymin <- min(sum_negatives(motif_matrix)) - 0.01
+        ymin <- min(sum_negatives(motif_matrix)) - 0.03
 
         # Sum all the positive numbers in each column and find the most extreme
-        ymax <- max(sum_positives(motif_matrix)) + 0.01
+        ymax <- max(sum_positives(motif_matrix)) + 0.03
     }
 
     # Start the motif logo plot
