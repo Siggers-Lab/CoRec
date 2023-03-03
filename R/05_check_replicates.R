@@ -49,6 +49,12 @@ check_replicates <-
         corecmotifs <- list(corecmotifs)
     }
 
+    #
+    if (length(corecmotifs) < 1) {
+        message("corecmotifs is an empty list")
+        return()
+    }
+
     # Make a dataframe summarizing the CoRecMotifs
     corecmotif_df <-
         summarize_corecmotifs(corecmotifs) %>%

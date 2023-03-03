@@ -203,6 +203,7 @@ process_corecmotifs <-
     matched_output <- NULL
     final_output <- NULL
     summary_output <- NULL
+    cluster_output <- NULL
 
     # Create names for the output files if necessary
     if (!is.null(output_base_name)) {
@@ -214,6 +215,11 @@ process_corecmotifs <-
             paste0(output_base_name, "_significant_corecmotifs.rds")
         summary_output <-
             paste0(output_base_name, "_significant_corecmotifs_summary.tsv")
+        cluster_output <-
+            paste0(
+                output_base_name,
+                "_significant_corecmotifs_summary_by_cluster.tsv"
+            )
     }
 
     # Filter out CoRecMotifs with low motif strength and/or rolling IC scores
@@ -258,12 +264,17 @@ process_corecmotifs <-
             output_file = final_output
         )
 
-    # Make and save a summary table if necessary
+    # Make and save summary tables if necessary
     if (!is.null(summary_output)) {
         corecmotif_summary <-
             summarize_corecmotifs(final_corecmotifs)
 
         try_catch_save_output(corecmotif_summary, summary_output, "tsv")
+
+        cluster_summary <-
+            summarize_corecmotifs(final_corecmotifs, by_cluster = TRUE)
+
+        try_catch_save_output(cluster_summary, cluster_output, "tsv")
     }
 
     # Return the list of CoRecMotifs

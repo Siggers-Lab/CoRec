@@ -88,6 +88,8 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
 #' [CoRecMotifs][CoRecMotif-class].
 #'
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to summarize.
+#' @param by_cluster `logical(1)`. Should the [CoRecMotifs][CoRecMotif-class] be
+#'   grouped by cluster? (Default: FALSE)
 #'
 #' @return A data frame with information about a list of
 #'   [CoRecMotifs][CoRecMotif-class].
@@ -96,7 +98,12 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
 #'
 #' @examples
 #' print("FILL THIS IN")
-summarize_corecmotifs <- function(corecmotifs) {
+summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        assertthat::is.flag(by_cluster)
+    )
+
     # Convert each corecmotif object into a data frame
     corecmotif_df <-
         lapply(corecmotifs, as.data.frame) %>%
@@ -104,7 +111,29 @@ summarize_corecmotifs <- function(corecmotifs) {
         # Combine all the data frames
         dplyr::bind_rows()
 
-    # Return the dataframe of corecmotif information
+    # Return the data frame of CoRecMotif information
+    if (!by_cluster) {
+        return(corecmotif_df)
+    }
+
+    # Group all the CoRecMotifs from a condition that matched the same cluster
+    corecmotif_df <-
+        corecmotif_df %>%
+
+        # Group by match cluster and PBM condition
+        dplyr::group_by(match_cluster, pbm_condition) %>%
+
+        # Summarize the "best" value from each group
+        dplyr::summarize(
+            probe_sets =
+                paste(paste(array_id, probe_set, sep = "_"), collapse = ";"),
+            max_motif_strength = max(motif_strength),
+            max_rolling_ic = max(rolling_ic),
+            match_motifs = paste(match_motif, collapse = ";"),
+            min_match_pvalue = min(match_pvalue)
+        )
+
+    # Return the data frame of CoRecMotif information grouped by cluster
     return(corecmotif_df)
 }
 
