@@ -1,0 +1,452 @@
+---
+title: "Introduction to CoRec"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to CoRec}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitr options, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>"
+)
+```
+
+## CoRec assay overview
+
+CoRec (short for **Co**factor **Rec**ruitment) is a protein binding microarray (PBM) based approach for profiling transcription cofactor (COF) recruitment to particular DNA sequences. The accompanying human Transcription Factor Array (hTF Array) design consists of probe sets based on the consensus binding sites of 346 transcription factors (TFs) across a wide range of TF families. Each probe set has a "seed probe" with the consensus sequence of the corresponding TF as well as a set of "SV probes" with all possible single nucleotide substitutions of the seed probe. The SV probes allow for empirical measurement of the differences in COF recruitment attributable to different nucleotides. Eventually we'll publish a paper and then I'll put in a link to that right here for more details.
+
+## Installation
+
+```{r installation, eval = FALSE}
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("Siggers-Lab/CoRec")
+
+library(CoRec)
+```
+
+## Analysis pipeline
+
+```{r library, echo = FALSE}
+library(CoRec)
+```
+
+### Load the fluorescence data
+
+```{r load help, eval = FALSE}
+# Relevant help pages for this section
+?load_fluorescence_data
+```
+
+The input to the CoRec analysis pipeline is a table of raw fluorescence data from a CoRec experiment. Typically this data will be saved in a TSV format file that can be loaded and converted into the appropriate format for downstream analyses using the `load_fluorescence_data()` function. See the documentation for `load_fluorescence_data()` for more details on the expected format of the TSV file.
+
+```{r load}
+# Load one of the provided example fluorescence data tables
+fluorescence_table <-
+    load_fluorescence_data(
+        system.file(
+            "extdata/example_fluorescence_data_2.dat", package = "CoRec"
+        ),
+        # These are the PBM conditions profiled in the example
+        # They will be used as column names
+        pbm_conditions = c(
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
+        )
+    )
+
+# The resulting data frame has a column of probe IDs and 4 columns of data 
+dplyr::as_tibble(fluorescence_table)
+```
+
+### Convert the fluorescence data into CoRecMotif objects
+
+```{r make corecmotifs help, eval = FALSE}
+# Relevant help pages for this section
+?make_corecmotifs
+?hTF_v1_annotation
+?"CoRecMotif-class"
+```
+
+The raw fluorescence data can then be converted into motifs that show the recruitment preferences of the COF. This process consists of three main steps, described in the sections below. The convenience function `make_corecmotifs()` performs all these steps with one function call. However, if you want finer control over the individual output files created, you can instead use the functions `annotate_fluorescence_table()`, `fluorescence_to_zscore_table()`, and then `zscore_table_to_corecmotifs()`.
+
+```{r make corecmotifs}
+# Convert the fluorescence data table into CoRecMotifs
+corecmotifs <-
+    make_corecmotifs(
+        fluorescence_table,
+        fluorescence_columns = c(
+                "UT_SUDHL4_SWISNF_mix",
+                "UT_SUDHL4_HDAC_mix",
+                "UT_SUDHL4_PRMT5",
+                "UT_SUDHL4_JMJD2A"
+            ),
+        # The `hTF_v1_annotation` table has the necessary probe information
+        annotation = hTF_v1_annotation,
+        array_id = "example_array",
+        # Provide a directory path and/or a base name to save output files
+        output_directory = NULL,
+        output_base_name = NULL
+    )
+
+# Each CoRecMotif contains motif metadata and several motif representations
+show(corecmotifs[[1]])
+```
+
+#### 1. Add probe information to the fluorescence data
+
+```{r annotate help, eval = FALSE}
+# Relevant help pages for this section
+?annotate_fluorescence_table
+?hTF_v1_annotation
+```
+
+Converting the fluorescence data into motifs requires more information about each probe. The `annotate_fluorescence_table()` function merges a table of the necessary probe information with the table of fluorescence data based on the probe IDs. The `hTF_v1_annotation` table contains the probe annotations for version 1 of the hTF Array design.
+
+```{r annotate}
+# The annotation table includes information like the probe type and sequence
+hTF_v1_annotation
+
+# Add the probe annotations to the table of fluorescence data
+annotated_fluorescence_table <-
+    annotate_fluorescence_table(
+        fluorescence_table,
+        fluorescence_columns = c(
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
+        ),
+        annotation = hTF_v1_annotation,
+        # Provide a TSV file path to save the annotated fluorescence table
+        output_file = NULL
+    )
+
+# The fluorescence table now contains all the necessary probe information
+print(annotated_fluorescence_table, width = 100)
+```
+
+#### 2. Transform the raw fluorescence values into z-scores
+
+```{r zscore help, eval = FALSE}
+# Relevant help pages for this section
+?fluorescence_to_zscore_table
+```
+
+Before converting the fluorescence data into motifs, the raw values must be normalized against background fluorescence levels. First the fluorescence values are log transformed, and then a z-score like statistic is calculated using the mean and standard deviation of the background fluorescence values. Specifically, this z-score statistic is defined as
+$$z = \frac{f - \mu_{bg}} {\sigma_{bg}},$$
+where $f$ is the fluorescence value of the probe, $\mu_{bg}$ is the mean background fluorescence value, and $\sigma_{bg}$ is the standard deviation of the background fluorescence values.
+
+```{r zscore}
+# Convert the fluorescence data into z-scores
+zscore_table <-
+    fluorescence_to_zscore_table(
+        annotated_fluorescence_table,
+        fluorescence_columns = c(
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
+        ),
+        # Provide a TSV file path to save the z-score table
+        output_file = NULL
+    )
+
+# The z-score table has the same annotation columns as the fluorescence table
+# However, the data columns are now z-scores rather than raw fluorescence values
+print(zscore_table, width = 100)
+```
+
+#### 3. Convert the table of z-scores into a list of CoRecMotifs
+
+```{r zscore to corecmotif help, eval = FALSE}
+# Relevant help pages for this section
+?make_zscore_motif
+?CoRecMotif
+?zscore_table_to_corecmotifs
+?"CoRecMotif-class"
+```
+
+The z-scores are converted into a motif format by filling in a 4 by $n$ matrix with the z-scores of the seed and SV probes of a given probe set, where $n$ is the length of the relevant TF's consensus binding sequence. For example, consider the "MA0780.1_PAX3" probe set. This probe set has 1 seed probe with the consensus sequence "TGTAATCGATTAGT" and an SV probe for every possible single nucleotide variant of this sequence. Each of the 14 positions in this consensus sequence has 3 SV probes, for a total of 42 SV probes. For example, the SV probes for the first position replace the first "T" in the consensus sequence to make the sequences "**A**GTAATCGATTAGT", "**C**GTAATCGATTAGT", and "**G**GTAATCGATTAGT". The z-scores for the seed probe and these three SV probes are then used to fill in the first column of the z-score motif. The seed probe and the three SV probes for the second position are used to fill in the second column, and so on as shown in the table below.
+
+|   |          1         |          2         |          3         | ... |
+|---|--------------------|--------------------|--------------------|-----|
+| A | **A**GTAATCGATTAGT | T**A**TAATCGATTAGT | TG**A**AATCGATTAGT | ... |
+| C | **C**GTAATCGATTAGT | T**C**TAATCGATTAGT | TG**C**AATCGATTAGT | ... |
+| G | **G**GTAATCGATTAGT |   TGTAATCGATTAGT   | TG**G**AATCGATTAGT | ... |
+| T |   TGTAATCGATTAGT   | T**T**TAATCGATTAGT |   TGTAATCGATTAGT   | ... |
+
+The z-score motif can then be transformed further into a delta z-score motif to highlight the differences in recruitment strength between individual nucleotides at a given position. To convert a z-score motif to a delta z-score motif, the column-wise median is subtracted from each z-score in that column. The z-score motif can also be transformed into a position probability matrix (PPM). See the help page for the `CoRecMotif` class for more information on this calculation.
+
+```{r zscore to corecmotif}
+# The "MA0780.1_PAX3" probe set has 1 seed probe and 42 SV probes
+dplyr::filter(zscore_table, probe_set == "MA0780.1_PAX3") %>%
+    print(width = 100)
+
+# The `make_zscore_motif()` function makes individual z-score motifs
+zscore_motif <-
+    make_zscore_motif(
+        zscore_table,
+        probe_set_name = "MA0780.1_PAX3",
+        pbm_condition = "UT_SUDHL4_SWISNF_mix"
+    )
+
+# The values in the z-score table are reformatted to create the z-score motif
+round(zscore_motif, 2)
+
+# This z-score motif can then be used to create a full CoRecMotif
+CoRecMotif(
+    probe_set = "MA0780.1_PAX3",
+    pbm_condition = "UT_SUDHL4_SWISNF_mix", 
+    zscore_motif = zscore_motif, 
+    array_id = "example_array"
+)
+
+# `zscore_table_to_corecmotifs()` is a more convenient way to make CoRecMotifs
+# It converts an entire z-score table into a list of CoRecMotifs
+all_corecmotifs <-
+    zscore_table_to_corecmotifs(
+        zscore_table,
+        zscore_columns = c(
+            "UT_SUDHL4_SWISNF_mix",
+            "UT_SUDHL4_HDAC_mix",
+            "UT_SUDHL4_PRMT5",
+            "UT_SUDHL4_JMJD2A"
+        ),
+        array_id = "example_array",
+        # Provide an RDS file path to save the list of CoRecMotifs
+        output_file = NULL
+    )
+
+# This is the same as `corecmotifs`, the output of `make_corecmotifs()`
+identical(all_corecmotifs, corecmotifs)
+```
+
+### Filter the CoRecMotifs and match them to reference motifs
+
+```{r process corecmotifs help, eval = FALSE}
+# Relevant help pages for this section
+?process_corecmotifs
+?motif_clusters
+```
+
+The list of all CoRecMotifs can then be filtered and compared to a database of reference TF motifs to identify the TF that is likely responsible for recruiting the COF to a given DNA sequence. This process can be broken down into several individual steps, detailed below, or the convenience function `process_corecmotifs()` can perform all the individual steps with reasonable default parameters. Again, if you want finer control over this process, you can use the individual functions `filter_corecmotifs()`, `check_replicates()`, and `find_match()`.
+
+```{r process corecmotifs 1}
+# Make a small list of example CoRecMotifs to use
+corecmotifs = example_corecmotifs[c(1:8, 21:28)]
+
+# The `summarize_corecmotifs()` function makes a table summarizing the motifs
+summarize_corecmotifs(corecmotifs) %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+```
+```{r process corecmotifs 2, eval = FALSE}
+# Filter the list of example CoRecMotifs and match to reference motifs
+# This can take a while with the default parameters
+# See `?process_corecmotifs` for a full list of arguments and their defaults
+# Make sure the `memes` package can find a MEME installation before running
+if (memes::meme_is_installed()) {
+    final_corecmotifs <-
+        process_corecmotifs(
+            corecmotifs,
+            reference_motifs_file =
+                system.file(
+                    "extdata/Homo_sapiens_JASPAR2022_CORE_filtered.meme",
+                    package = "CoRec"
+                ),
+            # The `motif_clusters` table maps each reference motif to a cluster
+            cluster_assignments = motif_clusters,
+            # Provide a directory path and/or a base name to save output files
+            output_directory = NULL,
+            output_base_name = NULL
+        )
+}
+```
+```{r process corecmotifs 3, echo = FALSE}
+# `process_corecmotifs()` takes too long to run for vignette test building
+# The above call produces the first two motifs in `example_matched_corecmotifs`
+# This feels like lying somehow idk
+final_corecmotifs <- example_matched_corecmotifs[1:2]
+```
+```{r process corecmotifs 4}
+# Each CoRecMotif now has information about its reference motif match
+show(final_corecmotifs[[1]])
+```
+
+#### 1. Filter individual CoRecMotifs
+
+```{r filter help, eval = FALSE}
+# Relevant help pages for this section
+?filter_corecmotifs
+```
+
+The function `filter_corecmotifs()` allows you to filter a list of CoRecMotifs, keeping only those that satisfy certain criteria. The `process_corecmotifs()` convenience function filters by motif strength and rolling IC, by default removing any CoRecMotifs with a motif strength less than 1 or a rolling IC less than 1.
+
+```{r filter}
+# The `filter_corecmotifs()` function can filter by many different criteria
+# For example, keep only motifs from one probe set in two PBM conditions
+filter_corecmotifs(
+    corecmotifs,
+    probe_set = "MA0095.2_YY1",
+    pbm_condition = c("UT_SUDHL4_SWISNF_mix", "UT_SUDHL4_HDAC_mix")
+) %>%
+    summarize_corecmotifs() %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+
+# See `?filter_corecmotifs` for a full list of available filtering criteria
+filter_corecmotifs(
+    corecmotifs,
+    array_id = "v1_a11_run1"
+) %>%
+    summarize_corecmotifs() %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+
+# The `process_corecmotifs()` function filters by motif strength and rolling IC
+filtered_corecmotifs <-
+    filter_corecmotifs(
+        corecmotifs,
+        motif_strength = 1,
+        rolling_ic = 1,
+        # Provide an RDS file path to save the list of filtered CoRecMotifs
+        output_file = NULL
+    )
+
+# Motifs with a strength < 1 and/or a rolling IC < 1 are removed
+summarize_corecmotifs(filtered_corecmotifs) %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+```
+
+#### 2. Filter groups of replicate CoRecMotifs
+
+```{r replicates help, eval = FALSE}
+# Relevant help pages for this section
+?check_replicates
+```
+
+After removing individual CoRecMotifs that do not meet your criteria, you may also want to remove CoRecMotifs that do not replicate well. The function `check_replicates()` allows you to remove groups of replicate CoRecMotifs that either do not have enough motifs passing your initial filtering criteria or do not have enough motifs that are similar to each other. By default, `process_corecmotifs()` removes replicate groups with fewer than 2 motifs and replicate motifs that have a Euclidean distance greater than 0.4
+
+```{r replicates}
+# The `process_corecmotifs()` function uses the default parameters
+replicated_corecmotifs <-
+    check_replicates(
+        filtered_corecmotifs,
+        # Provide an RDS file path to save the list of replicate CoRecMotifs
+        output_file = NULL
+    )
+
+# Only motifs that have at least two similar replicates are kept
+# "Similar" meaning the Euclidean distance between them is no greater than 0.4
+summarize_corecmotifs(replicated_corecmotifs) %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+```
+
+#### 3. Compare CoRecMotifs to reference motifs
+
+```{r match help, eval = FALSE}
+# Relevant help pages for this section
+?find_match
+?motif_clusters
+```
+
+Having filtered the CoRecMotifs, the next step is to compare them to a library of reference TF motifs to find the best match. A database of 946 TF motifs downloaded from JASPAR is included in the CoRec package under `extdata/Homo_sapiens_JASPAR2022_CORE_filtered.meme`. In addition to the single best matching TF motif, `find_match()` can also assign a cluster match using a table that maps TF motifs to motif clusters, as in the provided `motif_clusters` table.
+
+The `find_match()` function uses the `runTomTom()` function from the `memes` package. This package requires that the MEME suite be installed and findable. For more information, see the `memes` package's ["Install MEME"](https://snystrom.github.io/memes-manual/articles/install_guide.html) vignette.
+
+```{r match 1, eval = FALSE}
+# `find_match()` uses Tomtom to identify the best matching reference motif
+# This may take a while to run depending on how many CoRecMotifs you have
+matched_corecmotifs <-
+    find_match(
+        replicated_corecmotifs,
+        reference_motifs_file = 
+            system.file(
+                "extdata/Homo_sapiens_JASPAR2022_CORE_filtered.meme",
+                package = "CoRec"
+            ),
+        # Set `cluster_assignments` to NULL to skip assigning a cluster
+        cluster_assignments = motif_clusters,
+        # You can provide the path to the MEME installation with `meme_path`
+        # Setting `meme_path` to NULL will rely on `memes:runTomTom` to find it
+        meme_path = NULL,
+        # Provide an RDS file path to save the list of matched CoRecMotifs
+        output_file = NULL
+    )
+```
+```{r match 2, echo = FALSE}
+# `find_match()` also takes too long to run for vignette test building
+# I ran it once and saved the output in vignettes/
+load("matched_corecmotifs.rda")
+```
+```{r match 3}
+# The CoRecMotifs now have match information
+# Note that some of the CoRecMotifs did not match any reference motifs well
+summarize_corecmotifs(matched_corecmotifs) %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+
+# To remove CoRecMotifs with poor matches, we can use `filter_corecmotifs()`
+matched_corecmotifs <-
+    filter_corecmotifs(
+        matched_corecmotifs,
+        match_pvalue = 0.05
+    )
+
+# Any matches with an adjusted p-value greater than 0.05 are removed
+summarize_corecmotifs(matched_corecmotifs) %>%
+    dplyr::as_tibble() %>%
+    print(width = 100)
+
+# To ensure that n replicate motifs had a good match, use `check_replicates()`
+matched_corecmotifs <-
+    check_replicates(
+        matched_corecmotifs,
+        n_replicates = 2,
+        # We already compared replicate motifs to each other
+        # To skip doing it again, set `eucl_distance` to NULL
+        eucl_distance = NULL
+    )
+
+# This is the same as `final_corecmotifs`, the output of `process_corecmotifs()`
+identical(matched_corecmotifs, final_corecmotifs)
+
+```
+
+## Visualizing CoRecMotifs
+
+```{r plot help, eval = FALSE}
+# Relevant help pages for this section
+?plot_corecmotif
+```
+
+To visualize the CoRecMotif logos and their matched reference motif logos, use the `plot_corecmotif()` function. This function allows you to plot only the CoRecMotif, only the matching reference motif, or both in a variety of different formats. The available formats for reference motifs are ICM, PWM, and PPM. The CoRecMotifs have an additional delta_zscore format available as well.
+
+```{r plot 1, fig.height = 2, fig.width = 10, out.width = "90%", fig.align = "center"}
+# Plot the delta z-score motif next to the ICM of the matching reference motif
+plot_corecmotif(example_matched_corecmotifs[[1]])
+```
+```{r plot 2, fig.height = 2, fig.width = 5, out.width = "45%", fig.align = "center"}
+# You can change the type of logo to plot with the *_logo_type arguments
+plot_corecmotif(
+    example_matched_corecmotifs[[1]],
+    corecmotif_logo_type = "ICM",
+    reference_logo_type = "none"
+)
+```
+```{r plot 3, fig.height = 10, fig.width = 20, out.width = "90%", fig.align = "center"}
+# You can generate plots for all the matched CoRecMotifs with lapply ...
+corecmotif_plots <- lapply(example_matched_corecmotifs, plot_corecmotif)
+
+# ... and then display them all in one figure with cowplot::plot_grid()
+cowplot::plot_grid(plotlist = corecmotif_plots, ncol = 2)
+```
+
