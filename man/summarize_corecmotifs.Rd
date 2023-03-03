@@ -4,10 +4,13 @@
 \alias{summarize_corecmotifs}
 \title{Make a data frame summarizing a list of CoRecMotifs}
 \usage{
-summarize_corecmotifs(corecmotifs)
+summarize_corecmotifs(corecmotifs, by_cluster = FALSE)
 }
 \arguments{
 \item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to summarize.}
+
+\item{by_cluster}{\code{logical(1)}. Should the \link[=CoRecMotif-class]{CoRecMotifs} be
+grouped by cluster? (Default: FALSE)}
 }
 \value{
 A data frame with information about a list of
