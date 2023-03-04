@@ -141,6 +141,8 @@ make_corecmotifs <-
 #'   [check_replicates()] will have the suffix "significant_corecmotifs.rds".
 #' * The output of [summarize_corecmotifs()] will have the suffix
 #'   "significant_corecmotifs_summary.tsv".
+#' * The output of [summarize_corecmotifs()] with `by_cluster = TRUE` will have
+#'   the suffix "significant_corecmotifs_summary_by_cluster.tsv".
 #'
 #' @inheritParams check_replicates
 #' @inheritParams find_match

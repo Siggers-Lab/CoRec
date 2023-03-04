@@ -92,6 +92,8 @@ to the output base name.
 \code{\link[=check_replicates]{check_replicates()}} will have the suffix "significant_corecmotifs.rds".
 \item The output of \code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}} will have the suffix
 "significant_corecmotifs_summary.tsv".
+\item The output of \code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}} with \code{by_cluster = TRUE} will have
+the suffix "significant_corecmotifs_summary_by_cluster.tsv".
 }
 }
 \examples{
