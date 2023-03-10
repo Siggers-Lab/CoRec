@@ -28,6 +28,15 @@ plot_corecmotif <-
     corecmotif_logo_type <- match.arg(corecmotif_logo_type)
     reference_logo_type <- match.arg(reference_logo_type)
 
+    # Make sure corecmotif is a valid CoRecMotif
+    if (!methods::is(corecmotif, "CoRecMotif")) {
+        stop(
+            "corecmotif is not a CoRecMotif",
+            call. = FALSE
+        )
+    }
+    methods::validObject(corecmotif)
+
     # Get the correct form of the CoRecMotif as a numeric matrix
     corecmotif_matrix <-
         switch(

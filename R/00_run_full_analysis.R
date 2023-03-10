@@ -184,8 +184,6 @@ process_corecmotifs <-
     assertthat::assert_that(
         assertthat::is.string(reference_motifs_file) &&
             file.exists(reference_motifs_file),
-        assertthat::is.string(output_directory) || is.null(output_directory),
-        assertthat::is.string(output_base_name) || is.null(output_base_name),
         is.data.frame(cluster_assignments) || is.null(cluster_assignments),
         assertthat::is.string(meme_path) || is.null(meme_path),
         assertthat::is.number(motif_strength) || is.null(motif_strength),
@@ -193,8 +191,13 @@ process_corecmotifs <-
         assertthat::is.count(n_replicates),
         assertthat::is.number(eucl_distance) || is.null(eucl_distance),
         assertthat::is.count(min_overlap),
-        assertthat::is.number(match_pvalue) || is.null(match_pvalue)
+        assertthat::is.number(match_pvalue) || is.null(match_pvalue),
+        assertthat::is.string(output_directory) || is.null(output_directory),
+        assertthat::is.string(output_base_name) || is.null(output_base_name)
     )
+
+    # Make sure corecmotifs is a valid list of CoRecMotifs
+    corecmotifs <- check_corecmotif_list(corecmotifs)
 
     # Update the output base name with the output directory
     output_base_name <-

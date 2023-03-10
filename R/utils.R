@@ -104,6 +104,9 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
         assertthat::is.flag(by_cluster)
     )
 
+    # Make sure corecmotifs is a valid list of CoRecMotifs
+    corecmotifs <- check_corecmotif_list(corecmotifs)
+
     # Convert each corecmotif object into a data frame
     corecmotif_df <-
         lapply(corecmotifs, as.data.frame) %>%
@@ -161,6 +164,15 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
     assertthat::assert_that(
         is.data.frame(cluster_assignments) || is.null(cluster_assignments)
     )
+
+    # Make sure corecmotif is a valid CoRecMotif
+    if (!methods::is(corecmotif, "CoRecMotif")) {
+        stop(
+            "corecmotif is not a CoRecMotif",
+            call. = FALSE
+        )
+    }
+    methods::validObject(corecmotif)
 
     # Clear the cluster match slot if there are no clusters or no motif match
     if (is.null(cluster_assignments) ||

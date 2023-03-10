@@ -44,16 +44,8 @@ check_replicates <-
         assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Make sure corecmotifs is a list
-    if (!is.list(corecmotifs)) {
-        corecmotifs <- list(corecmotifs)
-    }
-
-    #
-    if (length(corecmotifs) < 1) {
-        message("corecmotifs is an empty list")
-        return()
-    }
+    # Make sure corecmotifs is a valid list of CoRecMotifs
+    corecmotifs <- check_corecmotif_list(corecmotifs)
 
     # Make a dataframe summarizing the CoRecMotifs
     corecmotif_df <-

@@ -55,10 +55,8 @@ find_match <-
         assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Make sure corecmotifs is a list
-    if (!is.list(corecmotifs)) {
-        corecmotifs <- list(corecmotifs)
-    }
+    # Make sure corecmotifs is a valid list of CoRecMotifs
+    corecmotifs <- check_corecmotif_list(corecmotifs)
 
     # Make sure cluster_assignments has the expected columns and remove extras
     if (!is.null(cluster_assignments)) {

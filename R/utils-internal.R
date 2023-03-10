@@ -18,6 +18,8 @@ probe_id <- probe_sequence <- probe_set <- NULL
 snv_position <- snv_nucleotide <- NULL
 cluster <- n_conditions <- distance <- NULL
 pbm_condition <- pbm_conditions <- zscore <- NULL
+array_id <-  motif_strength <- rolling_ic <- NULL
+match_cluster <- match_motif <- match_pvalue <- NULL
 
 # Define useful functions ------------------------------------------------------
 
@@ -110,6 +112,43 @@ check_valid_zscore_motif <- function(zscore_motif) {
     colnames(zscore_motif) <- as.character(1:ncol(zscore_motif))
 
     return(zscore_motif)
+}
+
+check_corecmotif_list <- function(corecmotifs) {
+    # If it's not a list or an individual CoRecMotif, give an error
+    if (!is.list(corecmotifs) && !methods::is(corecmotifs, "CoRecMotif")) {
+        stop(
+            "corecmotifs is not a list of CoRecMotifs or coercible to one",
+            call. = FALSE
+        )
+    }
+
+    # If it's an individual valid CoRecMotif, return it in a list
+    if (!is.list(corecmotifs) && methods::is(corecmotifs, "CoRecMotif")) {
+        methods::validObject(corecmotifs)
+        return(list(corecmotifs))
+    }
+
+    # Check if each element of corecmotifs is a CoRecMotif
+    are_corecmotifs <-
+        vapply(corecmotifs, methods::is, class2 = "CoRecMotif", logical(1))
+
+    # If any elements of corecmotifs are not CoRecMotifs, give an error
+    if (!all(are_corecmotifs)) {
+        stop(
+            "not all elements of corecmotifs are CoRecMotifs",
+            call. = FALSE
+        )
+    } else if (length(corecmotifs) < 1) {
+        stop(
+            "corecmotifs is an empty list",
+            call. = FALSE
+        )
+    }
+
+    # Check if each element of corecmotifs is a VALID CoRecMotif
+    vapply(corecmotifs, methods::validObject, logical(1))
+    return(corecmotifs)
 }
 
 # Try to save a TSV or RDS file but catch errors and give a warning instead

@@ -108,6 +108,60 @@ test_that("check_valid_zscore_motif() works", {
     )
 })
 
+test_that("check_corecmotif_list() works", {
+    # Fails when given a value that isn't a CoRecMotif or a list
+    expect_error(
+        check_corecmotif_list("this is not a CoRecMotif"),
+        "corecmotifs is not a list of CoRecMotifs or coercible to one"
+    )
+
+    # Fails when given a list of not CoRecMotifs
+    expect_error(
+        check_corecmotif_list(list("a", "b", "c")),
+        "not all elements of corecmotifs are CoRecMotifs"
+    )
+
+    # Fails when given a list of some CoRecMotifs and some not CoRecMotifs
+    expect_error(
+        check_corecmotif_list(list("a", "b", example_corecmotifs[[1]])),
+        "not all elements of corecmotifs are CoRecMotifs"
+    )
+
+    # Fails when given an invalid individual CoRecMotif
+    motif_1 <- example_corecmotifs[[4]]
+    motif_1@pbm_condition <- c("invalid", "pbm", "condition")
+    expect_error(
+        check_corecmotif_list(motif_1),
+        "invalid class \"CoRecMotif\" object"
+    )
+
+    # Fails when given a list containing an invalid CoRecMotif
+    motif_2 <- example_corecmotifs[[8]]
+    motif_2@array_id <- c("invalid", "array", "id")
+    expect_error(
+        check_corecmotif_list(c(example_corecmotifs[1:7], motif_2)),
+        "invalid class \"CoRecMotif\" object"
+    )
+
+    # Fails when given an empty list
+    expect_error(
+        check_corecmotif_list(list()),
+        "corecmotifs is an empty list"
+    )
+
+    # Returns a list of the CoRecMotif when given an individual CoRecMotif
+    expect_equal(
+        check_corecmotif_list(example_corecmotifs[[10]]),
+        list(example_corecmotifs[[10]])
+    )
+
+    # Returns the input list when given a list of CoRecMotifs
+    expect_equal(
+        check_corecmotif_list(example_corecmotifs),
+        example_corecmotifs
+    )
+})
+
 test_that("try_catch_save_output() works", {
     # Fails when given a value that isn't a character vector
     expect_error(
