@@ -115,10 +115,12 @@ test_that("filtering by eucl_distance works", {
         check_replicates(
             test_corecmotifs,
             n_replicates = 1,
-            eucl_distance = 0.6
+            eucl_distance = 0.5
         )
 
-    expect_setequal(eucl_distance_filter_2, test_corecmotifs[c(1, 3, 5:12)])
+    expect_setequal(
+        eucl_distance_filter_2, test_corecmotifs[c(1, 3, 5:6, 9:12)]
+    )
 
     # Filter out motifs with no Euclidean distance less than 0.4
     eucl_distance_filter_3 <-
@@ -128,7 +130,7 @@ test_that("filtering by eucl_distance works", {
             eucl_distance = 0.4
         )
 
-    expect_setequal(eucl_distance_filter_3, test_corecmotifs[9:10])
+    expect_setequal(eucl_distance_filter_3, test_corecmotifs[c(9:10, 12)])
 
     # Filter out motifs with no Euclidean distance less than 0.1
     eucl_distance_filter_4 <-
@@ -157,15 +159,15 @@ test_that("filtering by both n_replicates and eucl_distance works", {
 
     expect_setequal(combined_filter_1, test_corecmotifs)
 
-    # Filter out groups with < 3 motifs and motifs with no ED < 0.6
+    # Filter out groups with < 3 motifs and motifs with no ED < 0.5
     combined_filter_2 <-
         check_replicates(
             test_corecmotifs,
             n_replicates = 3,
-            eucl_distance = 0.6
+            eucl_distance = 0.5
         )
 
-    expect_setequal(combined_filter_2, test_corecmotifs[5:12])
+    expect_setequal(combined_filter_2, test_corecmotifs[9:12])
 
     # Filter out groups with < 2 motifs and motifs with no ED < 0.4
     combined_filter_3 <-
@@ -175,26 +177,26 @@ test_that("filtering by both n_replicates and eucl_distance works", {
             eucl_distance = 0.4
         )
 
-    expect_setequal(combined_filter_3, test_corecmotifs[9:10])
+    expect_setequal(combined_filter_3, test_corecmotifs[c(9:10, 12)])
 
-    # Filter out groups with < 3 motifs and motifs with no ED < 0.4
+    # Filter out groups with < 4 motifs and motifs with no ED < 0.4
     combined_filter_4 <-
         check_replicates(
             test_corecmotifs,
-            n_replicates = 3,
+            n_replicates = 4,
             eucl_distance = 0.4
         )
 
     expect_setequal(combined_filter_4, list())
 
-    # Filter out subsetted groups with < 3 motifs and motifs with no ED < 0.6
+    # Filter out subsetted groups with < 3 motifs and motifs with no ED < 0.5
     combined_filter_5 <-
         check_replicates(
-            test_corecmotifs[c(1:4, 6:8, 11)],
+            test_corecmotifs[c(1:4, 5:7, 11)],
             n_replicates = 2,
-            eucl_distance = 0.6
+            eucl_distance = 0.5
         )
 
-    expect_setequal(combined_filter_5, test_corecmotifs[c(1, 3, 7:8)])
+    expect_setequal(combined_filter_5, test_corecmotifs[c(1, 3, 5:6)])
 })
 

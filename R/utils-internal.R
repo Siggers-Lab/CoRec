@@ -233,12 +233,9 @@ find_seed_zscore <- function(zscore_motif) {
 }
 
 # Calculate the beta parameter to use when converting z-score motifs to PPMs
-calculate_beta <- function(zscore_motif) {
-    # Find the seed probe z-score
-    seed_zscore <- find_seed_zscore(zscore_motif)
-
+calculate_beta <- function(motif_strength) {
     # Calculate beta
-    beta <- 4 - (0.5 * seed_zscore)
+    beta <- 4 - (0.5 * motif_strength)
 
     # Restrict beta to a range of 1 to 4
     beta <- max(min(4, beta), 1)

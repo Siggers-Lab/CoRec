@@ -130,7 +130,7 @@ CoRecMotif <-
     motif_strength <- calculate_strength(zscore_motif)
 
     # Calculate beta
-    beta <- calculate_beta(zscore_motif)
+    beta <- calculate_beta(motif_strength)
 
     # Convert the z-score motif into a universalmotif
     motif <- zscore_to_universalmotif(zscore_motif, beta, motif_name)
@@ -206,7 +206,7 @@ methods::setValidity("CoRecMotif", function(object) {
     expected_cols <- as.character(1:ncol(get_zscore_motif(object)))
     expected_strength <- calculate_strength(get_zscore_motif(object))
     expected_rolling_ic <- calculate_rolling_ic(get_motif(object))
-    expected_beta <- calculate_beta(get_zscore_motif(object))
+    expected_beta <- calculate_beta(get_motif_strength(object))
     expected_ppm <-
         zscore_to_universalmotif(
             get_zscore_motif(object), expected_beta, get_motif_name(object)

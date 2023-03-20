@@ -203,7 +203,7 @@ test_that("filtering by numeric parameters works", {
 
     expect_equal(
         rolling_ic_filter,
-        example_corecmotifs[c(1, 8, 13:14, 18, 24, 27:28, 31, 33:34, 39:40)]
+        example_corecmotifs[c(1, 8, 14, 27:28, 31, 33:34, 39:40)]
     )
 
     # Filter by match_pvalue ---------------------------------------------------
@@ -256,7 +256,7 @@ test_that("filtering by multiple parameters works", {
 
     expect_equal(
         combined_filter_3,
-        example_corecmotifs[c(1, 8, 11, 13:14, 18, 24, 28, 31, 33:34, 39:40)]
+        example_corecmotifs[c(1, 8, 13:14, 18, 28, 31, 33:34, 39:40)]
     )
 })
 

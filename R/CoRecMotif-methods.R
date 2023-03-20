@@ -263,7 +263,7 @@ set_zscore_motif <- function(corecmotif, value) {
 
     # Update all the things that depend on the z-score motif
     corecmotif@motif_strength <- calculate_strength(value)
-    corecmotif@beta <- calculate_beta(value)
+    corecmotif@beta <- calculate_beta(corecmotif@motif_strength)
     corecmotif@motif <- zscore_to_universalmotif(
         value, corecmotif@beta, get_motif_name(corecmotif)
     )

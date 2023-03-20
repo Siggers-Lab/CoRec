@@ -221,47 +221,11 @@ test_that("find_seed_zscore() works", {
 })
 
 test_that("calculate_beta() works", {
-    zscore_motif_1 <-
-        matrix(
-            c(
-                c(0.5, 2.0, 0.5, 0.2, 0.2, 1.3),
-                c(1.0, 0.5, 1.1, 0.3, 1.3, 0.5),
-                c(1.2, 0.3, 1.2, 0.4, 1.5, 0.2),
-                c(0.3, 0.4, 0.1, 0.5, 0.5, 0.3)
-            ),
-            nrow = 4,
-            byrow = TRUE
-        )
+    expect_equal(calculate_beta(0.5), 3.75)
 
-    expect_equal(calculate_beta(zscore_motif_1), 3.75)
+    expect_equal(calculate_beta(-0.5), 4)
 
-    zscore_motif_2 <-
-        matrix(
-            c(
-                c(-0.5, 2.0, -0.5, 0.2, 0.2, 1.3),
-                c(1.0, -0.5, 1.1, 0.3, 1.3, -0.5),
-                c(1.2, 0.3, 1.2, 0.4, 1.5, 0.2),
-                c(0.3, 0.4, 0.1, -0.5, -0.5, 0.3)
-            ),
-            nrow = 4,
-            byrow = TRUE
-        )
-
-    expect_equal(calculate_beta(zscore_motif_2), 4)
-
-    zscore_motif_3 <-
-        matrix(
-            c(
-                c(8.0, 2.0, 8.0, 0.2, 0.2, 1.3),
-                c(1.0, 8.0, 1.1, 0.3, 1.3, 8.0),
-                c(1.2, 0.3, 1.2, 0.4, 1.5, 0.2),
-                c(0.3, 0.4, 0.1, 8.0, 8.0, 0.3)
-            ),
-            nrow = 4,
-            byrow = TRUE
-        )
-
-    expect_equal(calculate_beta(zscore_motif_3), 1)
+    expect_equal(calculate_beta(8), 1)
 })
 
 test_that("calculate_strength() works", {
