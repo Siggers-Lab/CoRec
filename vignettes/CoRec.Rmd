@@ -243,7 +243,6 @@ corecmotifs = example_corecmotifs[c(1:8, 21:28)]
 
 # The `summarize_corecmotifs()` function makes a table summarizing the motifs
 summarize_corecmotifs(corecmotifs) %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 ```
 ```{r process corecmotifs 2, eval = FALSE}
@@ -297,7 +296,6 @@ filter_corecmotifs(
     pbm_condition = c("UT_SUDHL4_SWISNF_mix", "UT_SUDHL4_HDAC_mix")
 ) %>%
     summarize_corecmotifs() %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 
 # See `?filter_corecmotifs` for a full list of available filtering criteria
@@ -306,7 +304,6 @@ filter_corecmotifs(
     array_id = "v1_a11_run1"
 ) %>%
     summarize_corecmotifs() %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 
 # The `process_corecmotifs()` function filters by motif strength and rolling IC
@@ -321,7 +318,6 @@ filtered_corecmotifs <-
 
 # Motifs with a strength < 1 and/or a rolling IC < 1 are removed
 summarize_corecmotifs(filtered_corecmotifs) %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 ```
 
@@ -346,7 +342,6 @@ replicated_corecmotifs <-
 # Only motifs that have at least two similar replicates are kept
 # "Similar" meaning the Euclidean distance between them is no greater than 0.4
 summarize_corecmotifs(replicated_corecmotifs) %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 ```
 
@@ -391,7 +386,6 @@ load("matched_corecmotifs.rda")
 # The CoRecMotifs now have match information
 # Note that some of the CoRecMotifs did not match any reference motifs well
 summarize_corecmotifs(matched_corecmotifs) %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 
 # To remove CoRecMotifs with poor matches, we can use `filter_corecmotifs()`
@@ -403,7 +397,6 @@ matched_corecmotifs <-
 
 # Any matches with an adjusted p-value greater than 0.05 are removed
 summarize_corecmotifs(matched_corecmotifs) %>%
-    dplyr::as_tibble() %>%
     print(width = 100)
 
 # To ensure that n replicate motifs had a good match, use `check_replicates()`

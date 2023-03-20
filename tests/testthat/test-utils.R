@@ -69,33 +69,38 @@ test_that("summarize_corecmotifs() works", {
     expected_df <-
         data.frame(
             "probe_set" = c(
-                example_corecmotifs[[1]]@probe_set,
                 example_corecmotifs[[2]]@probe_set,
+                example_corecmotifs[[1]]@probe_set,
                 example_matched_corecmotifs[[3]]@probe_set
             ),
             "pbm_condition" = c(
-                example_corecmotifs[[1]]@pbm_condition,
                 example_corecmotifs[[2]]@pbm_condition,
+                example_corecmotifs[[1]]@pbm_condition,
                 example_matched_corecmotifs[[3]]@pbm_condition
             ),
             "array_id" = c(
-                example_corecmotifs[[1]]@array_id,
                 example_corecmotifs[[2]]@array_id,
+                example_corecmotifs[[1]]@array_id,
                 example_matched_corecmotifs[[3]]@array_id
             ),
+            "list_index" = c(
+                2,
+                1,
+                3
+            ),
             "motif_strength" = c(
-                example_corecmotifs[[1]]@motif_strength,
                 example_corecmotifs[[2]]@motif_strength,
+                example_corecmotifs[[1]]@motif_strength,
                 example_matched_corecmotifs[[3]]@motif_strength
             ),
             "rolling_ic" = c(
-                example_corecmotifs[[1]]@rolling_ic,
                 example_corecmotifs[[2]]@rolling_ic,
+                example_corecmotifs[[1]]@rolling_ic,
                 example_matched_corecmotifs[[3]]@rolling_ic
             ),
             "seed_sequence" = c(
-                example_corecmotifs[[1]]@seed_sequence,
                 example_corecmotifs[[2]]@seed_sequence,
+                example_corecmotifs[[1]]@seed_sequence,
                 example_matched_corecmotifs[[3]]@seed_sequence
             ),
             "match_motif" = c(
@@ -112,8 +117,16 @@ test_that("summarize_corecmotifs() works", {
                 NA_character_,
                 NA_character_,
                 example_matched_corecmotifs[[3]]@match_cluster
+            ),
+            "best_match_cluster" = c(
+                NA_character_,
+                NA_character_,
+                example_matched_corecmotifs[[3]]@match_cluster
             )
-        )
+        ) %>%
+
+        # Convert to a tibble
+        tibble::as_tibble()
 
     expect_equal(
         summarize_corecmotifs(

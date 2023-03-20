@@ -107,34 +107,50 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
     # Make sure corecmotifs is a valid list of CoRecMotifs
     corecmotifs <- check_corecmotif_list(corecmotifs)
 
-    # Convert each corecmotif object into a data frame
+    # Convert each CoRecMotif into a data frame
     corecmotif_df <-
         lapply(corecmotifs, as.data.frame) %>%
 
         # Combine all the data frames
-        dplyr::bind_rows()
+        dplyr::bind_rows() %>%
 
-    # Return the data frame of CoRecMotif information
-    if (!by_cluster) {
-        return(corecmotif_df)
-    }
+        # Add an index mapping the data frame row to the position in the list
+        dplyr::mutate(list_index = dplyr::row_number()) %>%
+        dplyr::relocate(list_index, .after = array_id) %>%
+
+        # Group replicates together
+        dplyr::group_by(probe_set, pbm_condition) %>%
+
+        # Sort by match p-value
+        dplyr::arrange(match_pvalue, .by_group = TRUE) %>%
+
+        # Add a column for the match cluster with the best p-value
+        dplyr::mutate(best_match_cluster = dplyr::first(match_cluster)) %>%
+
+        # Remove the grouping
+        dplyr::ungroup()
 
     # Group all the CoRecMotifs from a condition that matched the same cluster
-    corecmotif_df <-
-        corecmotif_df %>%
+    if (by_cluster) {
+        corecmotif_df <-
+            corecmotif_df %>%
 
-        # Group by match cluster and PBM condition
-        dplyr::group_by(match_cluster, pbm_condition) %>%
+            # Group by match cluster and PBM condition
+            dplyr::group_by(best_match_cluster, pbm_condition) %>%
 
-        # Summarize the "best" value from each group
-        dplyr::summarize(
-            probe_sets =
-                paste(paste(array_id, probe_set, sep = "_"), collapse = ";"),
-            max_motif_strength = max(motif_strength),
-            max_rolling_ic = max(rolling_ic),
-            match_motifs = paste(match_motif, collapse = ";"),
-            min_match_pvalue = min(match_pvalue)
-        )
+            # Summarize the "best" value from each group
+            dplyr::summarize(
+                probe_sets =
+                    paste(
+                        paste(array_id, probe_set, sep = "_"),
+                        collapse = ";"
+                    ),
+                max_motif_strength = max(motif_strength),
+                max_rolling_ic = max(rolling_ic),
+                match_motifs = paste(match_motif, collapse = ";"),
+                min_match_pvalue = min(match_pvalue)
+            )
+    }
 
     # Return the data frame of CoRecMotif information grouped by cluster
     return(corecmotif_df)

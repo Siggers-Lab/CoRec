@@ -51,9 +51,6 @@ check_replicates <-
     corecmotif_df <-
         summarize_corecmotifs(corecmotifs) %>%
 
-        # Add a column with the row number to map to the list of CoRecMotifs
-        dplyr::mutate(index = dplyr::row_number()) %>%
-
         # Group replicates together
         dplyr::group_by(probe_set, pbm_condition) %>%
 
@@ -65,7 +62,7 @@ check_replicates <-
         corecmotif_df %>%
 
         # Each internal list is all the motifs that are replicates of each other
-        dplyr::group_map(~ c(corecmotifs[.x$index]), .keep = TRUE)
+        dplyr::group_map(~ c(corecmotifs[.x$list_index]), .keep = TRUE)
 
     # If not filtering by similarity, return the filtered list now
     if (is.null(eucl_distance)) {

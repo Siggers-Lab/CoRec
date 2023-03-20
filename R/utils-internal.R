@@ -18,8 +18,8 @@ probe_id <- probe_sequence <- probe_set <- NULL
 snv_position <- snv_nucleotide <- NULL
 cluster <- n_conditions <- distance <- NULL
 pbm_condition <- pbm_conditions <- zscore <- NULL
-array_id <-  motif_strength <- rolling_ic <- NULL
-match_cluster <- match_motif <- match_pvalue <- NULL
+array_id <-  motif_strength <- rolling_ic <- list_index <- NULL
+match_cluster <- match_motif <- match_pvalue <- best_match_cluster <- NULL
 
 # Define useful functions ------------------------------------------------------
 
