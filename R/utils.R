@@ -150,3 +150,43 @@ update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
     return(corecmotif)
 }
 
+#' Update a CoRecMotif
+#'
+#' Updates all the values that are calculated automatically when a
+#' [CoRecMotif][CoRecMotif-class] is created.
+#'
+#' @param corecmotif [CoRecMotif][CoRecMotif-class]. The
+#'   [CoRecMotif][CoRecMotif-class] to update.
+#' @param keep_match `logical(1)`. Should the `match_motif`, `match_pvalue`, and
+#'   `match_cluster` slots be kept? If `FALSE`, they will be reset to `NA`.
+#'   (Default: FALSE)
+#'
+#' @return An updated [CoRecMotif][CoRecMotif-class].
+#'
+#' @export
+#'
+#' @examples
+#' print("FILL THIS IN")
+update_corecmotif <- function(corecmotif, keep_match = FALSE) {
+    # Make a new CoRecMotif from the contents of the old one
+    # This will update all the fields that are calculated automatically
+    updated_corecmotif <-
+        CoRecMotif(
+            corecmotif@probe_set,
+            corecmotif@pbm_condition,
+            corecmotif@zscore_motif,
+            corecmotif@array_id,
+            corecmotif@seed_sequence
+        )
+
+    # Update the match information of the new CoRecMotif if necessary
+    if (keep_match) {
+        updated_corecmotif@match_motif <- corecmotif@match_motif
+        updated_corecmotif@match_pvalue <- corecmotif@match_pvalue
+        updated_corecmotif@match_cluster <- corecmotif@match_cluster
+    }
+
+    # Return the updated CoRecMotif
+    return(updated_corecmotif)
+}
+
