@@ -176,7 +176,7 @@ process_corecmotifs <-
         n_replicates = 2,
         eucl_distance = 0.4,
         min_overlap = 5,
-        match_pvalue = 0.05,
+        match_pvalue = 0.01,
         output_directory = NULL,
         output_base_name = NULL
     ) {
