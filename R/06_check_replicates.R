@@ -44,10 +44,7 @@ check_replicates <-
         assertthat::is.string(output_file) || is.null(output_file)
     )
 
-    # Make sure corecmotifs is a valid list of CoRecMotifs
-    corecmotifs <- check_corecmotif_list(corecmotifs)
-
-    # Make a dataframe summarizing the CoRecMotifs
+    # Make a data frame summarizing the CoRecMotifs
     corecmotif_df <-
         summarize_corecmotifs(corecmotifs) %>%
 
@@ -111,24 +108,26 @@ check_replicates <-
         replicated_motif_names <-
             motif_comparison %>%
 
-            # Convert the distance matrix to a dataframe
+            # Convert the distance matrix to a data frame
             as.data.frame() %>%
 
             # Convert the rownames into a column
-            tibble::rownames_to_column("motif_1") %>%
+            tibble::rownames_to_column("motif_name_1") %>%
 
             # Convert to long format
             tidyr::pivot_longer(
                 cols = colnames(motif_comparison),
-                names_to = "motif_2",
+                names_to = "motif_name_2",
                 values_to = "distance"
             ) %>%
 
             # Filter out self comparisons and dissimilar motifs
-            dplyr::filter(motif_1 != motif_2 & distance <= eucl_distance) %>%
+            dplyr::filter(
+                motif_name_1 != motif_name_2 & distance <= eucl_distance
+            ) %>%
 
             # Get the names of all the remaining similar motifs
-            dplyr::pull(motif_1)
+            dplyr::pull(motif_name_1)
 
         # Return the replicate CoRecMotifs that are replicating
         return(group[motif_names %in% replicated_motif_names])

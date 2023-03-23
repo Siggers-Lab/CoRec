@@ -56,11 +56,7 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
 
             # Summarize the "best" value from each group
             dplyr::summarize(
-                probe_sets =
-                    paste(
-                        paste(array_id, probe_set, sep = "_"),
-                        collapse = ";"
-                    ),
+                motif_names = paste(motif_name, collapse = ";"),
                 max_motif_strength = max(motif_strength),
                 max_rolling_ic = max(rolling_ic),
                 match_motifs = paste(match_motif, collapse = ";"),
@@ -184,6 +180,11 @@ update_corecmotif <- function(corecmotif, keep_match = FALSE) {
         updated_corecmotif@match_motif <- corecmotif@match_motif
         updated_corecmotif@match_pvalue <- corecmotif@match_pvalue
         updated_corecmotif@match_cluster <- corecmotif@match_cluster
+    }
+
+    if (methods::is(updated_corecmotif@match_motif, "universalmotif") &&
+        length(updated_corecmotif@match_motif["extrainfo"]) == 0) {
+        updated_corecmotif@match_motif["extrainfo"] <- ""
     }
 
     # Return the updated CoRecMotif

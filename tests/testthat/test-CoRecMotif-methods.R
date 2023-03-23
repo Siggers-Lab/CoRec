@@ -2,6 +2,7 @@ test_that("as.data.frame() works", {
     # Make a data frame to compare against for an unmatched motif
     expected_df_1 <-
         data.frame(
+            "motif_name" = example_corecmotifs[[1]]@motif@name,
             "probe_set" = example_corecmotifs[[1]]@probe_set,
             "pbm_condition" = example_corecmotifs[[1]]@pbm_condition,
             "array_id" = example_corecmotifs[[1]]@array_id,
@@ -18,6 +19,7 @@ test_that("as.data.frame() works", {
     # Make a data frame to compare against
     expected_df_2 <-
         data.frame(
+            "motif_name" = example_matched_corecmotifs[[7]]@motif@name,
             "probe_set" = example_matched_corecmotifs[[7]]@probe_set,
             "pbm_condition" = example_matched_corecmotifs[[7]]@pbm_condition,
             "array_id" = example_matched_corecmotifs[[7]]@array_id,

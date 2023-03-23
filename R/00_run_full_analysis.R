@@ -196,9 +196,6 @@ process_corecmotifs <-
         assertthat::is.string(output_base_name) || is.null(output_base_name)
     )
 
-    # Make sure corecmotifs is a valid list of CoRecMotifs
-    corecmotifs <- check_corecmotif_list(corecmotifs)
-
     # Update the output base name with the output directory
     output_base_name <-
         update_output_base_name(output_directory, output_base_name)

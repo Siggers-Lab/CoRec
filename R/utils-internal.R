@@ -13,13 +13,16 @@ corecmotif_outline_color <- "#abbed1"
 reference_outline_color <- "#added1"
 
 # Define a bunch of dummy variables to get rid of R CMD check notes
-motif <- motif_1 <- motif_2 <- NULL
+motif <- motif_name <- motif_name_1 <- motif_name_2 <- NULL
 probe_id <- probe_sequence <- probe_set <- NULL
 snv_position <- snv_nucleotide <- NULL
-cluster <- n_conditions <- distance <- NULL
-pbm_condition <- pbm_conditions <- zscore <- NULL
-array_id <-  motif_strength <- rolling_ic <- list_index <- NULL
-match_cluster <- match_motif <- match_pvalue <- best_match_cluster <- NULL
+pbm_condition <- pbm_conditions <- pbm_condition_1 <- pbm_condition_2 <- NULL
+array_id <- motif_strength <- rolling_ic <- NULL
+list_index <- list_index_1 <- list_index_2 <- NULL
+match_cluster <- match_motif <- NULL
+match_pvalue <- match_pvalue_1 <- match_pvalue_2 <- NULL
+best_match_cluster <- best_match_cluster_1 <- best_match_cluster_2 <- NULL
+cluster <- n_conditions <- distance <- zscore <- NULL
 
 # Define useful functions ------------------------------------------------------
 

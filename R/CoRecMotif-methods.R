@@ -4,6 +4,7 @@
 #' @rdname CoRecMotif-class
 methods::setMethod("as.data.frame", "CoRecMotif", function(x) {
     data.frame(
+        motif_name = get_motif_name(x),
         probe_set = get_probe_set(x),
         pbm_condition = get_pbm_condition(x),
         array_id = get_array_id(x),

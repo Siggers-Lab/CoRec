@@ -1,6 +1,11 @@
 test_that("summarize_corecmotifs() works", {
     expected_df <-
         data.frame(
+            "motif_name" = c(
+                example_corecmotifs[[2]]@motif@name,
+                example_corecmotifs[[1]]@motif@name,
+                example_matched_corecmotifs[[3]]@motif@name
+            ),
             "probe_set" = c(
                 example_corecmotifs[[2]]@probe_set,
                 example_corecmotifs[[1]]@probe_set,
