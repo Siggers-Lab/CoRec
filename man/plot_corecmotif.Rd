@@ -7,7 +7,8 @@
 plot_corecmotif(
   corecmotif,
   corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
-  reference_logo_type = c("ICM", "PWM", "PPM", "none")
+  reference_logo_type = c("ICM", "PWM", "PPM", "none"),
+  correct_orientation = TRUE
 )
 }
 \arguments{
@@ -21,6 +22,10 @@ plot_corecmotif(
 \item{reference_logo_type}{\code{character(1)}. One of "ICM", "PWM", "PPM", or
 "none". The type of logo to plot for the matching reference motif.
 (Default: "ICM")}
+
+\item{correct_orientation}{\code{logical(1)}. Should the reference motif be
+reversed if necessary to match the CoRecMotif's orientation? (Default:
+TRUE)}
 }
 \value{
 A \code{ggplot} object.

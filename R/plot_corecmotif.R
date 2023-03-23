@@ -11,6 +11,9 @@
 #' @param reference_logo_type `character(1)`. One of "ICM", "PWM", "PPM", or
 #'   "none". The type of logo to plot for the matching reference motif.
 #'   (Default: "ICM")
+#' @param correct_orientation `logical(1)`. Should the reference motif be
+#'   reversed if necessary to match the CoRecMotif's orientation? (Default:
+#'   TRUE)
 #'
 #' @return A `ggplot` object.
 #'
@@ -22,7 +25,8 @@ plot_corecmotif <-
     function(
         corecmotif,
         corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
-        reference_logo_type = c("ICM", "PWM", "PPM", "none")
+        reference_logo_type = c("ICM", "PWM", "PPM", "none"),
+        correct_orientation = TRUE
     ) {
     # Make sure the selected motif logo types are valid options
     corecmotif_logo_type <- match.arg(corecmotif_logo_type)
@@ -52,9 +56,9 @@ plot_corecmotif <-
     reference_matrix <-
         switch(
             reference_logo_type,
-            "ICM" = get_match_icm(corecmotif),
-            "PWM" = get_match_pwm(corecmotif),
-            "PPM" = get_match_ppm(corecmotif),
+            "ICM" = get_match_icm(corecmotif, correct_orientation),
+            "PWM" = get_match_pwm(corecmotif, correct_orientation),
+            "PPM" = get_match_ppm(corecmotif, correct_orientation),
             "none" = NA
         )
 

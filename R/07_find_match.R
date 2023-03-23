@@ -93,6 +93,10 @@ find_match <-
         corecmotifs[[index]]@match_motif <-
             motif_comparison[[index]]$best_match_motif[[1]]
 
+        # Save the match orientation in the extrainfo slot
+        corecmotifs[[index]]@match_motif["extrainfo"] <-
+            motif_comparison[[index]]$best_match_strand[[1]]
+
         # Set the match p-value (actually an E-value, but whatever)
         corecmotifs[[index]]@match_pvalue <-
             as.numeric(motif_comparison[[index]]$best_match_eval)

@@ -85,17 +85,35 @@ test_that("getters work", {
     # Get an example motif with a match and calculate some expected values
     motif_2 <- example_matched_corecmotifs[[3]]
 
-    icm_2 <- universalmotif::convert_type(motif_2@match_motif, "ICM")["motif"]
-    pwm_2 <- universalmotif::convert_type(motif_2@match_motif, "PWM")["motif"]
-    ppm_2 <- universalmotif::convert_type(motif_2@match_motif, "PPM")["motif"]
+    icm_2 <- universalmotif::convert_type(motif_2@match_motif, "ICM")
+    icm_2_rc <- universalmotif::motif_rc(icm_2)
+    pwm_2 <- universalmotif::convert_type(motif_2@match_motif, "PWM")
+    pwm_2_rc <- universalmotif::motif_rc(pwm_2)
+    ppm_2 <- universalmotif::convert_type(motif_2@match_motif, "PPM")
+    ppm_2_rc <- universalmotif::motif_rc(ppm_2)
 
     # Make sure everything matches
     expect_equal(get_match_motif(motif_2), motif_2@match_motif)
     expect_equal(get_match_name(motif_2), motif_2@match_motif["name"])
     expect_equal(get_match_altname(motif_2), motif_2@match_motif["altname"])
-    expect_equal(get_match_icm(motif_2), icm_2)
-    expect_equal(get_match_pwm(motif_2), pwm_2)
-    expect_equal(get_match_ppm(motif_2), ppm_2)
+    expect_equal(
+        get_match_icm(motif_2, correct_orientation = FALSE), icm_2["motif"]
+    )
+    expect_equal(
+        get_match_pwm(motif_2, correct_orientation = FALSE), pwm_2["motif"]
+    )
+    expect_equal(
+        get_match_ppm(motif_2, correct_orientation = FALSE), ppm_2["motif"]
+    )
+    expect_equal(
+        get_match_icm(motif_2, correct_orientation = TRUE), icm_2_rc["motif"]
+    )
+    expect_equal(
+        get_match_pwm(motif_2, correct_orientation = TRUE), pwm_2_rc["motif"]
+    )
+    expect_equal(
+        get_match_ppm(motif_2, correct_orientation = TRUE), ppm_2_rc["motif"]
+    )
 })
 
 test_that("bad arguments for character field setters are handled correctly", {

@@ -69,11 +69,11 @@ get_match_name(corecmotif)
 
 get_match_altname(corecmotif)
 
-get_match_icm(corecmotif)
+get_match_icm(corecmotif, correct_orientation = TRUE)
 
-get_match_pwm(corecmotif)
+get_match_pwm(corecmotif, correct_orientation = TRUE)
 
-get_match_ppm(corecmotif)
+get_match_ppm(corecmotif, correct_orientation = TRUE)
 
 get_match_pvalue(corecmotif)
 
@@ -94,6 +94,10 @@ set_motif_name(corecmotif, value)
 \arguments{
 \item{corecmotif}{\link[=CoRecMotif-class]{CoRecMotif}. The motif whose slots
 should be accessed or replaced.}
+
+\item{correct_orientation}{\code{logical(1)}. Should the reference motif be
+reversed if necessary to match the CoRecMotif's orientation? (Default:
+TRUE)}
 
 \item{value}{Object to replace the slot with. The required type depends on
 which slot is being replaced. See \linkS4class{CoRecMotif} for more information

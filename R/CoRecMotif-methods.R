@@ -48,6 +48,9 @@ methods::setMethod("show", "CoRecMotif", function(object) {
 #'
 #' @param corecmotif [CoRecMotif][CoRecMotif-class]. The motif whose slots
 #'   should be accessed or replaced.
+#' @param correct_orientation `logical(1)`. Should the reference motif be
+#'   reversed if necessary to match the CoRecMotif's orientation? (Default:
+#'   TRUE)
 #' @param value Object to replace the slot with. The required type depends on
 #'   which slot is being replaced. See [CoRecMotif-class] for more information
 #'   on the expected classes.
@@ -193,9 +196,12 @@ get_match_altname <- function(corecmotif) {
 
 #' @export
 #' @rdname accessors
-get_match_icm <- function(corecmotif) {
+get_match_icm <- function(corecmotif, correct_orientation = TRUE) {
     if (methods::is(corecmotif@match_motif, "universalmotif")) {
         icm <- universalmotif::convert_type(corecmotif@match_motif, "ICM")
+        if (correct_orientation && icm["extrainfo"] == "-") {
+            icm <- universalmotif::motif_rc(icm)
+        }
         return(icm["motif"])
     } else {
         return(NA)
@@ -204,9 +210,12 @@ get_match_icm <- function(corecmotif) {
 
 #' @export
 #' @rdname accessors
-get_match_pwm <- function(corecmotif) {
+get_match_pwm <- function(corecmotif, correct_orientation = TRUE) {
     if (methods::is(corecmotif@match_motif, "universalmotif")) {
         pwm <- universalmotif::convert_type(corecmotif@match_motif, "PWM")
+        if (correct_orientation && pwm["extrainfo"] == "-") {
+            pwm <- universalmotif::motif_rc(pwm)
+        }
         return(pwm["motif"])
     } else {
         return(NA)
@@ -215,9 +224,12 @@ get_match_pwm <- function(corecmotif) {
 
 #' @export
 #' @rdname accessors
-get_match_ppm <- function(corecmotif) {
+get_match_ppm <- function(corecmotif, correct_orientation = TRUE) {
     if (methods::is(corecmotif@match_motif, "universalmotif")) {
         ppm <- universalmotif::convert_type(corecmotif@match_motif, "PPM")
+        if (correct_orientation && ppm["extrainfo"] == "-") {
+            ppm <- universalmotif::motif_rc(ppm)
+        }
         return(ppm["motif"])
     } else {
         return(NA)
