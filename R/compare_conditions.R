@@ -37,6 +37,17 @@ compare_conditions <- function(corecmotifs) {
         # Get the names of the motifs in this group
         motif_names <- vapply(group, get_motif_name, character(1))
 
+        # If there's only one motif in this group, there's nothing to compare
+        if (length(motif_names) == 1) {
+            motif_comparison <-
+                data.frame(
+                    "motif_name_1" = motif_names,
+                    "motif_name_2" = motif_names,
+                    "distance" = 0
+                )
+            return(motif_comparison)
+        }
+
         # Make sure there aren't any duplicate names
         if (any(duplicated(motif_names))) {
             warning(
