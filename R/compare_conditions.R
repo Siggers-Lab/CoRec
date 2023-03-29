@@ -117,6 +117,7 @@ compare_conditions <- function(corecmotifs) {
 
         # Take the average distance
         dplyr::summarise(
+            min_distance = min(distance),
             mean_distance = mean(distance),
             motif_names_1 = paste(unique(motif_name_1), collapse = ";"),
             motif_names_2 = paste(unique(motif_name_2), collapse = ";"),
