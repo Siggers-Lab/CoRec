@@ -153,7 +153,7 @@ make_corecmotifs <-
 #' @param rolling_ic `numeric(1)` or `NULL`. The minimum rolling IC to keep or
 #'   NULL not to filter by rolling IC. (Default: 1)
 #' @param match_pvalue `numeric(1)` or `NULL`. The maximum match p-value to keep
-#'   or NULL not to filter by match p-value. (Default: 0.05)
+#'   or NULL not to filter by match p-value. (Default: 0.01)
 #'
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
 #'   match a reference motif.

@@ -75,6 +75,11 @@ check_replicates <-
 
     # Make sure replicate motifs are actually replicating (i.e., similar)
     replicated_motifs <- lapply(grouped_corecmotifs, function(group) {
+        # If there's only one motif in this group, there's nothing to compare
+        if (length(group) == 1) {
+            return(group)
+        }
+
         # Get a list of the PPMs in this group of replicates
         motifs <- lapply(group, get_motif)
 
@@ -111,7 +116,7 @@ check_replicates <-
             # Convert the distance matrix to a data frame
             as.data.frame() %>%
 
-            # Convert the rownames into a column
+            # Convert the row names into a column
             tibble::rownames_to_column("motif_name_1") %>%
 
             # Convert to long format

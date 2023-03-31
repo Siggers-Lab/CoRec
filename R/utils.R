@@ -41,7 +41,7 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
         dplyr::arrange(match_pvalue, .by_group = TRUE) %>%
 
         # Add a column for the match cluster with the best p-value
-        dplyr::mutate(best_match_cluster = dplyr::first(match_cluster)) %>%
+        dplyr::mutate(replicate_match_cluster = dplyr::first(match_cluster)) %>%
 
         # Remove the grouping
         dplyr::ungroup()
@@ -52,7 +52,7 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
             corecmotif_df %>%
 
             # Group by match cluster and PBM condition
-            dplyr::group_by(best_match_cluster, pbm_condition) %>%
+            dplyr::group_by(replicate_match_cluster, pbm_condition) %>%
 
             # Summarize the "best" value from each group
             dplyr::summarize(

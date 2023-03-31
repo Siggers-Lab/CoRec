@@ -4,11 +4,17 @@
 \alias{compare_conditions}
 \title{Compare CoRecMotifs across different PBM conditions}
 \usage{
-compare_conditions(corecmotifs)
+compare_conditions(corecmotifs, pbm_conditions, eucl_distance = 0.25)
 }
 \arguments{
 \item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to compare to
 each other.}
+
+\item{pbm_conditions}{\code{character}. The names of the PBM conditions to
+compare.}
+
+\item{eucl_distance}{\code{numeric(1)}. The maximum allowable Euclidean distance
+between conditions to group. (Default: 0.4)}
 }
 \value{
 A data frame with comparison information about a list of

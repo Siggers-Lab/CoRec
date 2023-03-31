@@ -14,7 +14,7 @@ process_corecmotifs(
   n_replicates = 2,
   eucl_distance = 0.4,
   min_overlap = 5,
-  match_pvalue = 0.05,
+  match_pvalue = 0.01,
   output_directory = NULL,
   output_base_name = NULL
 )
@@ -51,7 +51,7 @@ when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a reference motif.
 (Default: 5)}
 
 \item{match_pvalue}{\code{numeric(1)} or \code{NULL}. The maximum match p-value to keep
-or NULL not to filter by match p-value. (Default: 0.05)}
+or NULL not to filter by match p-value. (Default: 0.01)}
 
 \item{output_directory}{\code{character(1)} or \code{NULL}. The path to the directory
 where output files will be saved. No output files will be created unless

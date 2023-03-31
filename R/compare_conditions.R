@@ -5,6 +5,10 @@
 #'
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to compare to
 #'   each other.
+#' @param pbm_conditions `character`. The names of the PBM conditions to
+#'   compare.
+#' @param eucl_distance `numeric(1)`. The maximum allowable Euclidean distance
+#'   between conditions to group. (Default: 0.4)
 #'
 #' @return A data frame with comparison information about a list of
 #'   [CoRecMotifs][CoRecMotif-class].
@@ -13,40 +17,60 @@
 #'
 #' @examples
 #' print("FILL THIS IN")
-compare_conditions <- function(corecmotifs) {
-    # Make a data frame summarizing the CoRecMotifs
-    corecmotif_df <-
-        # summarize_corecmotifs(matching_corecmotifs) %>%
-        summarize_corecmotifs(corecmotifs) %>%
+compare_conditions <-
+    function(
+        corecmotifs,
+        pbm_conditions,
+        eucl_distance = 0.25
+    ) {
+    # Summarize the list of all CoRecMotifs
+    corecmotif_df <- summarize_corecmotifs(corecmotifs)
+
+    # Keep only the CoRecMotifs from the relevant PBM conditions
+    matching_corecmotifs <-
+        filter_corecmotifs(corecmotifs, pbm_condition = pbm_conditions)
+
+    # Summarize just the matching CoRecMotifs
+    matching_corecmotif_df <-
+        summarize_corecmotifs(matching_corecmotifs) %>%
 
         # Group all the motifs from the same probe set together
         dplyr::group_by(probe_set)
 
     # Make a list of lists of CoRecMotifs from the same probe set
     grouped_corecmotifs <-
-        corecmotif_df %>%
+        matching_corecmotif_df %>%
 
         # Each internal list is all the motifs from the same probe set
-        dplyr::group_map(~ c(corecmotifs[.x$list_index]), .keep = TRUE)
+        dplyr::group_map(~ c(matching_corecmotifs[.x$list_index]), .keep = TRUE)
 
     # Compare motifs from the same probe set in different PBM conditions
     motif_comparisons <- lapply(grouped_corecmotifs, function(group) {
-        # Get a list of the PPMs in this group of replicates
+        # Get the name of the probe set
+        probe_set <- get_probe_set(group[[1]])
+
+        # Get a list of all the PBM conditions for this probe set
+        group_pbm_conditions <-
+            vapply(group, get_pbm_condition, character(1)) %>%
+
+            unique()
+
+        # If there's only one PBM condition, there's nothing to compare
+        if (length(group_pbm_conditions) == 1) {
+            motif_comparison <-
+                data.frame(
+                    "probe_set" = probe_set,
+                    "pbm_condition" = group_pbm_conditions,
+                    "group" = paste0(probe_set, "_1")
+                )
+            return(motif_comparison)
+        }
+
+        # Get a list of the PPMs from this probe set
         motifs <- lapply(group, get_motif)
 
         # Get the names of the motifs in this group
         motif_names <- vapply(group, get_motif_name, character(1))
-
-        # If there's only one motif in this group, there's nothing to compare
-        if (length(motif_names) == 1) {
-            motif_comparison <-
-                data.frame(
-                    "motif_name_1" = motif_names,
-                    "motif_name_2" = motif_names,
-                    "distance" = 0
-                )
-            return(motif_comparison)
-        }
 
         # Make sure there aren't any duplicate names
         if (any(duplicated(motif_names))) {
@@ -71,24 +95,75 @@ compare_conditions <- function(corecmotifs) {
                 min.mean.ic = 0
             )
 
-        # Convert the distance matrix to a data frame
+        # Find the distance between each condition
         motif_comparison <-
             motif_comparison %>%
 
+            # Convert the distance matrix to a data frame
             as.data.frame() %>%
 
-            # Convert the rownames into a column
+            # Convert the row names into a column
             tibble::rownames_to_column("motif_name_1") %>%
 
             # Convert to long format
             tidyr::pivot_longer(
-                cols = colnames(motif_comparison)[-1],
+                cols = colnames(motif_comparison),
                 names_to = "motif_name_2",
                 values_to = "distance"
+            ) %>%
+
+            # Add the information about motif_1
+            dplyr::left_join(
+                corecmotif_df,
+                by = c("motif_name_1" = "motif_name")
+            ) %>%
+
+            # Add the information about motif_2
+            dplyr::left_join(
+                corecmotif_df,
+                by = c("motif_name_2" = "motif_name", "probe_set"),
+                suffix = c("_1", "_2")
+            ) %>%
+
+            # Group by the PBM conditions being compared
+            dplyr::group_by(probe_set, pbm_condition_1, pbm_condition_2) %>%
+
+            # Take the minimum distance between two conditions
+            dplyr::summarise(min_distance = min(distance))
+
+        # Group similar conditions together
+        group_assignments <-
+            motif_comparison %>%
+
+            # Convert to wide format with between condition distances
+            tidyr::pivot_wider(
+                id_cols = "pbm_condition_1",
+                names_from = "pbm_condition_2",
+                values_from = "min_distance"
+            ) %>%
+
+            # Convert the PBM condition column into the row names
+            tibble::column_to_rownames("pbm_condition_1") %>%
+
+            # Convert to a dist object
+            stats::as.dist() %>%
+
+            # Cluster the conditions using single linkage
+            stats::hclust(method = "single") %>%
+
+            # Cut into groups that are separated by at least eucl_distance
+            stats::cutree(h = eucl_distance)
+
+        # Make a data frame of the group assignments
+        group_assignments <-
+            data.frame(
+                "probe_set" = rep(probe_set, length(group_assignments)),
+                "pbm_condition" = names(group_assignments),
+                "group" = paste(probe_set, group_assignments, sep = "_")
             )
 
-        # Return the data frame of between condition distances
-        return(motif_comparison)
+        # Return the data frame of group assignments
+        return(group_assignments)
     })
 
     motif_comparison_df <-
@@ -97,43 +172,21 @@ compare_conditions <- function(corecmotifs) {
         # Combine all the data frames
         dplyr::bind_rows() %>%
 
-        # Add the information about motif_1
+        # Add the motif information
         dplyr::left_join(
             corecmotif_df,
-            by = c("motif_name_1" = "motif_name")
+            by = c("probe_set", "pbm_condition")
         ) %>%
 
-        # Add the information about motif_2
-        dplyr::left_join(
-            corecmotif_df,
-            by = c("motif_name_2" = "motif_name", "probe_set", "seed_sequence"),
-            suffix = c("_1", "_2")
-        ) %>%
+        # Group similar PBM conditions for the same probe set together
+        dplyr::group_by(probe_set, group) %>%
 
-        dplyr::filter(pbm_condition_1 <= pbm_condition_2) %>%
+        # Sort by match p-value
+        dplyr::arrange(match_pvalue, .by_group = TRUE) %>%
 
-        # Group by the PBM conditions being compared
-        dplyr::group_by(probe_set, pbm_condition_1, pbm_condition_2) %>%
+        # Add a column for the match cluster with the best p-value
+        dplyr::mutate(group_match_cluster = dplyr::first(match_cluster)) %>%
 
-        # Take the average distance
-        dplyr::summarise(
-            min_distance = min(distance),
-            mean_distance = mean(distance),
-            motif_names_1 = paste(unique(motif_name_1), collapse = ";"),
-            motif_names_2 = paste(unique(motif_name_2), collapse = ";"),
-            list_indices_1 = paste(unique(list_index_1), collapse = ";"),
-            list_indices_2 = paste(unique(list_index_2), collapse = ";"),
-            best_match_cluster_1 = unique(best_match_cluster_1),
-            best_match_cluster_2 = unique(best_match_cluster_2),
-            best_match_pvalue_1 = ifelse(
-                all(is.na(match_pvalue_1)),
-                NA,
-                min(stats::na.omit(match_pvalue_1))
-            ),
-            best_match_pvalue_2 = ifelse(
-                all(is.na(match_pvalue_2)),
-                NA,
-                min(stats::na.omit(match_pvalue_2))
-            )
-        )
+        # Remove the grouping
+        dplyr::ungroup()
 }

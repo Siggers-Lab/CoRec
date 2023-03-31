@@ -56,7 +56,7 @@ test_that("summarize_corecmotifs() works", {
                 NA_character_,
                 example_matched_corecmotifs[[3]]@match_cluster
             ),
-            "best_match_cluster" = c(
+            "replicate_match_cluster" = c(
                 NA_character_,
                 NA_character_,
                 example_matched_corecmotifs[[3]]@match_cluster
