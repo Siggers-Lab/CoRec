@@ -15,6 +15,7 @@ process_corecmotifs(
   eucl_distance = 0.4,
   min_overlap = 5,
   match_pvalue = 0.01,
+  pbm_condition_groups = NULL,
   output_directory = NULL,
   output_base_name = NULL
 )
@@ -53,6 +54,12 @@ when comparing a \link[=CoRecMotif-class]{CoRecMotif} to a reference motif.
 \item{match_pvalue}{\code{numeric(1)} or \code{NULL}. The maximum match p-value to keep
 or NULL not to filter by match p-value. (Default: 0.01)}
 
+\item{pbm_condition_groups}{\code{list(character)} or \code{NULL}. The names of the PBM
+conditions to compare. Each element of the list should contain a group of
+PBM conditions to compare to each other. If the list elements are named,
+the names will be passed to the \code{pbm_conditions_group} parameter of
+\code{\link[=compare_conditions]{compare_conditions()}}. (Default: NULL)}
+
 \item{output_directory}{\code{character(1)} or \code{NULL}. The path to the directory
 where output files will be saved. No output files will be created unless
 \code{output_directory} or \code{output_base_name} is provided. (Default: NULL)}
@@ -71,7 +78,8 @@ and CoRecMotifs that do not replicate, then compares the remaining
 CoRecMotifs to a database of reference motifs to identify the best match.
 This is a convenience function that calls \code{\link[=filter_corecmotifs]{filter_corecmotifs()}},
 \code{\link[=check_replicates]{check_replicates()}}, \code{\link[=find_match]{find_match()}}, then \code{\link[=filter_corecmotifs]{filter_corecmotifs()}} and
-\code{\link[=check_replicates]{check_replicates()}} again, and finally \code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}}.
+\code{\link[=check_replicates]{check_replicates()}} again, and finally \code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}} and
+optionally \code{\link[=compare_conditions]{compare_conditions()}}.
 }
 \details{
 By default no output files are created. To save output files, you must
@@ -94,6 +102,8 @@ to the output base name.
 "significant_corecmotifs_summary.tsv".
 \item The output of \code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}} with \code{by_cluster = TRUE} will have
 the suffix "significant_corecmotifs_summary_by_cluster.tsv".
+\item The output of \code{\link[=compare_conditions]{compare_conditions()}} will have the suffix
+"condition_comparisons.tsv".
 }
 }
 \examples{
@@ -101,5 +111,5 @@ print("FILL THIS IN")
 }
 \seealso{
 \code{\link[=filter_corecmotifs]{filter_corecmotifs()}}, \code{\link[=check_replicates]{check_replicates()}}, \code{\link[=find_match]{find_match()}},
-\code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}}
+\code{\link[=summarize_corecmotifs]{summarize_corecmotifs()}}, \code{\link[=compare_conditions]{compare_conditions()}}
 }

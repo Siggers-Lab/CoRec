@@ -5,7 +5,7 @@
 #' @slot probe_set `character(1)`. The probe set name.
 #' @slot pbm_condition `character(1)`. The PBM condition (e.g., cell type,
 #'   treatment, and factor profiled).
-#' @slot zscore_motif `matrix(numeric())`. The z-score motif. See
+#' @slot zscore_motif `matrix(numeric)`. The z-score motif. See
 #'   [make_zscore_motif()] for a description of the expected format.
 #' @slot array_id `character(1)`. The name of the array/experiment the z-score
 #'   motif is from.

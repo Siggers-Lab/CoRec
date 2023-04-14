@@ -121,7 +121,8 @@ make_corecmotifs <-
 #' CoRecMotifs to a database of reference motifs to identify the best match.
 #' This is a convenience function that calls [filter_corecmotifs()],
 #' [check_replicates()], [find_match()], then [filter_corecmotifs()] and
-#' [check_replicates()] again, and finally [summarize_corecmotifs()].
+#' [check_replicates()] again, and finally [summarize_corecmotifs()] and
+#' optionally [compare_conditions()].
 #'
 #' By default no output files are created. To save output files, you must
 #' provide `output_directory`, `output_base_name`, or both. The output files are
@@ -143,6 +144,8 @@ make_corecmotifs <-
 #'   "significant_corecmotifs_summary.tsv".
 #' * The output of [summarize_corecmotifs()] with `by_cluster = TRUE` will have
 #'   the suffix "significant_corecmotifs_summary_by_cluster.tsv".
+#' * The output of [compare_conditions()] will have the suffix
+#'   "condition_comparisons.tsv".
 #'
 #' @inheritParams check_replicates
 #' @inheritParams find_match
@@ -154,12 +157,17 @@ make_corecmotifs <-
 #'   NULL not to filter by rolling IC. (Default: 1)
 #' @param match_pvalue `numeric(1)` or `NULL`. The maximum match p-value to keep
 #'   or NULL not to filter by match p-value. (Default: 0.01)
+#' @param pbm_condition_groups `list(character)` or `NULL`. The names of the PBM
+#'   conditions to compare. Each element of the list should contain a group of
+#'   PBM conditions to compare to each other. If the list elements are named,
+#'   the names will be passed to the `pbm_conditions_group` parameter of
+#'   [compare_conditions()]. (Default: NULL)
 #'
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
 #'   match a reference motif.
 #'
 #' @seealso [filter_corecmotifs()], [check_replicates()], [find_match()],
-#'   [summarize_corecmotifs()]
+#'   [summarize_corecmotifs()], [compare_conditions()]
 #'
 #' @export
 #'
@@ -177,6 +185,7 @@ process_corecmotifs <-
         eucl_distance = 0.4,
         min_overlap = 5,
         match_pvalue = 0.01,
+        pbm_condition_groups = NULL,
         output_directory = NULL,
         output_base_name = NULL
     ) {
@@ -192,6 +201,10 @@ process_corecmotifs <-
         assertthat::is.number(eucl_distance) || is.null(eucl_distance),
         assertthat::is.count(min_overlap),
         assertthat::is.number(match_pvalue) || is.null(match_pvalue),
+        is.null(pbm_condition_groups) || (
+            is.list(pbm_condition_groups) &&
+                all(vapply(pbm_condition_groups, is.character, logical(1)))
+            ),
         assertthat::is.string(output_directory) || is.null(output_directory),
         assertthat::is.string(output_base_name) || is.null(output_base_name)
     )
@@ -206,6 +219,7 @@ process_corecmotifs <-
     final_output <- NULL
     summary_output <- NULL
     cluster_output <- NULL
+    comparison_output <- NULL
 
     # Create names for the output files if necessary
     if (!is.null(output_base_name)) {
@@ -222,6 +236,8 @@ process_corecmotifs <-
                 output_base_name,
                 "_significant_corecmotifs_summary_by_cluster.tsv"
             )
+        comparison_output <-
+            paste0(output_base_name, "_condition_comparisons.tsv")
     }
 
     # Filter out CoRecMotifs with low motif strength and/or rolling IC scores
@@ -268,15 +284,36 @@ process_corecmotifs <-
 
     # Make and save summary tables if necessary
     if (!is.null(summary_output)) {
+        # Summarize at the level of individual motifs
         corecmotif_summary <-
             summarize_corecmotifs(final_corecmotifs)
 
         try_catch_save_output(corecmotif_summary, summary_output, "tsv")
 
+        # Summarize at the level of clusters
         cluster_summary <-
             summarize_corecmotifs(final_corecmotifs, by_cluster = TRUE)
 
         try_catch_save_output(cluster_summary, cluster_output, "tsv")
+
+        # Compare across conditions if necessary
+        if (!is.null(pbm_condition_groups)) {
+            condition_comparison_df <-
+                lapply(1:length(pbm_condition_groups), function(i) {
+                    compare_conditions(
+                        matched_corecmotifs,
+                        pbm_conditions = pbm_condition_groups[[i]],
+                        pbm_conditions_group = names(pbm_condition_groups[i])
+                    )
+                }) %>%
+
+                # Combine all the data frames
+                dplyr::bind_rows()
+
+            try_catch_save_output(
+                condition_comparison_df, comparison_output, "tsv"
+            )
+        }
     }
 
     # Return the list of CoRecMotifs

@@ -5,8 +5,12 @@
 #'
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to compare to
 #'   each other.
-#' @param pbm_conditions `character`. The names of the PBM conditions to
-#'   compare.
+#' @param pbm_conditions `character`. The names of the individual PBM conditions
+#'   to compare.
+#' @param pbm_conditions_group `character(1)` or `NULL`. The name of the group
+#'   of PBM conditions to compare. This name will be combined with the probe set
+#'   ID and a number to identify groups of motifs that are similar across
+#'   conditions. (Default: NULL)
 #' @param eucl_distance `numeric(1)`. The maximum allowable Euclidean distance
 #'   between conditions to group. (Default: 0.4)
 #'
@@ -21,10 +25,24 @@ compare_conditions <-
     function(
         corecmotifs,
         pbm_conditions,
+        pbm_conditions_group = NULL,
         eucl_distance = 0.25
     ) {
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        is.character(pbm_conditions),
+        assertthat::is.string(pbm_conditions_group) ||
+            is.null(pbm_conditions_group),
+        assertthat::is.number(eucl_distance)
+    )
+
     # Summarize the list of all CoRecMotifs
     corecmotif_df <- summarize_corecmotifs(corecmotifs)
+
+    # Make a name for this group of conditions if one is not provided
+    if (is.null(pbm_conditions_group) || pbm_conditions_group == "") {
+        pbm_conditions_group <- paste(pbm_conditions, collapse = "_")
+    }
 
     # Keep only the CoRecMotifs from the relevant PBM conditions
     matching_corecmotifs <-
@@ -61,7 +79,7 @@ compare_conditions <-
                 data.frame(
                     "probe_set" = probe_set,
                     "pbm_condition" = group_pbm_conditions,
-                    "group" = paste0(probe_set, "_1")
+                    "group" = paste0(pbm_conditions_group, "_", probe_set, "_1")
                 )
             return(motif_comparison)
         }
@@ -159,7 +177,13 @@ compare_conditions <-
             data.frame(
                 "probe_set" = rep(probe_set, length(group_assignments)),
                 "pbm_condition" = names(group_assignments),
-                "group" = paste(probe_set, group_assignments, sep = "_")
+                "group" =
+                    paste(
+                        pbm_conditions_group,
+                        probe_set,
+                        group_assignments,
+                        sep = "_"
+                    )
             )
 
         # Return the data frame of group assignments
