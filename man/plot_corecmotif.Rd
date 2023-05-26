@@ -8,7 +8,8 @@ plot_corecmotif(
   corecmotif,
   corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
   reference_logo_type = c("ICM", "PWM", "PPM", "none"),
-  correct_orientation = TRUE
+  correct_orientation = TRUE,
+  check_corecmotif = TRUE
 )
 }
 \arguments{
@@ -26,6 +27,11 @@ plot_corecmotif(
 \item{correct_orientation}{\code{logical(1)}. Should the reference motif be
 reversed if necessary to match the CoRecMotif's orientation? (Default:
 TRUE)}
+
+\item{check_corecmotif}{\code{logical(1)}. Should \code{corecmotif} be checked for
+validity? Setting this to FALSE can increase speed, but if \code{corecmotif} is
+not a valid \link[=CoRecMotif-class]{CoRecMotif}, it may produce uninformative
+error messages. (Default: TRUE)}
 }
 \value{
 A \code{ggplot} object.

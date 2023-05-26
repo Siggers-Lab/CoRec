@@ -8,7 +8,8 @@ check_replicates(
   corecmotifs,
   n_replicates = 2,
   eucl_distance = 0.4,
-  output_file = NULL
+  output_file = NULL,
+  check_corecmotifs = TRUE
 )
 }
 \arguments{
@@ -24,6 +25,11 @@ step. (Default: 0.4)}
 
 \item{output_file}{\code{character(1)} or \code{NULL}. The path to the file where the
 results should be saved, or NULL not to save the results. (Default: NULL)}
+
+\item{check_corecmotifs}{\code{logical(1)}. Should \code{corecmotifs} be checked for
+validity? Setting this to FALSE can increase speed, but if \code{corecmotifs}
+contains anything other than valid \link[=CoRecMotif-class]{CoRecMotifs}, it may
+produce uninformative error messages. (Default: TRUE)}
 }
 \value{
 A list of \link[=CoRecMotif-class]{CoRecMotifs} that are replicating.

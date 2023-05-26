@@ -35,18 +35,23 @@ check_replicates <-
         corecmotifs,
         n_replicates = 2,
         eucl_distance = 0.4,
-        output_file = NULL
+        output_file = NULL,
+        check_corecmotifs = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         assertthat::is.count(n_replicates),
         assertthat::is.number(eucl_distance) || is.null(eucl_distance),
-        assertthat::is.string(output_file) || is.null(output_file)
+        assertthat::is.string(output_file) || is.null(output_file),
+        assertthat::is.flag(check_corecmotifs)
     )
 
     # Make a data frame summarizing the CoRecMotifs
     corecmotif_df <-
-        summarize_corecmotifs(corecmotifs) %>%
+        summarize_corecmotifs(
+            corecmotifs,
+            check_corecmotifs = check_corecmotifs
+        ) %>%
 
         # Group replicates together
         dplyr::group_by(probe_set, pbm_condition) %>%

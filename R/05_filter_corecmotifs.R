@@ -27,6 +27,10 @@
 #'   or NULL not to filter by match p-value. (Default: NULL)
 #' @param match_cluster `character` or `NULL`. The match clusters to keep or
 #'   NULL not to filter by match cluster. (Default: NULL)
+#' @param check_corecmotifs `logical(1)`. Should `corecmotifs` be checked for
+#'   validity? Setting this to FALSE can increase speed, but if `corecmotifs`
+#'   contains anything other than valid [CoRecMotifs][CoRecMotif-class], it may
+#'   produce uninformative error messages. (Default: TRUE)
 #'
 #' @return A list of [CoRecMotifs][CoRecMotif-class] that pass the given
 #'   filters.
@@ -52,7 +56,8 @@ filter_corecmotifs <-
         match_altname = NULL,
         match_pvalue = NULL,
         match_cluster = NULL,
-        output_file = NULL
+        output_file = NULL,
+        check_corecmotifs = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -67,11 +72,14 @@ filter_corecmotifs <-
         is.character(match_altname) || is.null(match_altname),
         assertthat::is.number(match_pvalue) || is.null(match_pvalue),
         is.character(match_cluster) || is.null(match_cluster),
-        assertthat::is.string(output_file) || is.null(output_file)
+        assertthat::is.string(output_file) || is.null(output_file),
+        assertthat::is.flag(check_corecmotifs)
     )
 
     # Make sure corecmotifs is a valid list of CoRecMotifs
-    corecmotifs <- check_corecmotif_list(corecmotifs)
+    if (check_corecmotifs) {
+        corecmotifs <- check_corecmotif_list(corecmotifs)
+    }
 
     # Filter by probe_set
     if (!is.null(probe_set)) {

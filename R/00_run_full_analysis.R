@@ -245,7 +245,8 @@ process_corecmotifs <-
         filter_corecmotifs(
             corecmotifs,
             motif_strength = motif_strength,
-            rolling_ic = rolling_ic
+            rolling_ic = rolling_ic,
+            check_corecmotifs = TRUE
         )
 
     # Filter out CoRecMotifs that don't replicate
@@ -254,7 +255,8 @@ process_corecmotifs <-
             corecmotifs = filtered_corecmotifs,
             n_replicates = n_replicates,
             eucl_distance = eucl_distance,
-            output_file = filtered_output
+            output_file = filtered_output,
+            check_corecmotifs = FALSE
         )
 
     # Find the best matching reference motif for each CoRecMotif
@@ -265,34 +267,41 @@ process_corecmotifs <-
             cluster_assignments = cluster_assignments,
             min_overlap = min_overlap,
             meme_path = meme_path,
-            output_file = matched_output
+            output_file = matched_output,
+            check_corecmotifs = FALSE
         )
 
     # Filter out CoRecMotifs that don't match any reference motifs well
     final_corecmotifs <-
         filter_corecmotifs(
             matched_corecmotifs,
-            match_pvalue = match_pvalue
+            match_pvalue = match_pvalue,
+            check_corecmotifs = FALSE
         ) %>%
 
         # Make sure at least min_n_replicates match a reference motif well
         check_replicates(
             n_replicates = n_replicates,
             eucl_distance = NULL,
-            output_file = final_output
+            output_file = final_output,
+            check_corecmotifs = FALSE
         )
 
     # Make and save summary tables if necessary
     if (!is.null(summary_output)) {
         # Summarize at the level of individual motifs
         corecmotif_summary <-
-            summarize_corecmotifs(final_corecmotifs)
+            summarize_corecmotifs(final_corecmotifs, check_corecmotifs = FALSE)
 
         try_catch_save_output(corecmotif_summary, summary_output, "tsv")
 
         # Summarize at the level of clusters
         cluster_summary <-
-            summarize_corecmotifs(final_corecmotifs, by_cluster = TRUE)
+            summarize_corecmotifs(
+                final_corecmotifs,
+                by_cluster = TRUE,
+                check_corecmotifs = FALSE
+            )
 
         try_catch_save_output(cluster_summary, cluster_output, "tsv")
 
@@ -303,7 +312,8 @@ process_corecmotifs <-
                     compare_conditions(
                         matched_corecmotifs,
                         pbm_conditions = pbm_condition_groups[[i]],
-                        pbm_conditions_group = names(pbm_condition_groups[i])
+                        pbm_conditions_group = names(pbm_condition_groups[i]),
+                        check_corecmotifs = FALSE
                     )
                 }) %>%
 

@@ -14,6 +14,7 @@
 #' provided.
 #'
 #' @inheritParams annotate_fluorescence_table
+#' @inheritParams filter_corecmotifs
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to match to
 #'   reference motifs.
 #' @param reference_motifs_file `character(1)`. The path to the MEME format file
@@ -43,7 +44,8 @@ find_match <-
         cluster_assignments = NULL,
         meme_path = NULL,
         min_overlap = 5,
-        output_file = NULL
+        output_file = NULL,
+        check_corecmotifs = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
@@ -52,11 +54,14 @@ find_match <-
         is.data.frame(cluster_assignments) || is.null(cluster_assignments),
         assertthat::is.string(meme_path) || is.null(meme_path),
         assertthat::is.count(min_overlap),
-        assertthat::is.string(output_file) || is.null(output_file)
+        assertthat::is.string(output_file) || is.null(output_file),
+        assertthat::is.flag(check_corecmotifs)
     )
 
     # Make sure corecmotifs is a valid list of CoRecMotifs
-    corecmotifs <- check_corecmotif_list(corecmotifs)
+    if (check_corecmotifs) {
+        corecmotifs <- check_corecmotif_list(corecmotifs)
+    }
 
     # Make sure cluster_assignments has the expected columns and remove extras
     if (!is.null(cluster_assignments)) {

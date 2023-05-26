@@ -8,7 +8,8 @@ compare_conditions(
   corecmotifs,
   pbm_conditions,
   pbm_conditions_group = NULL,
-  eucl_distance = 0.25
+  eucl_distance = 0.25,
+  check_corecmotifs = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,11 @@ conditions. (Default: NULL)}
 
 \item{eucl_distance}{\code{numeric(1)}. The maximum allowable Euclidean distance
 between conditions to group. (Default: 0.4)}
+
+\item{check_corecmotifs}{\code{logical(1)}. Should \code{corecmotifs} be checked for
+validity? Setting this to FALSE can increase speed, but if \code{corecmotifs}
+contains anything other than valid \link[=CoRecMotif-class]{CoRecMotifs}, it may
+produce uninformative error messages. (Default: TRUE)}
 }
 \value{
 A data frame with comparison information about a list of

@@ -4,7 +4,11 @@
 \alias{update_cluster_match}
 \title{Update the match cluster of a CoRecMotif}
 \usage{
-update_cluster_match(corecmotif, cluster_assignments = NULL)
+update_cluster_match(
+  corecmotif,
+  cluster_assignments = NULL,
+  check_corecmotif = TRUE
+)
 }
 \arguments{
 \item{corecmotif}{\link[=CoRecMotif-class]{CoRecMotif}. The
@@ -13,6 +17,11 @@ update_cluster_match(corecmotif, cluster_assignments = NULL)
 \item{cluster_assignments}{\code{data.frame} or \code{NULL}. A table mapping the
 reference motifs to motif clusters or NULL to reset the \code{match_cluster}
 slot to NA. See \link{motif_clusters} for expected columns. (Default: NULL)}
+
+\item{check_corecmotif}{\code{logical(1)}. Should \code{corecmotif} be checked for
+validity? Setting this to FALSE can increase speed, but if \code{corecmotif} is
+not a valid \link[=CoRecMotif-class]{CoRecMotif}, it may produce uninformative
+error messages. (Default: TRUE)}
 }
 \value{
 A \link[=CoRecMotif-class]{CoRecMotif} with its \code{match_cluster} slot

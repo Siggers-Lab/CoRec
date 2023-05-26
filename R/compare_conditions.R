@@ -3,6 +3,7 @@
 #' Compares the [CoRecMotifs][CoRecMotif-class] in each PBM condition to the
 #' CoRecMotifs from the same probe set in all the other PBM conditions.
 #'
+#' @inheritParams filter_corecmotifs
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to compare to
 #'   each other.
 #' @param pbm_conditions `character`. The names of the individual PBM conditions
@@ -26,18 +27,24 @@ compare_conditions <-
         corecmotifs,
         pbm_conditions,
         pbm_conditions_group = NULL,
-        eucl_distance = 0.25
+        eucl_distance = 0.25,
+        check_corecmotifs = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         is.character(pbm_conditions),
         assertthat::is.string(pbm_conditions_group) ||
             is.null(pbm_conditions_group),
-        assertthat::is.number(eucl_distance)
+        assertthat::is.number(eucl_distance),
+        assertthat::is.flag(check_corecmotifs)
     )
 
     # Summarize the list of all CoRecMotifs
-    corecmotif_df <- summarize_corecmotifs(corecmotifs)
+    corecmotif_df <-
+        summarize_corecmotifs(
+            corecmotifs,
+            check_corecmotifs = check_corecmotifs
+        )
 
     # Make a name for this group of conditions if one is not provided
     if (is.null(pbm_conditions_group) || pbm_conditions_group == "") {
@@ -46,11 +53,18 @@ compare_conditions <-
 
     # Keep only the CoRecMotifs from the relevant PBM conditions
     matching_corecmotifs <-
-        filter_corecmotifs(corecmotifs, pbm_condition = pbm_conditions)
+        filter_corecmotifs(
+            corecmotifs,
+            pbm_condition = pbm_conditions,
+            check_corecmotifs = FALSE
+        )
 
     # Summarize just the matching CoRecMotifs
     matching_corecmotif_df <-
-        summarize_corecmotifs(matching_corecmotifs) %>%
+        summarize_corecmotifs(
+            matching_corecmotifs,
+            check_corecmotifs = FALSE
+        ) %>%
 
         # Group all the motifs from the same probe set together
         dplyr::group_by(probe_set)
@@ -214,3 +228,4 @@ compare_conditions <-
         # Remove the grouping
         dplyr::ungroup()
 }
+

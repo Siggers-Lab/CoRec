@@ -14,6 +14,10 @@
 #' @param correct_orientation `logical(1)`. Should the reference motif be
 #'   reversed if necessary to match the CoRecMotif's orientation? (Default:
 #'   TRUE)
+#' @param check_corecmotif `logical(1)`. Should `corecmotif` be checked for
+#'   validity? Setting this to FALSE can increase speed, but if `corecmotif` is
+#'   not a valid [CoRecMotif][CoRecMotif-class], it may produce uninformative
+#'   error messages. (Default: TRUE)
 #'
 #' @return A `ggplot` object.
 #'
@@ -26,20 +30,27 @@ plot_corecmotif <-
         corecmotif,
         corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
         reference_logo_type = c("ICM", "PWM", "PPM", "none"),
-        correct_orientation = TRUE
+        correct_orientation = TRUE,
+        check_corecmotif = TRUE
     ) {
-    # Make sure the selected motif logo types are valid options
+    # Make sure all the arguments are the right type
+    assertthat::assert_that(
+        assertthat::is.flag(correct_orientation),
+        assertthat::is.flag(check_corecmotif)
+    )
     corecmotif_logo_type <- match.arg(corecmotif_logo_type)
     reference_logo_type <- match.arg(reference_logo_type)
 
     # Make sure corecmotif is a valid CoRecMotif
-    if (!methods::is(corecmotif, "CoRecMotif")) {
-        stop(
-            "corecmotif is not a CoRecMotif",
-            call. = FALSE
-        )
+    if (check_corecmotif) {
+        if (!methods::is(corecmotif, "CoRecMotif")) {
+            stop(
+                "corecmotif is not a CoRecMotif",
+                call. = FALSE
+            )
+        }
+        methods::validObject(corecmotif)
     }
-    methods::validObject(corecmotif)
 
     # Get the correct form of the CoRecMotif as a numeric matrix
     corecmotif_matrix <-

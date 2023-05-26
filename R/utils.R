@@ -3,6 +3,7 @@
 #' Creates a data frame representation of a list of
 #' [CoRecMotifs][CoRecMotif-class].
 #'
+#' @inheritParams filter_corecmotifs
 #' @param corecmotifs `list`. The [CoRecMotifs][CoRecMotif-class] to summarize.
 #' @param by_cluster `logical(1)`. Should the [CoRecMotifs][CoRecMotif-class] be
 #'   grouped by cluster? (Default: FALSE)
@@ -14,14 +15,22 @@
 #'
 #' @examples
 #' print("FILL THIS IN")
-summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
+summarize_corecmotifs <-
+    function(
+        corecmotifs,
+        by_cluster = FALSE,
+        check_corecmotifs = TRUE
+    ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
-        assertthat::is.flag(by_cluster)
+        assertthat::is.flag(by_cluster),
+        assertthat::is.flag(check_corecmotifs)
     )
 
     # Make sure corecmotifs is a valid list of CoRecMotifs
-    corecmotifs <- check_corecmotif_list(corecmotifs)
+    if (check_corecmotifs) {
+        corecmotifs <- check_corecmotif_list(corecmotifs)
+    }
 
     # Convert each CoRecMotif into a data frame
     corecmotif_df <-
@@ -74,6 +83,7 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
 #' the provided cluster assignments and the name of the motif in the
 #' CoRecMotif's `match_motif` slot.
 #'
+#' @inheritParams plot_corecmotif
 #' @param corecmotif [CoRecMotif][CoRecMotif-class]. The
 #'   [CoRecMotif][CoRecMotif-class] to update.
 #' @param cluster_assignments `data.frame` or `NULL`. A table mapping the
@@ -87,20 +97,28 @@ summarize_corecmotifs <- function(corecmotifs, by_cluster = FALSE) {
 #'
 #' @examples
 #' print("FILL THIS IN")
-update_cluster_match <- function(corecmotif, cluster_assignments = NULL) {
+update_cluster_match <-
+    function(
+        corecmotif,
+        cluster_assignments = NULL,
+        check_corecmotif = TRUE
+    ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
-        is.data.frame(cluster_assignments) || is.null(cluster_assignments)
+        is.data.frame(cluster_assignments) || is.null(cluster_assignments),
+        assertthat::is.flag(check_corecmotif)
     )
 
     # Make sure corecmotif is a valid CoRecMotif
-    if (!methods::is(corecmotif, "CoRecMotif")) {
-        stop(
-            "corecmotif is not a CoRecMotif",
-            call. = FALSE
-        )
+    if (check_corecmotif) {
+        if (!methods::is(corecmotif, "CoRecMotif")) {
+            stop(
+                "corecmotif is not a CoRecMotif",
+                call. = FALSE
+            )
+        }
+        methods::validObject(corecmotif)
     }
-    methods::validObject(corecmotif)
 
     # Clear the cluster match slot if there are no clusters or no motif match
     if (is.null(cluster_assignments) ||

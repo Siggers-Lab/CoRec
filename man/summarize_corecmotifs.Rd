@@ -4,13 +4,22 @@
 \alias{summarize_corecmotifs}
 \title{Make a data frame summarizing a list of CoRecMotifs}
 \usage{
-summarize_corecmotifs(corecmotifs, by_cluster = FALSE)
+summarize_corecmotifs(
+  corecmotifs,
+  by_cluster = FALSE,
+  check_corecmotifs = TRUE
+)
 }
 \arguments{
 \item{corecmotifs}{\code{list}. The \link[=CoRecMotif-class]{CoRecMotifs} to summarize.}
 
 \item{by_cluster}{\code{logical(1)}. Should the \link[=CoRecMotif-class]{CoRecMotifs} be
 grouped by cluster? (Default: FALSE)}
+
+\item{check_corecmotifs}{\code{logical(1)}. Should \code{corecmotifs} be checked for
+validity? Setting this to FALSE can increase speed, but if \code{corecmotifs}
+contains anything other than valid \link[=CoRecMotif-class]{CoRecMotifs}, it may
+produce uninformative error messages. (Default: TRUE)}
 }
 \value{
 A data frame with information about a list of
