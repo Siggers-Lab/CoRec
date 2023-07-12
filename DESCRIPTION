@@ -12,6 +12,7 @@ Depends:
     R (>= 4.1)
 Imports: 
     assertthat,
+    biocViews,
     cowplot,
     dplyr,
     ggplot2,
