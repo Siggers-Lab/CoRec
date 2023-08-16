@@ -6,9 +6,9 @@ CoRec (short for Cofactor Recruitment) is a protein binding microarray (PBM) bas
 The `CoRec` package requires a minimum R version of 4.1. It also requires an installation of the [MEME suite](https://meme-suite.org/meme/) (see ["Detecting the MEME Suite"](#detecting-the-meme-suite) for more information).
 
 ```
-if (!requireNamespace("devtools", quietly = TRUE))
-    install.packages("devtools")
-devtools::install_github("Siggers-Lab/CoRec", build_vignettes = TRUE)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("Siggers-Lab/CoRec", build_vignettes = TRUE)
 ```
 
 ## Getting started
