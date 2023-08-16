@@ -225,7 +225,7 @@ methods::setValidity("CoRecMotif", function(object) {
                 "@rolling_ic is inconsistent with @zscore_motif",
             get_beta(object) != expected_beta ~
                 "@beta is inconsistent with @zscore_motif",
-            !identical(get_ppm(object), expected_ppm) ~
+            !all.equal(get_ppm(object), expected_ppm) ~
                 "@motif is inconsistent with @zscore_motif"
         )
 
