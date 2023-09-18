@@ -249,6 +249,18 @@ process_corecmotifs <-
             check_corecmotifs = TRUE
         )
 
+    # Make sure you didn't filter out all the CoRecMotifs
+    if (length(filtered_corecmotifs) < 1) {
+        warning(
+            "No CoRecMotifs passed the following filters\n",
+            "\tMotif strength: ", motif_strength, "\n",
+            "\tRolling IC: ", rolling_ic, "\n",
+            "Consider setting motif_strength or rolling_ic to a smaller value",
+            call. = FALSE
+        )
+        return()
+    }
+
     # Filter out CoRecMotifs that don't replicate
     replicated_corecmotifs <-
         check_replicates(
@@ -258,6 +270,20 @@ process_corecmotifs <-
             output_file = filtered_output,
             check_corecmotifs = FALSE
         )
+
+    # Make sure you didn't filter out all the CoRecMotifs
+    if (length(replicated_corecmotifs) < 1) {
+        warning(
+            "No CoRecMotifs passed the following filters\n",
+            "\tNumber of replicates: ", n_replicates, "\n",
+            "\tMaximum Euclidean distance between replicates: ",
+            eucl_distance, "\n",
+            "If your data is unreplicated, set n_replicates = 1\n",
+            "Consider setting eucl_distance to a larger value",
+            call. = FALSE
+        )
+        return()
+    }
 
     # Find the best matching reference motif for each CoRecMotif
     matched_corecmotifs <-
@@ -277,15 +303,40 @@ process_corecmotifs <-
             matched_corecmotifs,
             match_pvalue = match_pvalue,
             check_corecmotifs = FALSE
-        ) %>%
+        )
 
-        # Make sure at least min_n_replicates match a reference motif well
+    # Make sure you didn't filter out all the CoRecMotifs
+    if (length(final_corecmotifs) < 1) {
+        warning(
+            "No CoRecMotifs passed the following filter\n",
+            "\tMatch p-value: ", match_pvalue, "\n",
+            "Consider setting match_pvalue to a larger value",
+            call. = FALSE
+        )
+        return()
+    }
+
+    # Make sure at least n_replicates match a reference motif well
+    final_corecmotifs <-
         check_replicates(
+            final_corecmotifs,
             n_replicates = n_replicates,
             eucl_distance = NULL,
             output_file = final_output,
             check_corecmotifs = FALSE
         )
+
+    # Make sure you didn't filter out all the CoRecMotifs
+    if (length(final_corecmotifs) < 1) {
+        warning(
+            "No CoRecMotifs passed the following filter\n",
+            "\tNumber of replicates matching a reference motif: ",
+            n_replicates, "\n",
+            "Consider setting match_pvalue to a larger value",
+            call. = FALSE
+        )
+        return()
+    }
 
     # Make and save summary tables if necessary
     if (!is.null(summary_output)) {
