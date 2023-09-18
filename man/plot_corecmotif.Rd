@@ -9,6 +9,8 @@ plot_corecmotif(
   corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
   reference_logo_type = c("ICM", "PWM", "PPM", "none"),
   correct_orientation = TRUE,
+  fade_corecmotif = FALSE,
+  fade_reference = FALSE,
   check_corecmotif = TRUE
 )
 }
@@ -27,6 +29,12 @@ plot_corecmotif(
 \item{correct_orientation}{\code{logical(1)}. Should the reference motif be
 reversed if necessary to match the CoRecMotif's orientation? (Default:
 TRUE)}
+
+\item{fade_corecmotif}{\code{logical(1)}. Should the
+\link[=CoRecMotif-class]{CoRecMotif} logo be faded? (Default: FALSE)}
+
+\item{fade_reference}{\code{logical(1)}. Should the reference motif logo be faded?
+(Default: FALSE)}
 
 \item{check_corecmotif}{\code{logical(1)}. Should \code{corecmotif} be checked for
 validity? Setting this to FALSE can increase speed, but if \code{corecmotif} is

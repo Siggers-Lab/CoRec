@@ -14,6 +14,10 @@
 #' @param correct_orientation `logical(1)`. Should the reference motif be
 #'   reversed if necessary to match the CoRecMotif's orientation? (Default:
 #'   TRUE)
+#' @param fade_corecmotif `logical(1)`. Should the
+#'   [CoRecMotif][CoRecMotif-class] logo be faded? (Default: FALSE)
+#' @param fade_reference `logical(1)`. Should the reference motif logo be faded?
+#'   (Default: FALSE)
 #' @param check_corecmotif `logical(1)`. Should `corecmotif` be checked for
 #'   validity? Setting this to FALSE can increase speed, but if `corecmotif` is
 #'   not a valid [CoRecMotif][CoRecMotif-class], it may produce uninformative
@@ -31,11 +35,15 @@ plot_corecmotif <-
         corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
         reference_logo_type = c("ICM", "PWM", "PPM", "none"),
         correct_orientation = TRUE,
+        fade_corecmotif = FALSE,
+        fade_reference = FALSE,
         check_corecmotif = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         assertthat::is.flag(correct_orientation),
+        assertthat::is.flag(fade_corecmotif),
+        assertthat::is.flag(fade_reference),
         assertthat::is.flag(check_corecmotif)
     )
     corecmotif_logo_type <- match.arg(corecmotif_logo_type)
@@ -83,7 +91,8 @@ plot_corecmotif <-
             plot_motif(
                 corecmotif_matrix,
                 logo_type = corecmotif_logo_type,
-                outline_color = corecmotif_outline_color
+                outline_color = corecmotif_outline_color,
+                fade_motif = fade_corecmotif
             ) +
 
             # Add a title
@@ -104,7 +113,8 @@ plot_corecmotif <-
             plot_motif(
                 reference_matrix,
                 logo_type = reference_logo_type,
-                outline_color = reference_outline_color
+                outline_color = reference_outline_color,
+                fade_motif = fade_reference
             ) +
 
             # Add a title
@@ -142,7 +152,7 @@ plot_corecmotif <-
 }
 
 # This is a private helper for plot_corecmotif()
-plot_motif <- function(motif_matrix, logo_type, outline_color) {
+plot_motif <- function(motif_matrix, logo_type, outline_color, fade_motif) {
     # Figure out what the y axis label should be based on the motif type
     y_label <-
         switch(
@@ -157,19 +167,22 @@ plot_motif <- function(motif_matrix, logo_type, outline_color) {
     xmin <- 0.5
     xmax <- ncol(motif_matrix) + 0.5
 
+    # Make a small buffer so the tops of letters don't get cut off
+    y_buffer = 0.03
+
     # Set the minimum and maximum values for the y axis
     if (logo_type == "ICM") {
-        ymin <- -0.03
-        ymax <- 2.03
+        ymin <-0 - y_buffer
+        ymax <- 2 + y_buffer
     } else if (logo_type == "PPM") {
-        ymin <- -0.03
-        ymax <- 1.03
+        ymin <- 0 - y_buffer
+        ymax <- 1 + y_buffer
     } else {
         # Sum all the negative numbers in each column and find the most extreme
-        ymin <- min(sum_negatives(motif_matrix)) - 0.03
+        ymin <- min(sum_negatives(motif_matrix)) - y_buffer
 
         # Sum all the positive numbers in each column and find the most extreme
-        ymax <- max(sum_positives(motif_matrix)) + 0.03
+        ymax <- max(sum_positives(motif_matrix)) + y_buffer
     }
 
     # Start the motif logo plot
@@ -188,14 +201,14 @@ plot_motif <- function(motif_matrix, logo_type, outline_color) {
 
         # Add an outline to the positive section of the logo
         ggplot2::annotate(
-            'rect',
+            "rect",
             xmin = xmin,
             xmax = xmax,
-            ymin = 0,
+            ymin = 0 - y_buffer,
             ymax = ymax,
             color = outline_color,
             fill = NA,
-            size = 1.5
+            linewidth = 1.5
         ) +
 
         # Set the formatting for the y axis text
@@ -211,7 +224,7 @@ plot_motif <- function(motif_matrix, logo_type, outline_color) {
 
             # Add a semi-transparent box with an outline
             ggplot2::annotate(
-                'rect',
+                "rect",
                 xmin = xmin,
                 xmax = xmax,
                 ymin = ymin,
@@ -219,7 +232,26 @@ plot_motif <- function(motif_matrix, logo_type, outline_color) {
                 alpha = 0.65,
                 colour = outline_color,
                 fill = "white",
-                size = 1.5
+                linewidth = 1.5
+            )
+    }
+
+    # Fade the whole logo if necessary
+    if (fade_motif) {
+        motif_plot <-
+            motif_plot +
+
+            # Add a semi-transparent box to the whole logo
+            ggplot2::annotate(
+                "rect",
+                xmin = xmin,
+                xmax = xmax,
+                ymin = ymin,
+                ymax = ymax,
+                alpha = 0.65,
+                colour = outline_color,
+                fill = "white",
+                linewidth = 1.5
             )
     }
 
