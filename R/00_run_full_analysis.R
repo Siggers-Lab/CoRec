@@ -160,7 +160,7 @@ make_corecmotifs <-
 #' @param pbm_condition_groups `list(character)` or `NULL`. The names of the PBM
 #'   conditions to compare. Each element of the list should contain a group of
 #'   PBM conditions to compare to each other. If the list elements are named,
-#'   the names will be passed to the `pbm_conditions_group` parameter of
+#'   the names will be passed to the `group_name` parameter of
 #'   [compare_conditions()]. (Default: NULL)
 #'
 #' @return A filtered list of replicated [CoRecMotifs][CoRecMotif-class] that
@@ -312,7 +312,7 @@ process_corecmotifs <-
                     compare_conditions(
                         matched_corecmotifs,
                         pbm_conditions = pbm_condition_groups[[i]],
-                        pbm_conditions_group = names(pbm_condition_groups[i]),
+                        group_name = names(pbm_condition_groups[i]),
                         check_corecmotifs = FALSE
                     )
                 }) %>%

@@ -57,7 +57,7 @@ or NULL not to filter by match p-value. (Default: 0.01)}
 \item{pbm_condition_groups}{\code{list(character)} or \code{NULL}. The names of the PBM
 conditions to compare. Each element of the list should contain a group of
 PBM conditions to compare to each other. If the list elements are named,
-the names will be passed to the \code{pbm_conditions_group} parameter of
+the names will be passed to the \code{group_name} parameter of
 \code{\link[=compare_conditions]{compare_conditions()}}. (Default: NULL)}
 
 \item{output_directory}{\code{character(1)} or \code{NULL}. The path to the directory

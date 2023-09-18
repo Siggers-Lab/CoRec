@@ -8,7 +8,7 @@
 #'   each other.
 #' @param pbm_conditions `character`. The names of the individual PBM conditions
 #'   to compare.
-#' @param pbm_conditions_group `character(1)` or `NULL`. The name of the group
+#' @param group_name `character(1)` or `NULL`. The name of the group
 #'   of PBM conditions to compare. This name will be combined with the probe set
 #'   ID and a number to identify groups of motifs that are similar across
 #'   conditions. (Default: NULL)
@@ -26,15 +26,14 @@ compare_conditions <-
     function(
         corecmotifs,
         pbm_conditions,
-        pbm_conditions_group = NULL,
+        group_name = NULL,
         eucl_distance = 0.25,
         check_corecmotifs = TRUE
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
         is.character(pbm_conditions),
-        assertthat::is.string(pbm_conditions_group) ||
-            is.null(pbm_conditions_group),
+        assertthat::is.string(group_name) || is.null(group_name),
         assertthat::is.number(eucl_distance),
         assertthat::is.flag(check_corecmotifs)
     )
@@ -47,8 +46,8 @@ compare_conditions <-
         )
 
     # Make a name for this group of conditions if one is not provided
-    if (is.null(pbm_conditions_group) || pbm_conditions_group == "") {
-        pbm_conditions_group <- paste(pbm_conditions, collapse = "_")
+    if (is.null(group_name) || group_name == "") {
+        group_name <- paste(pbm_conditions, collapse = "_")
     }
 
     # Keep only the CoRecMotifs from the relevant PBM conditions
@@ -93,7 +92,7 @@ compare_conditions <-
                 data.frame(
                     "probe_set" = probe_set,
                     "pbm_condition" = group_pbm_conditions,
-                    "group" = paste0(pbm_conditions_group, "_", probe_set, "_1")
+                    "group" = paste0(group_name, "_", probe_set, "_1")
                 )
             return(motif_comparison)
         }
@@ -193,7 +192,7 @@ compare_conditions <-
                 "pbm_condition" = names(group_assignments),
                 "group" =
                     paste(
-                        pbm_conditions_group,
+                        group_name,
                         probe_set,
                         group_assignments,
                         sep = "_"

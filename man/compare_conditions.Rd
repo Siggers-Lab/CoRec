@@ -7,7 +7,7 @@
 compare_conditions(
   corecmotifs,
   pbm_conditions,
-  pbm_conditions_group = NULL,
+  group_name = NULL,
   eucl_distance = 0.25,
   check_corecmotifs = TRUE
 )
@@ -19,7 +19,7 @@ each other.}
 \item{pbm_conditions}{\code{character}. The names of the individual PBM conditions
 to compare.}
 
-\item{pbm_conditions_group}{\code{character(1)} or \code{NULL}. The name of the group
+\item{group_name}{\code{character(1)} or \code{NULL}. The name of the group
 of PBM conditions to compare. This name will be combined with the probe set
 ID and a number to identify groups of motifs that are similar across
 conditions. (Default: NULL)}
