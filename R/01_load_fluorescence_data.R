@@ -41,6 +41,28 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
         is.character(pbm_conditions)
     )
 
+    # Make sure the PBM conditions are valid column names
+    pbm_conditions_fixed <- make.names(pbm_conditions)
+
+    # Throw a warning if the column names were changed
+    if (!identical(pbm_conditions, pbm_conditions_fixed)) {
+        warning(
+            "pbm_conditions contained invalid column name(s)\n",
+            "New names:",
+            lapply(1:length(pbm_conditions), function(i) {
+                if (pbm_conditions[i] != pbm_conditions_fixed[i]) {
+                    paste0(
+                        "\n\t",
+                        pbm_conditions[i],
+                        " -> ",
+                        pbm_conditions_fixed[i]
+                    )
+                }
+            }),
+            call. = FALSE
+        )
+    }
+
     # Load the table of fluorescence values
     fluorescence_table <-
         utils::read.table(
@@ -52,13 +74,13 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
         )
 
     # Make sure the list of PBM conditions is the right length
-    if (ncol(fluorescence_table) != (length(pbm_conditions) + 3)) {
+    if (ncol(fluorescence_table) != (length(pbm_conditions_fixed) + 3)) {
         stop(
             "pbm_conditions is the wrong length\n",
             "Expected ",
             ncol(fluorescence_table) -3,
             " values but got ",
-            length(pbm_conditions),
+            length(pbm_conditions_fixed),
             call. = FALSE
         )
     }
@@ -69,7 +91,12 @@ load_fluorescence_data <- function(fluorescence_file, pbm_conditions) {
 
         # Rename the columns
         magrittr::set_colnames(
-            c("probe_id", "probe_sequence", "n_conditions", pbm_conditions)
+            c(
+                "probe_id",
+                "probe_sequence",
+                "n_conditions",
+                pbm_conditions_fixed
+            )
         ) %>%
 
         # Remove the unnecessary columns
