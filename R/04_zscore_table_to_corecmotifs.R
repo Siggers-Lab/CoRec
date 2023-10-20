@@ -196,6 +196,12 @@ make_zscore_motif <- function(zscore_table, probe_set_name, pbm_condition) {
             fill = list(zscore = seed_zscore)
         ) %>%
 
+        # Make sure the snv_positions are in the correct order
+        # If the snv_position column wasn't numeric, it might be wrong
+        dplyr::arrange(
+            as.numeric(snv_position), as.character(snv_nucleotide)
+        ) %>%
+
         # Reformat so the columns are positions and the rows are nucleotides
         tidyr::pivot_wider(
             names_from = snv_position,
