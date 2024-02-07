@@ -11,6 +11,8 @@
 #' @param reference_logo_type `character(1)`. One of "ICM", "PWM", "PPM", or
 #'   "none". The type of logo to plot for the matching reference motif.
 #'   (Default: "ICM")
+#' @param reverse_complement `logical(1)`. Should the CoRecMotif be reversed?
+#'   (Default: False)
 #' @param correct_orientation `logical(1)`. Should the reference motif be
 #'   reversed if necessary to match the CoRecMotif's orientation? (Default:
 #'   TRUE)
@@ -34,6 +36,7 @@ plot_corecmotif <-
         corecmotif,
         corecmotif_logo_type = c("delta_zscore", "ICM", "PWM", "PPM", "none"),
         reference_logo_type = c("ICM", "PWM", "PPM", "none"),
+        reverse_complement = FALSE,
         correct_orientation = TRUE,
         fade_corecmotif = FALSE,
         fade_reference = FALSE,
@@ -41,6 +44,7 @@ plot_corecmotif <-
     ) {
     # Make sure all the arguments are the right type
     assertthat::assert_that(
+        assertthat::is.flag(reverse_complement),
         assertthat::is.flag(correct_orientation),
         assertthat::is.flag(fade_corecmotif),
         assertthat::is.flag(fade_reference),
@@ -71,6 +75,14 @@ plot_corecmotif <-
             "none" = NA
         )
 
+    # Take the reverse complement if necessary
+    if (reverse_complement && !is.na(corecmotif_matrix)) {
+        corecmotif_matrix <-
+            matrix(rev(corecmotif_matrix), nrow = 4, byrow = FALSE) %>%
+            magrittr::set_rownames(c("A", "C", "G", "T")) %>%
+            magrittr::set_colnames(1:ncol(.))
+    }
+
     # Get the correct form of the reference motif as a numeric matrix
     reference_matrix <-
         switch(
@@ -80,6 +92,14 @@ plot_corecmotif <-
             "PPM" = get_match_ppm(corecmotif, correct_orientation),
             "none" = NA
         )
+
+    # Take the reverse complement if necessary
+    if (reverse_complement && correct_orientation && !is.na(reference_matrix)) {
+        reference_matrix <-
+            matrix(rev(reference_matrix), nrow = 4, byrow = FALSE) %>%
+            magrittr::set_rownames(c("A", "C", "G", "T")) %>%
+            magrittr::set_colnames(1:ncol(.))
+    }
 
     # Set both plots to NA by default
     corecmotif_plot <- NA
